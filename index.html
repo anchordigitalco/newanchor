@@ -1566,8 +1566,12 @@ body.video-failed .card{max-width:100%}
         // continuing to ease through the last stretch - otherwise the card (and its hotspots)
         // appear over a still-mid-seek, softer frame instead of the sharp one it lands on.
         // gated on p>=0.3 too so a very short hop (small |toT-fromT|) can't satisfy the
-        // video-time threshold right out of the gate and skip the glide entirely.
-        if(p >= 1 || (p >= 0.3 && Math.abs(toT - interp) <= SNAP_THRESHOLD_SEC)){
+        // video-time threshold right out of the gate and skip the glide entirely. the
+        // p>=0.65 fallback matters on the longest hops (the opening zoom-out is 7.7 real
+        // seconds, by far the longest on the site): a cubic ease-out's tail is so flat that
+        // the content-time threshold alone doesn't fire until very late wall-clock-wise on a
+        // long hop, reading as the buttons lagging well after the motion already looks done.
+        if(p >= 1 || (p >= 0.3 && (Math.abs(toT - interp) <= SNAP_THRESHOLD_SEC || p >= 0.65))){
           requestSeek(toT);
           reveal();
         }
