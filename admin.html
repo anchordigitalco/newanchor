@@ -180,6 +180,18 @@
     .inbox{grid-template-columns:1fr;height:auto}
     .inbox-list{border-right:0;border-bottom:1px solid var(--hairline);max-height:260px}
   }
+  .client-table-scroll{overflow-x:auto}
+  /* on a phone-width screen a 230px fixed sidebar eats most of it - lock it to the already-built
+     icon-only rail instead, the toggle button itself is redundant here since there's nothing
+     left to collapse from, so it's hidden too. */
+  @media (max-width:640px){
+    .sidebar{width:64px;padding:1rem .5rem}
+    .sidebar-brand span,.sidebar-link span,.sidebar-toggle,.sidebar-whoami{display:none}
+    .sidebar-brand{justify-content:center;padding-left:0;padding-right:0}
+    .sidebar-link{justify-content:center;padding-left:.4rem;padding-right:.4rem}
+    .main{padding:1.2rem}
+    .add-row{flex-direction:column;align-items:stretch}
+  }
 
   /* ---- meetings ---- */
   .meeting-card{padding:1rem 1.1rem;border:1px solid var(--hairline);border-radius:14px;margin-bottom:.7rem}
@@ -304,7 +316,7 @@
       <div class="panel">
         <h2>All clients</h2>
         <p class="panel-sub">Invited clients who haven't signed up yet show as pending.</p>
-        <div id="client-table-wrap"></div>
+        <div id="client-table-wrap" class="client-table-scroll"></div>
       </div>
     </div>
 

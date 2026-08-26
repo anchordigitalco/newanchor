@@ -115,6 +115,16 @@
 
   .content-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:1.5rem;align-items:start;margin-bottom:1.5rem}
   @media (max-width:900px){.content-grid{grid-template-columns:1fr}}
+  /* on a phone-width screen a 230px fixed sidebar eats most of it - lock it to the already-built
+     icon-only rail instead (same look the desktop "Collapse" button produces), the toggle button
+     itself is redundant here since there's nothing left to collapse from, so it's hidden too. */
+  @media (max-width:640px){
+    .sidebar{width:64px;padding:1rem .5rem}
+    .sidebar-brand span,.sidebar-link span,.sidebar-toggle{display:none}
+    .sidebar-brand{justify-content:center;padding-left:0;padding-right:0}
+    .sidebar-link{justify-content:center;padding-left:.4rem;padding-right:.4rem}
+    .main{padding:1.2rem}
+  }
 
   .panel{background:var(--panel);border:1px solid var(--hairline);border-radius:18px;padding:1.6rem}
   .panel h2{font-size:1.05rem;margin:0 0 .3rem;font-weight:600}
