@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;600;700&family=Varela+Round&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Varela+Round&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
     --dark:#1F1E1C;
@@ -18,7 +18,7 @@
     --accent-hover:#C9C6C0;
     --ink:#131313;
     --hairline:rgba(242,240,236,.12);
-    --font-body:'Karla',Helvetica Neue,Arial,sans-serif;
+    --font-body:'Inter',Helvetica Neue,Arial,sans-serif;
     --font-word:'Varela Round',Helvetica Neue,Arial,sans-serif;
     --font-mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
     --ease-soft:cubic-bezier(.4,0,.2,1);
@@ -43,7 +43,8 @@
     position:sticky;top:0;
   }
   .sidebar.collapsed{width:72px;padding:1.4rem .7rem}
-  .sidebar-brand{display:flex;align-items:center;gap:.6rem;padding:.4rem .5rem 1.4rem;border-bottom:1px solid var(--hairline);margin-bottom:1.1rem}
+  .sidebar-brand{display:flex;align-items:center;gap:.6rem;padding:.4rem .5rem 1.4rem;border-bottom:1px solid var(--hairline);margin-bottom:1.1rem;text-decoration:none;transition:opacity .2s var(--ease-soft)}
+  .sidebar-brand:hover{opacity:.8}
   .sidebar-brand img{height:22px;width:auto;flex-shrink:0}
   .sidebar-brand span{font-family:var(--font-word);font-size:.98rem;white-space:nowrap;overflow:hidden;transition:opacity .2s var(--ease-soft)}
   .sidebar.collapsed .sidebar-brand span{opacity:0;width:0}
@@ -215,10 +216,10 @@
 <body>
 
   <nav class="sidebar" id="sidebar">
-    <div class="sidebar-brand">
+    <a class="sidebar-brand" href="index.html" aria-label="Anchor Digital, back to the site">
       <img src="assets/anchor-icon.png" alt="">
       <span>anchor digital</span>
-    </div>
+    </a>
     <div class="sidebar-nav">
       <a class="sidebar-link active" href="#top">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>

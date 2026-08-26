@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Policy - Anchor Digital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Varela+Round&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --dark:#1F1E1C;
+    --dark-ink:#F2F0EC;
+    --ink-faint:#A8A49D;
+    --accent:#FFFFFF;
+    --hairline:rgba(242,240,236,.14);
+    --font-body:'Inter',Helvetica Neue,Arial,sans-serif;
+    --font-word:'Varela Round',Helvetica Neue,Arial,sans-serif;
+    --font-mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --ease-soft:cubic-bezier(.4,0,.2,1);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:var(--font-body);color:var(--dark-ink);background:var(--dark);
+    min-height:100vh;min-height:100dvh;
+  }
+  a{color:inherit}
+  .home-link{
+    display:inline-flex;align-items:center;gap:.5rem;
+    padding:1.6rem clamp(1.2rem,4vw,3rem) 0;
+    font-family:var(--font-word);font-size:.98rem;text-decoration:none;
+    opacity:.85;transition:opacity .2s var(--ease-soft);
+  }
+  .home-link:hover{opacity:1}
+  .home-link svg{width:16px;height:16px}
+  main{
+    max-width:42rem;margin:0 auto;
+    padding:2.4rem clamp(1.2rem,4vw,3rem) 6rem;
+  }
+  .kicker{
+    font-family:var(--font-mono);font-size:.7rem;letter-spacing:.12em;text-transform:lowercase;
+    color:var(--ink-faint);display:flex;align-items:center;gap:.55rem;margin-bottom:1.1rem;
+  }
+  .kicker::before{content:"";width:20px;height:1px;background:var(--ink-faint)}
+  h1{font-size:clamp(1.7rem,4vw,2.3rem);margin:0 0 .4rem;font-weight:600;line-height:1.15}
+  .updated{color:var(--ink-faint);font-size:.85rem;margin:0 0 2.6rem}
+  .note{
+    font-size:.85rem;line-height:1.65;color:var(--ink-faint);
+    padding:1rem 1.2rem;border:1px solid var(--hairline);border-radius:14px;margin-bottom:2.6rem;
+  }
+  section{margin-bottom:2.2rem}
+  h2{font-size:1.05rem;font-weight:600;margin:0 0 .8rem}
+  p{font-size:.92rem;line-height:1.75;margin:0 0 .9rem;color:var(--dark-ink)}
+  ul{margin:0 0 .9rem;padding-left:1.2rem}
+  li{font-size:.92rem;line-height:1.75;margin-bottom:.4rem}
+  strong{font-weight:600}
+  a.inline{text-decoration:underline;text-underline-offset:2px}
+  .divider{border:0;border-top:1px solid var(--hairline);margin:2.6rem 0}
+  .contact-block{font-size:.92rem;line-height:1.9}
+</style>
+</head>
+<body>
+
+  <a class="home-link" href="index.html" aria-label="Back to Anchor Digital">
+    <svg viewBox="0 0 16 16" fill="none"><path d="M10 3 5 8l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    anchor digital
+  </a>
+
+  <main>
+    <p class="kicker">legal</p>
+    <h1>Privacy Policy</h1>
+    <p class="updated">Last updated August 26, 2026</p>
+
+    <p class="note">
+      This describes what Anchor Digital Studio LLC actually collects and does with it, written
+      to match how this site and client portal are really built, not a generic template. It
+      isn't a substitute for legal advice, if you need this reviewed against a specific law
+      (GDPR, CCPA, or otherwise), talk to a lawyer, we're not one.
+    </p>
+
+    <section>
+      <h2>What this covers</h2>
+      <p>
+        This policy covers anchordigitalco.com and the client portal (login, dashboard, and
+        related pages). It applies to visitors, prospective clients who use the contact form,
+        and clients with a portal account.
+      </p>
+    </section>
+
+    <section>
+      <h2>Information we collect</h2>
+      <p><strong>If you use the contact form.</strong> The form doesn't submit anything to a server, it opens your own email application with the details you entered (name, email, business type, budget, timeline, message) pre-filled into a message addressed to us. That email then lives wherever your email provider stores sent mail, and in our inbox once you send it. We don't store contact-form submissions in any database.</p>
+      <p><strong>If you create a client portal account.</strong> We collect your email address and a password. Your password is hashed by our authentication provider (Supabase) and is never visible to us in plain text. If you provide a company name, we store that too. New accounts can only be created for an email we've already approved, and email confirmation is required before an account becomes active.</p>
+      <p><strong>Project information.</strong> Once you're a client, we (Adam and Jackson) enter project status, milestones, and activity updates into your dashboard ourselves. This is business record-keeping about the work, not information collected from you.</p>
+      <p><strong>Files you upload.</strong> If you use the Drive feature to send us images or documents, those files are stored in a private folder tied to your account. Only you and Anchor Digital admins can access it.</p>
+      <p><strong>Studio assistant conversations.</strong> If you use the virtual assistant, we store the text of what you send and what it replies, so we can review and improve it. Message content is also sent to Anthropic (the company behind Claude, the AI model powering the assistant) to generate a response, see "Third-party services" below.</p>
+      <p><strong>Meeting scheduling.</strong> If you book a meeting through our embedded Calendly widget, that booking is handled directly by Calendly under its own privacy policy. We (as admins) can see upcoming meeting details, name, email, and time, pulled from Calendly to display in our internal admin view.</p>
+    </section>
+
+    <section>
+      <h2>How we use it</h2>
+      <ul>
+        <li>To run your client portal, show you accurate project status, and let you reach us.</li>
+        <li>To respond to contact-form inquiries (via your own email client, as described above).</li>
+        <li>To generate assistant replies grounded in your actual project data, rather than guessing.</li>
+        <li>To keep the portal secure, for example, rate-limiting how many messages the assistant will answer in an hour.</li>
+      </ul>
+      <p>We don't sell your data, and we don't use it for advertising. We don't run analytics or advertising trackers on this site.</p>
+    </section>
+
+    <section>
+      <h2>Third-party services we use</h2>
+      <p>We rely on a small number of service providers to run the site and portal. Each only receives the data needed to do its job:</p>
+      <ul>
+        <li><strong>Supabase</strong> hosts our database, authentication, and file storage. Portal account data, project data, and uploaded files live there.</li>
+        <li><strong>Anthropic</strong> processes the text of messages sent to the studio assistant, in order to generate a reply.</li>
+        <li><strong>Calendly</strong> handles meeting scheduling if you book time with us.</li>
+        <li><strong>Google Fonts</strong> serves the typefaces used on this site, which means your browser makes a request to Google's servers (including your IP address) to load them.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Data storage and security</h2>
+      <p>
+        Portal data is protected by database-level access rules (Row Level Security) that
+        restrict a client account to only ever reading its own data, regardless of what the
+        website's code does or doesn't show. Passwords are hashed, never stored or visible in
+        plain text. Uploaded files sit in a private storage folder scoped to your account.
+        Nothing here makes us immune to every possible security issue, but access is
+        restricted at the database level, not just hidden in the interface.
+      </p>
+    </section>
+
+    <section>
+      <h2>Cookies and local storage</h2>
+      <p>
+        We don't use cookies for tracking or advertising. The portal uses your browser's local
+        storage to keep you logged in between visits, that's a functional necessity, not
+        tracking, and it isn't shared with any third party for marketing purposes.
+      </p>
+    </section>
+
+    <section>
+      <h2>Your choices</h2>
+      <p>
+        You can ask us to access, correct, or delete the data tied to your portal account at
+        any time, just email us. If you'd rather not have an assistant conversation logged,
+        don't use that feature, everything else in the portal works without it.
+      </p>
+    </section>
+
+    <section>
+      <h2>Children's privacy</h2>
+      <p>This site and portal are intended for business use and are not directed at children. We don't knowingly collect information from anyone under 16.</p>
+    </section>
+
+    <section>
+      <h2>Changes to this policy</h2>
+      <p>If what we collect or how we use it changes in a meaningful way, we'll update this page and change the date at the top.</p>
+    </section>
+
+    <hr class="divider">
+
+    <section>
+      <h2>Contact us</h2>
+      <p class="contact-block">
+        Questions about this policy, or a request about your data:<br>
+        <a class="inline" href="mailto:adam@anchordigitalco.com">adam@anchordigitalco.com</a><br>
+        <a class="inline" href="mailto:jackson@anchordigitalco.com">jackson@anchordigitalco.com</a><br>
+        Anchor Digital Studio LLC
+      </p>
+    </section>
+  </main>
+
+</body>
+</html>

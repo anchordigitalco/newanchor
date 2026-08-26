@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;600;700&family=Varela+Round&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Varela+Round&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
     --dark:#1F1E1C;
@@ -18,7 +18,7 @@
     --accent-hover:#C9C6C0;
     --ink:#131313;
     --hairline:rgba(242,240,236,.12);
-    --font-body:'Karla',Helvetica Neue,Arial,sans-serif;
+    --font-body:'Inter',Helvetica Neue,Arial,sans-serif;
     --font-word:'Varela Round',Helvetica Neue,Arial,sans-serif;
     --font-mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
     --ease-soft:cubic-bezier(.4,0,.2,1);
@@ -44,7 +44,8 @@
     position:sticky;top:0;
   }
   .sidebar.collapsed{width:72px;padding:1.4rem .7rem}
-  .sidebar-brand{display:flex;align-items:center;gap:.6rem;padding:.4rem .5rem 1.4rem;border-bottom:1px solid var(--hairline);margin-bottom:1.1rem}
+  .sidebar-brand{display:flex;align-items:center;gap:.6rem;padding:.4rem .5rem 1.4rem;border-bottom:1px solid var(--hairline);margin-bottom:1.1rem;text-decoration:none;transition:opacity .2s var(--ease-soft)}
+  .sidebar-brand:hover{opacity:.8}
   .sidebar-brand img{height:22px;width:auto;flex-shrink:0}
   .sidebar-brand span{font-family:var(--font-word);font-size:.98rem;white-space:nowrap;overflow:hidden;transition:opacity .2s var(--ease-soft)}
   .sidebar.collapsed .sidebar-brand span{opacity:0;width:0}
@@ -128,6 +129,38 @@
   .row-actions svg{width:15px;height:15px}
   .empty-state{padding:1.6rem 1rem;text-align:center;color:var(--ink-faint);font-size:.85rem;border:1px dashed var(--hairline);border-radius:14px}
 
+  /* ---- messages inbox: list on the left, selected thread on the right ---- */
+  .inbox{
+    display:grid;grid-template-columns:300px 1fr;
+    border:1px solid var(--hairline);border-radius:18px;overflow:hidden;
+    height:min(600px,70vh);background:var(--panel);
+  }
+  .inbox-list{border-right:1px solid var(--hairline);overflow-y:auto}
+  .inbox-row{
+    display:flex;align-items:center;gap:.7rem;padding:.8rem 1rem;cursor:pointer;
+    border-bottom:1px solid var(--hairline);transition:background .15s var(--ease-soft);
+  }
+  .inbox-row:hover{background:rgba(242,240,236,.05)}
+  .inbox-row.active{background:rgba(242,240,236,.09)}
+  .inbox-avatar{
+    width:36px;height:36px;border-radius:50%;background:rgba(242,240,236,.1);flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:.8rem;
+  }
+  .inbox-row-body{min-width:0;flex:1}
+  .inbox-row-name{display:block;font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .inbox-row-preview{display:block;font-size:.76rem;color:var(--ink-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:.15rem}
+  .inbox-row-time{font-size:.66rem;color:var(--ink-faint);font-family:var(--font-mono);flex-shrink:0}
+  .inbox-thread{display:flex;flex-direction:column;background:var(--dark)}
+  .inbox-thread-head{padding:1rem 1.3rem;border-bottom:1px solid var(--hairline);flex-shrink:0}
+  .inbox-thread-head .name{font-weight:600;font-size:.94rem;margin:0}
+  .inbox-thread-head .email{font-size:.76rem;color:var(--ink-faint);margin:.15rem 0 0}
+  .inbox-thread-body{flex:1;overflow-y:auto;padding:1.2rem;display:flex;flex-direction:column;gap:.6rem}
+  .inbox-empty{flex:1;display:flex;align-items:center;justify-content:center;color:var(--ink-faint);font-size:.85rem;padding:2rem;text-align:center}
+  @media (max-width:720px){
+    .inbox{grid-template-columns:1fr;height:auto}
+    .inbox-list{border-right:0;border-bottom:1px solid var(--hairline);max-height:260px}
+  }
+
   /* ---- meetings ---- */
   .meeting-card{padding:1rem 1.1rem;border:1px solid var(--hairline);border-radius:14px;margin-bottom:.7rem}
   .meeting-card:last-child{margin-bottom:0}
@@ -183,10 +216,10 @@
 <body>
 
   <nav class="sidebar" id="sidebar">
-    <div class="sidebar-brand">
+    <a class="sidebar-brand" href="index.html" aria-label="Anchor Digital, back to the site">
       <img src="assets/anchor-icon.png" alt="">
       <span>anchor digital · admin</span>
-    </div>
+    </a>
     <div class="sidebar-nav">
       <button class="sidebar-link active" id="nav-clients" type="button">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -253,10 +286,13 @@
     <div class="view" id="view-messages" hidden>
       <div class="main-head">
         <h1>Messages</h1>
-        <p>Transcripts of what clients have asked the studio assistant. Click a client to read the full conversation.</p>
+        <p>Transcripts of what clients have asked the studio assistant.</p>
       </div>
-      <div class="panel">
-        <div id="messages-table-wrap"></div>
+      <div class="inbox">
+        <div class="inbox-list" id="inbox-list"></div>
+        <div class="inbox-thread" id="inbox-thread">
+          <div class="inbox-empty">Select a conversation to read it.</div>
+        </div>
       </div>
     </div>
 
@@ -342,7 +378,7 @@
         views[key].hidden = key !== name;
         navButtons[key].classList.toggle('active', key === name);
       });
-      if(name === 'messages') renderMessagesTable();
+      if(name === 'messages') renderMessagesInbox();
       if(name === 'meetings') loadMeetings();
     }
     navButtons.clients.addEventListener('click', function(){ setView('clients'); });
@@ -454,56 +490,119 @@
       wrap.appendChild(table);
     }
 
-    // ---- messages view: clients sorted by most recent message ----
-    function renderMessagesTable(){
-      var wrap = document.getElementById('messages-table-wrap');
-      var withMessages = profileRows.filter(function(p){ return p.messages && p.messages.length > 0; });
+    // ---- messages view: a two-pane inbox, client list left, selected transcript right ----
+    var selectedMessageClientId = null;
+
+    function clientInitial(profile){
+      var src = (profile.company_name || profile.email || '?').trim();
+      return src.charAt(0).toUpperCase() || '?';
+    }
+
+    function messagesWithData(){
+      return profileRows.filter(function(p){ return p.messages && p.messages.length > 0; });
+    }
+
+    function lastMessageOf(profile){
+      return profile.messages.slice().sort(function(a,b){ return new Date(b.created_at) - new Date(a.created_at); })[0];
+    }
+
+    function renderMessagesInbox(){
+      var listEl = document.getElementById('inbox-list');
+      var withMessages = messagesWithData();
+      listEl.innerHTML = '';
 
       if(withMessages.length === 0){
-        wrap.innerHTML = '<div class="empty-state">No conversations yet. They\'ll show up here once a client uses the assistant.</div>';
+        var empty = document.createElement('div');
+        empty.className = 'empty-state';
+        empty.style.margin = '1rem';
+        empty.textContent = "No conversations yet. They'll show up here once a client uses the assistant.";
+        listEl.appendChild(empty);
+        renderInboxThread(null);
         return;
       }
 
       withMessages.sort(function(a, b){
-        var aLast = a.messages.reduce(function(max, m){ return new Date(m.created_at) > max ? new Date(m.created_at) : max; }, new Date(0));
-        var bLast = b.messages.reduce(function(max, m){ return new Date(m.created_at) > max ? new Date(m.created_at) : max; }, new Date(0));
-        return bLast - aLast;
+        return new Date(lastMessageOf(b).created_at) - new Date(lastMessageOf(a).created_at);
       });
-
-      var table = document.createElement('table');
-      table.className = 'client-table';
-      table.innerHTML = '<thead><tr><th>Client</th><th>Email</th><th>Messages</th><th>Last message</th></tr></thead>';
-      var tbody = document.createElement('tbody');
 
       withMessages.forEach(function(profile){
-        var sorted = profile.messages.slice().sort(function(a,b){ return new Date(b.created_at) - new Date(a.created_at); });
-        var last = sorted[0];
-        var tr = document.createElement('tr');
-        tr.className = 'is-clickable';
+        var last = lastMessageOf(profile);
+        var row = document.createElement('div');
+        row.className = 'inbox-row' + (profile.id === selectedMessageClientId ? ' active' : '');
 
-        var nameCell = document.createElement('td');
-        nameCell.textContent = profile.company_name || profile.email;
-        tr.appendChild(nameCell);
+        var avatar = document.createElement('span');
+        avatar.className = 'inbox-avatar';
+        avatar.textContent = clientInitial(profile);
 
-        var emailCell = document.createElement('td');
-        emailCell.textContent = profile.email;
-        tr.appendChild(emailCell);
+        var body = document.createElement('span');
+        body.className = 'inbox-row-body';
+        var name = document.createElement('span');
+        name.className = 'inbox-row-name';
+        name.textContent = profile.company_name || profile.email;
+        var preview = document.createElement('span');
+        preview.className = 'inbox-row-preview';
+        preview.textContent = (last.role === 'assistant' ? 'Assistant: ' : '') + last.content;
+        body.appendChild(name);
+        body.appendChild(preview);
 
-        var countCell = document.createElement('td');
-        countCell.textContent = String(profile.messages.length);
-        tr.appendChild(countCell);
+        var time = document.createElement('span');
+        time.className = 'inbox-row-time';
+        time.textContent = formatDate(last.created_at) || '';
 
-        var lastCell = document.createElement('td');
-        lastCell.textContent = formatDateTime(last.created_at) || '';
-        tr.appendChild(lastCell);
+        row.appendChild(avatar);
+        row.appendChild(body);
+        row.appendChild(time);
 
-        tr.addEventListener('click', function(){ openDrawer(profile); });
-        tbody.appendChild(tr);
+        row.addEventListener('click', function(){
+          selectedMessageClientId = profile.id;
+          renderMessagesInbox();
+        });
+
+        listEl.appendChild(row);
       });
 
-      table.appendChild(tbody);
-      wrap.innerHTML = '';
-      wrap.appendChild(table);
+      var current = selectedMessageClientId
+        ? withMessages.filter(function(p){ return p.id === selectedMessageClientId; })[0]
+        : null;
+      renderInboxThread(current || null);
+    }
+
+    function renderInboxThread(profile){
+      var el = document.getElementById('inbox-thread');
+      el.innerHTML = '';
+
+      if(!profile){
+        var empty = document.createElement('div');
+        empty.className = 'inbox-empty';
+        empty.textContent = 'Select a conversation to read it.';
+        el.appendChild(empty);
+        return;
+      }
+
+      var head = document.createElement('div');
+      head.className = 'inbox-thread-head';
+      var name = document.createElement('p');
+      name.className = 'name';
+      name.textContent = profile.company_name || profile.email;
+      var email = document.createElement('p');
+      email.className = 'email';
+      email.textContent = profile.email;
+      head.appendChild(name);
+      head.appendChild(email);
+
+      var body = document.createElement('div');
+      body.className = 'inbox-thread-body';
+      var sorted = profile.messages.slice().sort(function(a,b){ return new Date(a.created_at) - new Date(b.created_at); });
+      sorted.forEach(function(m){
+        var bubble = document.createElement('div');
+        bubble.className = 'msg-bubble ' + (m.role === 'user' ? 'user' : 'assistant');
+        bubble.textContent = m.content;
+        body.appendChild(bubble);
+      });
+
+      el.appendChild(head);
+      el.appendChild(body);
+      body.scrollTop = body.scrollHeight;
     }
 
     // ---- meetings view: live Calendly data via the list-meetings function ----

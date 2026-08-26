@@ -11,7 +11,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 64'%3E%3Crect width='100' height='64' rx='10' fill='%23F2F0EC'/%3E%3Cpath d='M10 10h27a13 13 0 0 1 13 13v16a17 17 0 0 1-17 17h-6a6 6 0 0 1 0-12h6a5 5 0 0 0 5-5v-4H23A13 13 0 0 1 10 22V10z' fill='%23131313'/%3E%3Cpath d='M90 10H63a13 13 0 0 0-13 13v16a17 17 0 0 0 17 17h6a6 6 0 0 0 0-12h-6a5 5 0 0 1-5-5v-4h27a13 13 0 0 0 13-13V10z' fill='%23131313'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;600;700&family=Varela+Round&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Varela+Round&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ============ RESET + TOKENS ============ */
 *,*::before,*::after{box-sizing:border-box}
@@ -39,7 +39,7 @@ h1,h2,h3{margin:0;font-weight:400}
   --accent-muted:rgba(255,255,255,.16);
   --hairline:rgba(19,19,19,.13);
   --hairline-dark:rgba(242,240,236,.16);
-  --font-body:'Karla',Helvetica Neue,Arial,sans-serif;
+  --font-body:'Inter',Helvetica Neue,Arial,sans-serif;
   --font-word:'Varela Round',Helvetica Neue,Arial,sans-serif;
   --font-mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
   --ease:cubic-bezier(.16,.8,.24,1);
@@ -286,33 +286,32 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
    itself being blurred. drop it here: just the small glowing dot, nothing softening the video. */
 #band-services > .hotspot{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;border-color:transparent}
 #band-services > .hotspot:hover,#band-services > .hotspot:focus-visible{border-color:rgba(255,255,255,.7);background:rgba(242,240,236,.12)}
-/* the three cards, independent of where their buttons sit: one grid, equal columns, a single
-   shared gap, so the cards themselves stay evenly spaced and identically sized without any
-   hand-tuned per-card position. --services-header-bottom is set on #band-services (an ancestor)
-   by the JS block above and inherited down from there: whatever the header's real rendered height
-   turns out to be, the grid starts clear of it with room to spare, on any viewport, instead of a
-   guessed fixed percentage. */
+/* the three cards, each anchored to its own button's real video-matched x% - not an evenly-spaced
+   grid. the monitors in the footage aren't evenly spaced (22.7% / 38.5% / 64.1%), so a rigid
+   1/3-2/3-3/3 grid put the third ("ongoing maintenance") card well to the right of the monitor
+   that actually opens it. each .services-col below carries its own left:X% inline, matching its
+   button exactly, then centers on that point with translateX. --services-header-bottom is set on
+   #band-services (an ancestor) by the JS block above and inherited down from there: whatever the
+   header's real rendered height turns out to be, the cards start clear of it with room to spare,
+   on any viewport, instead of a guessed fixed percentage. */
 .services-grid{
-  position:absolute;left:var(--gutter);right:var(--gutter);
-  top:calc(var(--services-header-bottom,300px) + 1vh);
-  display:grid;grid-template-columns:repeat(3,1fr);column-gap:clamp(1rem,3vw,2.4rem);
+  position:absolute;inset:0;
   z-index:2;pointer-events:none;
 }
-/* one column per service; the card is anchored to the top of its own column, centered within it. */
+/* one column per service; positioned via its own inline left:X% (set in the HTML, matching the
+   button it belongs to), centered on that point, top-anchored below the header. */
 .services-col{
-  position:relative;
+  position:absolute;top:calc(var(--services-header-bottom,300px) + 1vh);
+  transform:translateX(-50%);
   pointer-events:none;
 }
 /* one shared width/height for all three - specificity high enough to always beat the open-order
    shape classes (.card-vertical/.card-horizontal) used elsewhere on the site, so these three never
    resize to fit their own copy; the longer "ongoing maintenance" card scrolls internally instead.
-   absolutely positioned from the same top-center point as the button (every column's button is
-   the same size, so this point lines up identically for all three), covering it once open.
-   centered with left:0;right:0;margin:auto rather than a translateX, so the transform property
-   stays free for the card's own open/close scale-and-fade animation. */
+   the column above already centers itself on the button's x%, so the card just fills it. */
 #band-services .services-col .popup-card{
-  position:absolute;top:0;left:0;right:0;margin:0 auto;
-  width:min(360px,100%);height:min(520px,54vh);
+  position:relative;
+  width:min(360px,84vw);height:min(520px,54vh);
   display:flex;flex-direction:column;
   z-index:2;pointer-events:auto;
 }
@@ -729,6 +728,8 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
 .footer-contact a{text-decoration:underline;color:var(--dark-ink)}
 .footer-bottom{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;padding-top:1.6rem;font-size:.76rem;opacity:.55}
 .footer-bottom .legal{display:flex;gap:1.3rem}
+.footer-bottom .legal a{text-decoration:none;transition:opacity .2s var(--ease-soft)}
+.footer-bottom .legal a:hover{opacity:.75}
 .footer-disclosure{max-width:56ch;opacity:.55;font-size:.74rem;margin-top:.5rem}
 
 /* ============ REDUCED MOTION ============ */
@@ -846,7 +847,7 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
         <button class="hotspot" style="left:38.5%;top:36.6%" data-info="innovation" aria-label="Brand Digital Systems, more info"><span></span></button>
         <button class="hotspot" style="left:64.1%;top:38.9%" data-info="growth" aria-label="Ongoing Maintenance & Consulting, more info"><span></span></button>
         <div class="services-grid">
-          <div class="services-col">
+          <div class="services-col" style="left:22.7%">
             <div class="popup-card has-img" data-info="design" hidden>
               <button class="popup-close" data-close aria-label="Close">&times;</button>
               <img class="clip-img" src="assets/pillars/design.jpg" alt="">
@@ -856,7 +857,7 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
               </div>
             </div>
           </div>
-          <div class="services-col">
+          <div class="services-col" style="left:38.5%">
             <div class="popup-card has-img" data-info="innovation" hidden>
               <button class="popup-close" data-close aria-label="Close">&times;</button>
               <img class="clip-img" src="assets/pillars/innovation.jpg" alt="">
@@ -866,7 +867,7 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
               </div>
             </div>
           </div>
-          <div class="services-col">
+          <div class="services-col" style="left:64.1%">
             <div class="popup-card has-img" data-info="growth" hidden>
               <button class="popup-close" data-close aria-label="Close">&times;</button>
               <img class="clip-img" src="assets/pillars/growth.jpg" alt="">
@@ -1159,7 +1160,7 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
     </div>
     <div class="footer-bottom">
       <span>&copy; <span id="year"></span> Anchor Digital Studio LLC.</span>
-      <span class="legal"><span>Terms</span><span>Privacy</span></span>
+      <span class="legal"><span>Terms</span><a href="privacy.html">Privacy</a></span>
     </div>
     <p class="footer-disclosure">The studio walkthrough in this site is a generated visualization built for this design, not a photo of a physical office. Team photos, project links, and press mentions are all real.</p>
   </footer>
