@@ -63,7 +63,8 @@
   .sidebar.collapsed{width:72px;padding:1.4rem .7rem}
   .sidebar-brand{display:flex;align-items:center;gap:.6rem;padding:.4rem .5rem 1.4rem;border-bottom:1px solid var(--hairline);margin-bottom:1.1rem;text-decoration:none;transition:opacity .2s var(--ease-soft)}
   .sidebar-brand:hover{opacity:.8}
-  .sidebar-brand img{height:22px;width:auto;flex-shrink:0}
+  .sidebar-brand img{height:22px;width:auto;flex-shrink:0;filter:invert(1)}
+  html[data-theme="light"] .sidebar-brand img{filter:none}
   .sidebar-brand span{font-family:var(--font-word);font-size:.98rem;white-space:nowrap;overflow:hidden;transition:opacity .2s var(--ease-soft)}
   .sidebar.collapsed .sidebar-brand span{opacity:0;width:0}
   .sidebar-nav{display:flex;flex-direction:column;gap:.2rem;flex:1}
