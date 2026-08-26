@@ -758,6 +758,13 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
   .tour-static{display:block}
   .card{max-width:100%}
 }
+/* the video blob fetch failed (bad connection, timed out, blocked) on a device that otherwise
+   would've gotten the full scrub experience: fall back to the exact same static tour the gates
+   above use, rather than leaving the visitor stuck on the poster frame with scroll still locked. */
+body.video-failed .tour{display:none}
+body.video-failed .dot-rail{display:none}
+body.video-failed .tour-static{display:block}
+body.video-failed .card{max-width:100%}
 
 /* a shallow scrub-capable window (short desktop browser, not a phone): give the content room */
 @media (max-height:640px){
@@ -1725,7 +1732,8 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
   }
   function failVideo(){
     ring.classList.add('hidden');
-    stageEl.classList.add('video-failed');
+    document.body.classList.add('video-failed');
+    disableScrubMode(); // unlock scroll + drop the interactive listeners so the static tour beneath is actually reachable
   }
 
   function enableScrubMode(){
