@@ -291,7 +291,11 @@
         // try creating the account, Supabase sends a verification email and
         // won't issue a session until it's confirmed.
         showStatus('Setting up your account...');
-        var signUpRes = await supabase.auth.signUp({ email: email2, password: password });
+        var signUpRes = await supabase.auth.signUp({
+          email: email2,
+          password: password,
+          options: { emailRedirectTo: window.location.origin + '/portal.html' }
+        });
         if(!signUpRes.error){
           if(signUpRes.data && signUpRes.data.session){
             showStatus('Taking you in...');
