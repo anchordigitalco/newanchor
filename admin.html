@@ -519,7 +519,11 @@
         }
         var data = res.data || {};
         if(data.error){
-          el.innerHTML = '<div class="empty-state">' + data.error + '</div>';
+          var errBox = document.createElement('div');
+          errBox.className = 'empty-state';
+          errBox.textContent = data.error;
+          el.innerHTML = '';
+          el.appendChild(errBox);
           return;
         }
         var meetings = data.meetings || [];

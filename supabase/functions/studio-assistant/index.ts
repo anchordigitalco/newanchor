@@ -55,6 +55,24 @@ Deno.serve(async (req) => {
     if (!message) {
       return json({ error: "Empty message." }, 400);
     }
+    if (message.length > 4000) {
+      return json({ error: "That message is too long, try breaking it up." }, 400);
+    }
+
+    // cheap cost-control guard: cap how many messages one client can send
+    // per hour, protects the Anthropic bill from a bug or abuse, not just
+    // from malice
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    const { count: recentCount, error: countError } = await supabaseAdmin
+      .from("messages")
+      .select("id", { count: "exact", head: true })
+      .eq("client_id", user.id)
+      .eq("role", "user")
+      .gte("created_at", oneHourAgo);
+    if (countError) console.error("rate limit check error:", countError);
+    if ((recentCount ?? 0) >= 40) {
+      return json({ reply: "You've sent a lot of messages in the last hour, give it a little while and try again. If it's urgent, email adam@anchordigitalco.com." }, 200);
+    }
 
     // pull this client's real project data so the assistant can answer honestly
     // instead of guessing, grounded only in what's actually in the database
@@ -72,8 +90,13 @@ Deno.serve(async (req) => {
 
     const messages = [
       ...history
-        .filter((m: unknown) => m && typeof m === "object" && "role" in m && "content" in m)
-        .slice(-10),
+        .filter((m: any) =>
+          m && typeof m === "object"
+          && (m.role === "user" || m.role === "assistant")
+          && typeof m.content === "string"
+        )
+        .slice(-10)
+        .map((m: any) => ({ role: m.role, content: String(m.content).slice(0, 2000) })),
       { role: "user", content: message },
     ];
 
