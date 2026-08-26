@@ -308,8 +308,12 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
 /* one shared width/height for all three - specificity high enough to always beat the open-order
    shape classes (.card-vertical/.card-horizontal) used elsewhere on the site, so these three never
    resize to fit their own copy; the longer "ongoing maintenance" card scrolls internally instead.
-   the column above already centers itself on the button's x%, so the card just fills it. */
-#band-services .services-col .popup-card{
+   the column above already centers itself on the button's x%, so the card just fills it.
+   :not([hidden]) matters here: this selector's #id gives it higher specificity than the shared
+   .popup-card[hidden]{display:none} rule, so without this guard a CLOSED card would still get
+   display:flex from here, an invisible (opacity:0) but fully laid-out, pointer-events:auto box
+   sitting right on top of its own hotspot button and silently eating the click. */
+#band-services .services-col .popup-card:not([hidden]){
   position:relative;
   width:min(360px,84vw);height:min(520px,54vh);
   display:flex;flex-direction:column;
@@ -1543,7 +1547,7 @@ body.video-failed .card{max-width:100%}
     // position is within a hair of its destination instead - this scales with the ease curve itself,
     // not a fixed guess of how long that tail happens to take on any given hop.
     var revealed = false;
-    var EASE_REVEAL_AT = 0.86;
+    var EASE_REVEAL_AT = 0.995;
     function reveal(){
       if(revealed) return;
       revealed = true;
