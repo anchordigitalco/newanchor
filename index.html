@@ -777,7 +777,7 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
     <span>anchor digital</span>
   </a>
   <div class="chrome-right">
-    <a class="btn-ghost" href="#contact" data-jump="contact">Start a project</a>
+    <a class="btn-ghost instant-jump" href="#contact" data-jump="contact">Start a project</a>
     <a class="btn-ghost" href="portal.html" id="client-portal-link">Anchor Client Portal</a>
     <div class="menu-wrap">
       <button class="menu-pill" id="menu-btn" aria-haspopup="true" aria-expanded="false">
@@ -1773,7 +1773,7 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
     el.addEventListener('click', function(e){
       e.preventDefault();
       var id = el.getAttribute('data-jump');
-      if(el.closest('#menu-dropdown')) instantJumpTo(id);
+      if(el.closest('#menu-dropdown') || el.classList.contains('instant-jump')) instantJumpTo(id);
       else jumpTo(id);
     });
   });

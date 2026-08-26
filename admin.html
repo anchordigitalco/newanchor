@@ -28,27 +28,56 @@
   body{
     font-family:var(--font-body);color:var(--dark-ink);background:var(--dark);
     min-height:100vh;min-height:100dvh;
+    display:flex;
     visibility:hidden;
   }
   body.ready{visibility:visible}
   a{color:inherit}
   button{font-family:inherit}
 
-  .topbar{
-    display:flex;align-items:center;justify-content:space-between;gap:1rem;
-    padding:1rem clamp(1.2rem,3vw,2.4rem);border-bottom:1px solid var(--hairline);
-    background:var(--panel);position:sticky;top:0;z-index:5;
+  /* ---- sidebar (same pattern as dashboard.html) ---- */
+  .sidebar{
+    width:230px;flex-shrink:0;min-height:100vh;min-height:100dvh;
+    background:var(--panel);border-right:1px solid var(--hairline);
+    padding:1.4rem 1rem;display:flex;flex-direction:column;
+    transition:width .25s var(--ease-soft),padding .25s var(--ease-soft);
+    position:sticky;top:0;
   }
-  .topbar-brand{display:flex;align-items:center;gap:.6rem;font-family:var(--font-word);font-size:.98rem}
-  .topbar-brand img{height:20px;width:auto}
-  .topbar-nav{display:flex;align-items:center;gap:1.2rem}
-  .topbar-nav button,.topbar-nav a{
-    background:none;border:0;cursor:pointer;color:var(--ink-faint);font-size:.82rem;text-decoration:none;
-    transition:color .2s var(--ease-soft);
+  .sidebar.collapsed{width:72px;padding:1.4rem .7rem}
+  .sidebar-brand{display:flex;align-items:center;gap:.6rem;padding:.4rem .5rem 1.4rem;border-bottom:1px solid var(--hairline);margin-bottom:1.1rem}
+  .sidebar-brand img{height:22px;width:auto;flex-shrink:0}
+  .sidebar-brand span{font-family:var(--font-word);font-size:.98rem;white-space:nowrap;overflow:hidden;transition:opacity .2s var(--ease-soft)}
+  .sidebar.collapsed .sidebar-brand span{opacity:0;width:0}
+  .sidebar-nav{display:flex;flex-direction:column;gap:.2rem;flex:1}
+  .sidebar-link{
+    display:flex;align-items:center;gap:.8rem;padding:.7rem .6rem;border-radius:10px;
+    font-size:.86rem;text-decoration:none;color:var(--ink-faint);
+    transition:background .2s var(--ease-soft),color .2s var(--ease-soft);
+    white-space:nowrap;overflow:hidden;background:none;border:0;cursor:pointer;text-align:left;width:100%;
   }
-  .topbar-nav button:hover,.topbar-nav a:hover{color:var(--dark-ink)}
+  .sidebar-link svg{width:17px;height:17px;flex-shrink:0}
+  .sidebar-link span{overflow:hidden;transition:opacity .2s var(--ease-soft)}
+  .sidebar.collapsed .sidebar-link span{opacity:0;width:0}
+  .sidebar-link:hover{background:rgba(242,240,236,.06);color:var(--dark-ink)}
+  .sidebar-link.active{background:rgba(242,240,236,.1);color:var(--dark-ink)}
+  .sidebar-foot{border-top:1px solid var(--hairline);padding-top:.6rem;margin-top:.6rem;display:flex;flex-direction:column;gap:.2rem}
+  .sidebar-whoami{padding:.3rem .6rem 1rem;font-size:.72rem;color:var(--ink-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sidebar.collapsed .sidebar-whoami{opacity:0}
+  .sidebar-toggle{
+    margin-top:.6rem;display:flex;align-items:center;gap:.6rem;
+    padding:.7rem .6rem;border-radius:10px;border:1px solid var(--hairline);background:none;
+    color:var(--ink-faint);font-family:var(--font-mono);font-size:.72rem;cursor:pointer;
+    transition:background .2s var(--ease-soft),color .2s var(--ease-soft);
+  }
+  .sidebar-toggle:hover{background:rgba(242,240,236,.06);color:var(--dark-ink)}
+  .sidebar-toggle svg{width:15px;height:15px;flex-shrink:0;transition:transform .25s var(--ease-soft)}
+  .sidebar.collapsed .sidebar-toggle svg{transform:rotate(180deg)}
+  .sidebar.collapsed .sidebar-toggle span{opacity:0;width:0}
+  .sidebar-toggle span{overflow:hidden;transition:opacity .2s var(--ease-soft)}
 
-  .main{max-width:72rem;margin:0 auto;padding:clamp(1.5rem,3vw,2.6rem)}
+  /* ---- main ---- */
+  .main{flex:1;min-width:0;padding:clamp(1.5rem,3vw,2.6rem)}
+  .view[hidden]{display:none}
   .main-head{margin-bottom:1.8rem}
   .main-head h1{font-size:clamp(1.4rem,3vw,1.9rem);margin:0 0 .3rem;font-weight:600}
   .main-head p{margin:0;color:var(--ink-faint);font-size:.9rem}
@@ -99,6 +128,13 @@
   .row-actions svg{width:15px;height:15px}
   .empty-state{padding:1.6rem 1rem;text-align:center;color:var(--ink-faint);font-size:.85rem;border:1px dashed var(--hairline);border-radius:14px}
 
+  /* ---- meetings ---- */
+  .meeting-card{padding:1rem 1.1rem;border:1px solid var(--hairline);border-radius:14px;margin-bottom:.7rem}
+  .meeting-card:last-child{margin-bottom:0}
+  .meeting-card .meeting-name{font-weight:600;font-size:.9rem;margin:0 0 .3rem}
+  .meeting-card .meeting-time{font-family:var(--font-mono);font-size:.72rem;color:var(--ink-faint);margin:0 0 .5rem}
+  .meeting-card .meeting-invitees{font-size:.82rem;color:var(--ink-faint);margin:0}
+
   /* ---- detail drawer ---- */
   .drawer-backdrop{
     position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9;
@@ -137,47 +173,104 @@
   .drive-file-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .drive-file button{background:none;border:0;color:var(--ink-faint);cursor:pointer;flex-shrink:0}
   .drive-file button:hover{color:var(--dark-ink)}
+
+  .msg-list{display:flex;flex-direction:column;gap:.6rem;max-height:340px;overflow-y:auto;padding-right:.3rem}
+  .msg-bubble{max-width:85%;padding:.55rem .75rem;border-radius:12px;font-size:.82rem;line-height:1.5;white-space:pre-wrap}
+  .msg-bubble.assistant{align-self:flex-start;background:rgba(242,240,236,.07)}
+  .msg-bubble.user{align-self:flex-end;background:var(--accent);color:var(--ink)}
 </style>
 </head>
 <body>
 
-  <div class="topbar">
-    <div class="topbar-brand"><img src="assets/anchor-icon.png" alt=""> anchor digital · admin</div>
-    <nav class="topbar-nav">
-      <span id="admin-whoami"></span>
-      <button type="button" id="nav-logout">Log out</button>
-      <a href="index.html">Back to site</a>
-    </nav>
-  </div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <img src="assets/anchor-icon.png" alt="">
+      <span>anchor digital · admin</span>
+    </div>
+    <div class="sidebar-nav">
+      <button class="sidebar-link active" id="nav-clients" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Clients</span>
+      </button>
+      <button class="sidebar-link" id="nav-messages" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        <span>Messages</span>
+      </button>
+      <button class="sidebar-link" id="nav-meetings" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>
+        <span>Upcoming meetings</span>
+      </button>
+    </div>
+    <div class="sidebar-foot">
+      <p class="sidebar-whoami" id="admin-whoami"></p>
+      <button class="sidebar-link" id="nav-logout" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
+        <span>Log out</span>
+      </button>
+      <a class="sidebar-link" href="index.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        <span>Back to site</span>
+      </a>
+      <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Collapse sidebar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        <span>Collapse</span>
+      </button>
+    </div>
+  </nav>
 
   <main class="main">
-    <div class="main-head">
-      <h1>Clients</h1>
-      <p>Everything about every client, in one place.</p>
-    </div>
 
-    <div class="panel">
-      <h2>Add a client</h2>
-      <p class="panel-sub">Adds an email to the client allowlist so they can create a portal account. This doesn't create the account itself, they do that from the login page.</p>
-      <div class="add-row">
-        <div class="add-field">
-          <label for="add-email">Email</label>
-          <input id="add-email" type="email" placeholder="client@company.com">
-        </div>
-        <div class="add-field">
-          <label for="add-company">Company name (optional)</label>
-          <input id="add-company" type="text" placeholder="Company">
-        </div>
-        <button class="btn" id="add-client-btn" type="button">Add client</button>
+    <div class="view" id="view-clients">
+      <div class="main-head">
+        <h1>Clients</h1>
+        <p>Everything about every client, in one place.</p>
       </div>
-      <p class="form-status" id="add-status"></p>
+
+      <div class="panel">
+        <h2>Add a client</h2>
+        <p class="panel-sub">Adds an email to the client allowlist so they can create a portal account. This doesn't create the account itself, they do that from the login page.</p>
+        <div class="add-row">
+          <div class="add-field">
+            <label for="add-email">Email</label>
+            <input id="add-email" type="email" placeholder="client@company.com">
+          </div>
+          <div class="add-field">
+            <label for="add-company">Company name (optional)</label>
+            <input id="add-company" type="text" placeholder="Company">
+          </div>
+          <button class="btn" id="add-client-btn" type="button">Add client</button>
+        </div>
+        <p class="form-status" id="add-status"></p>
+      </div>
+
+      <div class="panel">
+        <h2>All clients</h2>
+        <p class="panel-sub">Invited clients who haven't signed up yet show as pending.</p>
+        <div id="client-table-wrap"></div>
+      </div>
     </div>
 
-    <div class="panel">
-      <h2>All clients</h2>
-      <p class="panel-sub">Invited clients who haven't signed up yet show as pending.</p>
-      <div id="client-table-wrap"></div>
+    <div class="view" id="view-messages" hidden>
+      <div class="main-head">
+        <h1>Messages</h1>
+        <p>Transcripts of what clients have asked the studio assistant. Click a client to read the full conversation.</p>
+      </div>
+      <div class="panel">
+        <div id="messages-table-wrap"></div>
+      </div>
     </div>
+
+    <div class="view" id="view-meetings" hidden>
+      <div class="main-head">
+        <h1>Upcoming meetings</h1>
+        <p>Pulled live from Calendly.</p>
+      </div>
+      <div class="panel">
+        <div id="meetings-list"></div>
+        <button class="btn btn-quiet" id="meetings-refresh" type="button" style="margin-top:1rem">Refresh</button>
+      </div>
+    </div>
+
   </main>
 
   <div class="drawer-backdrop" id="drawer-backdrop"></div>
@@ -200,6 +293,11 @@
       <div class="drawer-field"><label for="d-last-update">Last update</label><input id="d-last-update" type="date"></div>
       <button class="btn" id="d-save-project" type="button">Save project</button>
       <p class="form-status" id="d-project-status"></p>
+    </div>
+
+    <div class="drawer-section" id="d-messages-section">
+      <h3>Messages</h3>
+      <div id="d-messages-list"></div>
     </div>
 
     <div class="drawer-section">
@@ -232,8 +330,32 @@
     var supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     var allowedRows = [];   // rows from allowed_clients
-    var profileRows = [];   // rows from profiles, each with nested projects[] and activity[]
+    var profileRows = [];   // rows from profiles, each with nested projects[]/activity[]/messages[]
     var activeClient = null; // the profile row currently open in the drawer
+
+    // ---- sidebar: view switching + collapse ----
+    var views = { clients: document.getElementById('view-clients'), messages: document.getElementById('view-messages'), meetings: document.getElementById('view-meetings') };
+    var navButtons = { clients: document.getElementById('nav-clients'), messages: document.getElementById('nav-messages'), meetings: document.getElementById('nav-meetings') };
+
+    function setView(name){
+      Object.keys(views).forEach(function(key){
+        views[key].hidden = key !== name;
+        navButtons[key].classList.toggle('active', key === name);
+      });
+      if(name === 'messages') renderMessagesTable();
+      if(name === 'meetings') loadMeetings();
+    }
+    navButtons.clients.addEventListener('click', function(){ setView('clients'); });
+    navButtons.messages.addEventListener('click', function(){ setView('messages'); });
+    navButtons.meetings.addEventListener('click', function(){ setView('meetings'); });
+
+    var sidebar = document.getElementById('sidebar');
+    var sidebarToggle = document.getElementById('sidebar-toggle');
+    sidebarToggle.addEventListener('click', function(){
+      var collapsed = sidebar.classList.toggle('collapsed');
+      sidebarToggle.querySelector('span').textContent = collapsed ? 'Expand' : 'Collapse';
+      sidebarToggle.setAttribute('aria-label', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
+    });
 
     document.getElementById('nav-logout').addEventListener('click', async function(){
       try { await supabase.auth.signOut(); } catch (err) { console.error(err); }
@@ -245,11 +367,16 @@
       try { return new Date(iso).toLocaleDateString(undefined, { year:'numeric', month:'short', day:'numeric' }); }
       catch (err) { return null; }
     }
+    function formatDateTime(iso){
+      if(!iso) return null;
+      try { return new Date(iso).toLocaleString(undefined, { year:'numeric', month:'short', day:'numeric', hour:'numeric', minute:'2-digit' }); }
+      catch (err) { return null; }
+    }
 
     // ---- load + render client table ----
     async function loadClients(){
       var allowedRes = await supabase.from('allowed_clients').select('email,company_name,added_at').order('added_at', { ascending: false });
-      var profileRes = await supabase.from('profiles').select('id,email,company_name,created_at,projects(id,status,next_milestone,open_items,last_update_at),activity(id,message,created_at)').order('created_at', { ascending: false });
+      var profileRes = await supabase.from('profiles').select('id,email,company_name,created_at,projects(id,status,next_milestone,open_items,last_update_at),activity(id,message,created_at),messages(id,role,content,created_at)').order('created_at', { ascending: false });
 
       if(allowedRes.error) console.error('load allowed_clients error', allowedRes.error);
       if(profileRes.error) console.error('load profiles error', profileRes.error);
@@ -327,6 +454,105 @@
       wrap.appendChild(table);
     }
 
+    // ---- messages view: clients sorted by most recent message ----
+    function renderMessagesTable(){
+      var wrap = document.getElementById('messages-table-wrap');
+      var withMessages = profileRows.filter(function(p){ return p.messages && p.messages.length > 0; });
+
+      if(withMessages.length === 0){
+        wrap.innerHTML = '<div class="empty-state">No conversations yet. They\'ll show up here once a client uses the assistant.</div>';
+        return;
+      }
+
+      withMessages.sort(function(a, b){
+        var aLast = a.messages.reduce(function(max, m){ return new Date(m.created_at) > max ? new Date(m.created_at) : max; }, new Date(0));
+        var bLast = b.messages.reduce(function(max, m){ return new Date(m.created_at) > max ? new Date(m.created_at) : max; }, new Date(0));
+        return bLast - aLast;
+      });
+
+      var table = document.createElement('table');
+      table.className = 'client-table';
+      table.innerHTML = '<thead><tr><th>Client</th><th>Email</th><th>Messages</th><th>Last message</th></tr></thead>';
+      var tbody = document.createElement('tbody');
+
+      withMessages.forEach(function(profile){
+        var sorted = profile.messages.slice().sort(function(a,b){ return new Date(b.created_at) - new Date(a.created_at); });
+        var last = sorted[0];
+        var tr = document.createElement('tr');
+        tr.className = 'is-clickable';
+
+        var nameCell = document.createElement('td');
+        nameCell.textContent = profile.company_name || profile.email;
+        tr.appendChild(nameCell);
+
+        var emailCell = document.createElement('td');
+        emailCell.textContent = profile.email;
+        tr.appendChild(emailCell);
+
+        var countCell = document.createElement('td');
+        countCell.textContent = String(profile.messages.length);
+        tr.appendChild(countCell);
+
+        var lastCell = document.createElement('td');
+        lastCell.textContent = formatDateTime(last.created_at) || '';
+        tr.appendChild(lastCell);
+
+        tr.addEventListener('click', function(){ openDrawer(profile); });
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(tbody);
+      wrap.innerHTML = '';
+      wrap.appendChild(table);
+    }
+
+    // ---- meetings view: live Calendly data via the list-meetings function ----
+    async function loadMeetings(){
+      var el = document.getElementById('meetings-list');
+      el.innerHTML = '<div class="empty-state">Loading...</div>';
+      try {
+        var res = await supabase.functions.invoke('list-meetings');
+        if(res.error){
+          el.innerHTML = '<div class="empty-state">Could not reach the meetings function. Has it been deployed?</div>';
+          console.error('list-meetings invoke error', res.error);
+          return;
+        }
+        var data = res.data || {};
+        if(data.error){
+          el.innerHTML = '<div class="empty-state">' + data.error + '</div>';
+          return;
+        }
+        var meetings = data.meetings || [];
+        if(meetings.length === 0){
+          el.innerHTML = '<div class="empty-state">No upcoming meetings.</div>';
+          return;
+        }
+        el.innerHTML = '';
+        meetings.forEach(function(m){
+          var card = document.createElement('div');
+          card.className = 'meeting-card';
+          var name = document.createElement('p');
+          name.className = 'meeting-name';
+          name.textContent = m.name || 'Meeting';
+          var time = document.createElement('p');
+          time.className = 'meeting-time';
+          time.textContent = (formatDateTime(m.start_time) || '') + (m.location ? ' · ' + m.location : '');
+          var invitees = document.createElement('p');
+          invitees.className = 'meeting-invitees';
+          var names = (m.invitees || []).map(function(i){ return i.name + (i.email ? ' (' + i.email + ')' : ''); });
+          invitees.textContent = names.length ? 'With ' + names.join(', ') : '';
+          card.appendChild(name);
+          card.appendChild(time);
+          if(names.length) card.appendChild(invitees);
+          el.appendChild(card);
+        });
+      } catch (err) {
+        console.error('loadMeetings error', err);
+        el.innerHTML = '<div class="empty-state">Something went wrong loading meetings.</div>';
+      }
+    }
+    document.getElementById('meetings-refresh').addEventListener('click', loadMeetings);
+
     async function removeClient(email){
       if(!window.confirm('Remove ' + email + ' from the client list? This does not delete their account if they already signed up.')) return;
       var res = await supabase.from('allowed_clients').delete().eq('email', email);
@@ -365,6 +591,25 @@
     var drawer = document.getElementById('drawer');
     var backdrop = document.getElementById('drawer-backdrop');
 
+    function renderMessagesList(messages){
+      var el = document.getElementById('d-messages-list');
+      if(!messages || messages.length === 0){
+        el.innerHTML = '<div class="empty-state">No conversation yet.</div>';
+        return;
+      }
+      var sorted = messages.slice().sort(function(a,b){ return new Date(a.created_at) - new Date(b.created_at); });
+      var list = document.createElement('div');
+      list.className = 'msg-list';
+      sorted.forEach(function(m){
+        var bubble = document.createElement('div');
+        bubble.className = 'msg-bubble ' + (m.role === 'user' ? 'user' : 'assistant');
+        bubble.textContent = m.content;
+        list.appendChild(bubble);
+      });
+      el.innerHTML = '';
+      el.appendChild(list);
+    }
+
     function openDrawer(profile){
       activeClient = profile;
       document.getElementById('drawer-name').textContent = profile.company_name || profile.email;
@@ -378,6 +623,7 @@
       document.getElementById('d-project-status').textContent = '';
 
       renderActivityList(profile.activity || []);
+      renderMessagesList(profile.messages || []);
       loadDriveFiles(profile.id);
 
       drawer.classList.add('open');

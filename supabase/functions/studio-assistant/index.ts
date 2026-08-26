@@ -100,6 +100,17 @@ Deno.serve(async (req) => {
 
     const data = await anthropicRes.json();
     const reply = data?.content?.[0]?.text ?? "Sorry, I couldn't put together a reply to that.";
+
+    // log both sides for the admin "Messages" view. Awaited (not
+    // fire-and-forget) because the edge runtime can tear down the isolate
+    // right after the response is sent, which would silently drop an
+    // un-awaited insert.
+    const { error: logError } = await supabaseAdmin.from("messages").insert([
+      { client_id: user.id, role: "user", content: message },
+      { client_id: user.id, role: "assistant", content: reply },
+    ]);
+    if (logError) console.error("message log error:", logError);
+
     return json({ reply }, 200);
   } catch (err) {
     console.error("studio-assistant error:", err);
