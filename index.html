@@ -286,36 +286,37 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
    itself being blurred. drop it here: just the small glowing dot, nothing softening the video. */
 #band-services > .hotspot{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;border-color:transparent}
 #band-services > .hotspot:hover,#band-services > .hotspot:focus-visible{border-color:rgba(255,255,255,.7);background:rgba(242,240,236,.12)}
-/* the three cards, each anchored to its own button's real video-matched x% - not an evenly-spaced
-   grid. the monitors in the footage aren't evenly spaced (22.7% / 38.5% / 64.1%), so a rigid
-   1/3-2/3-3/3 grid put the third ("ongoing maintenance") card well to the right of the monitor
-   that actually opens it. each .services-col below carries its own left:X% inline, matching its
-   button exactly, then centers on that point with translateX. --services-header-bottom is set on
+/* the three cards don't need to sit above their own button - when several are open together
+   (allowed, no longer mutually exclusive) they just need to read as neat and even across the
+   page, which a plain equal-width grid gives for free. --services-header-bottom is set on
    #band-services (an ancestor) by the JS block above and inherited down from there: whatever the
-   header's real rendered height turns out to be, the cards start clear of it with room to spare,
+   header's real rendered height turns out to be, the grid starts clear of it with room to spare,
    on any viewport, instead of a guessed fixed percentage. */
 .services-grid{
-  position:absolute;inset:0;
+  position:absolute;left:var(--gutter);right:var(--gutter);
+  top:calc(var(--services-header-bottom,300px) + 1vh);
+  display:grid;grid-template-columns:repeat(3,1fr);column-gap:clamp(1rem,3vw,2.4rem);
   z-index:2;pointer-events:none;
 }
-/* one column per service; positioned via its own inline left:X% (set in the HTML, matching the
-   button it belongs to), centered on that point, top-anchored below the header. */
+/* one column per service; the card is anchored to the top of its own column, centered within it. */
 .services-col{
-  position:absolute;top:calc(var(--services-header-bottom,300px) + 1vh);
-  transform:translateX(-50%);
+  position:relative;
   pointer-events:none;
 }
 /* one shared width/height for all three - specificity high enough to always beat the open-order
    shape classes (.card-vertical/.card-horizontal) used elsewhere on the site, so these three never
    resize to fit their own copy; the longer "ongoing maintenance" card scrolls internally instead.
-   the column above already centers itself on the button's x%, so the card just fills it.
+   absolutely positioned from the same top-center point as the button (every column's button is
+   the same size, so this point lines up identically for all three), covering it once open.
+   centered with left:0;right:0;margin:auto rather than a translateX, so the transform property
+   stays free for the card's own open/close scale-and-fade animation.
    :not([hidden]) matters here: this selector's #id gives it higher specificity than the shared
    .popup-card[hidden]{display:none} rule, so without this guard a CLOSED card would still get
    display:flex from here, an invisible (opacity:0) but fully laid-out, pointer-events:auto box
    sitting right on top of its own hotspot button and silently eating the click. */
 #band-services .services-col .popup-card:not([hidden]){
-  position:relative;
-  width:min(360px,84vw);height:min(520px,54vh);
+  position:absolute;top:0;left:0;right:0;margin:0 auto;
+  width:min(360px,100%);height:min(520px,54vh);
   display:flex;flex-direction:column;
   z-index:2;pointer-events:auto;
 }
@@ -868,7 +869,7 @@ body.video-failed .card{max-width:100%}
         <button class="hotspot" style="left:38.5%;top:36.6%" data-info="innovation" aria-label="Brand Digital Systems, more info"><span></span></button>
         <button class="hotspot" style="left:64.1%;top:38.9%" data-info="growth" aria-label="Ongoing Maintenance & Consulting, more info"><span></span></button>
         <div class="services-grid">
-          <div class="services-col" style="left:22.7%">
+          <div class="services-col">
             <div class="popup-card has-img" data-info="design" hidden>
               <button class="popup-close" data-close aria-label="Close">&times;</button>
               <img class="clip-img" src="assets/pillars/design.jpg" alt="">
@@ -878,7 +879,7 @@ body.video-failed .card{max-width:100%}
               </div>
             </div>
           </div>
-          <div class="services-col" style="left:38.5%">
+          <div class="services-col">
             <div class="popup-card has-img" data-info="innovation" hidden>
               <button class="popup-close" data-close aria-label="Close">&times;</button>
               <img class="clip-img" src="assets/pillars/innovation.jpg" alt="">
@@ -888,7 +889,7 @@ body.video-failed .card{max-width:100%}
               </div>
             </div>
           </div>
-          <div class="services-col" style="left:64.1%">
+          <div class="services-col">
             <div class="popup-card has-img" data-info="growth" hidden>
               <button class="popup-close" data-close aria-label="Close">&times;</button>
               <img class="clip-img" src="assets/pillars/growth.jpg" alt="">
@@ -1894,11 +1895,6 @@ body.video-failed .card{max-width:100%}
     var card = document.querySelector('.popup-card[data-info="' + info + '"]');
     var dot = document.querySelector('.hotspot[data-info="' + info + '"]');
     if(!card || !card.hidden) return;
-    // only one of these three at a time - two open together can overlap (the buttons they
-    // belong to aren't evenly spaced, so neither is the room between their cards)
-    openOrder.slice().forEach(function(otherInfo){
-      if(otherInfo !== info) closeHotspotCard(otherInfo);
-    });
     card.hidden = false;
     if(dot) dot.classList.add('open');
     if(openOrder.indexOf(info) === -1) openOrder.push(info);
