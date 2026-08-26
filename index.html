@@ -1,0 +1,2017 @@
+<title>Anchor Digital</title>
+<meta name="description" content="A digital development and strategy studio helping small businesses modernize their digital presence. Walk through the studio to see the work.">
+<meta name="theme-color" content="#1f1e1c">
+<meta property="og:title" content="Anchor Digital">
+<meta property="og:description" content="A digital development and strategy studio helping small businesses modernize their digital presence.">
+<!-- DEPLOY STEP: replace with absolute live URLs at deploy time -->
+<meta property="og:image" content="assets/frame-aerial.jpg">
+<meta property="og:url" content="assets/hero-poster.jpg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 64'%3E%3Crect width='100' height='64' rx='10' fill='%23F2F0EC'/%3E%3Cpath d='M10 10h27a13 13 0 0 1 13 13v16a17 17 0 0 1-17 17h-6a6 6 0 0 1 0-12h6a5 5 0 0 0 5-5v-4H23A13 13 0 0 1 10 22V10z' fill='%23131313'/%3E%3Cpath d='M90 10H63a13 13 0 0 0-13 13v16a17 17 0 0 0 17 17h6a6 6 0 0 0 0-12h-6a5 5 0 0 1-5-5v-4h27a13 13 0 0 0 13-13V10z' fill='%23131313'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;600;700&family=Varela+Round&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============ RESET + TOKENS ============ */
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+html{overflow-x:hidden;overflow-x:clip}
+body{overflow-x:hidden;overflow-x:clip}
+img,video{max-width:100%;display:block}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit}
+ul{margin:0;padding:0;list-style:none}
+p{margin:0}
+h1,h2,h3{margin:0;font-weight:400}
+
+:root{
+  --canvas:#F2F0EC;
+  --canvas-alt:#E8E5DF;
+  --panel:#FFFFFF;
+  --ink:#131313;
+  --ink-muted:#696661;
+  --ink-faint:#A8A49D;
+  --dark:#1F1E1C;
+  --dark-ink:#F2F0EC;
+  --accent:#FFFFFF;
+  --accent-hover:#C9C6C0;
+  --accent-muted:rgba(255,255,255,.16);
+  --hairline:rgba(19,19,19,.13);
+  --hairline-dark:rgba(242,240,236,.16);
+  --font-body:'Karla',Helvetica Neue,Arial,sans-serif;
+  --font-word:'Varela Round',Helvetica Neue,Arial,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --ease:cubic-bezier(.16,.8,.24,1);
+  --ease-soft:cubic-bezier(.4,0,.2,1);
+  --gutter:clamp(1.25rem,5vw,4rem);
+  --nav-h:76px;
+  --tshadow:0 1px 2px rgba(10,9,7,.9),0 3px 14px rgba(10,9,7,.6),0 12px 46px rgba(10,9,7,.55);
+}
+
+body{
+  font-family:var(--font-body);
+  background:var(--canvas);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  line-height:1.5;
+}
+html.locked,html.locked body{overflow:hidden;height:100%}
+
+.skip-link{position:fixed;left:1rem;top:-100px;z-index:1000;background:var(--ink);color:var(--canvas);padding:.75rem 1.25rem;border-radius:8px;transition:top .25s var(--ease)}
+.skip-link:focus{top:1rem}
+
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
+
+/* ============ CHROME (persistent header) ============ */
+.chrome{
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  height:var(--nav-h);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 var(--gutter);
+  pointer-events:none;
+  opacity:1;transition:opacity .35s var(--ease-soft);
+}
+body.in-motion .chrome,
+body.in-motion .chrome-scrim,
+body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s var(--ease-soft)}
+.chrome-scrim,.dot-rail{transition:opacity .35s var(--ease-soft)}
+.chrome > *{pointer-events:auto}
+.chrome-scrim{
+  position:fixed;top:0;left:0;right:0;height:calc(var(--nav-h) + 40px);z-index:499;
+  background:linear-gradient(rgba(10,9,7,.5),rgba(10,9,7,0));
+  pointer-events:none;
+}
+.logo-home{
+  display:flex;align-items:center;gap:.55rem;
+  text-decoration:none;
+  transition:opacity .3s var(--ease-soft);
+}
+.logo-home:hover{opacity:.75}
+.logo-home img{height:26px;width:auto}
+.logo-home span{
+  font-family:var(--font-word);
+  font-size:1.05rem;
+  color:var(--dark-ink);
+  letter-spacing:.01em;
+  text-shadow:0 1px 6px rgba(0,0,0,.5);
+}
+
+.chrome-right{display:flex;align-items:center;gap:.65rem;flex-wrap:wrap;justify-content:flex-end}
+
+.btn-ghost{
+  font-family:var(--font-mono);
+  font-size:.78rem;
+  letter-spacing:.02em;
+  color:var(--dark-ink);
+  text-decoration:none;
+  padding:.6rem 1.1rem;
+  border:1px solid rgba(242,240,236,.4);
+  border-radius:99px;
+  transition:background .3s var(--ease-soft),border-color .3s var(--ease-soft),color .3s var(--ease-soft);
+  white-space:nowrap;
+}
+.btn-ghost:hover{background:rgba(242,240,236,.12);border-color:rgba(242,240,236,.7)}
+
+.menu-wrap{position:relative}
+.menu-pill{
+  font-family:var(--font-mono);
+  font-size:.78rem;
+  letter-spacing:.03em;
+  color:var(--dark-ink);
+  padding:.6rem 1.3rem;
+  border:1px solid rgba(242,240,236,.4);
+  border-radius:99px;
+  display:flex;align-items:center;gap:.5rem;
+  transition:background .3s var(--ease-soft),border-color .3s var(--ease-soft),color .3s var(--ease-soft);
+}
+.menu-pill:hover{background:rgba(242,240,236,.12);border-color:rgba(242,240,236,.7)}
+.menu-pill svg{width:11px;height:11px;transition:transform .3s var(--ease)}
+.menu-pill[aria-expanded="true"] svg{transform:rotate(180deg)}
+
+.menu-dropdown{
+  position:absolute;top:calc(100% + 10px);right:0;
+  min-width:220px;
+  background:var(--panel);
+  border:1px solid var(--hairline);
+  border-radius:16px;
+  padding:.5rem;
+  box-shadow:0 20px 60px rgba(10,9,7,.25);
+  opacity:0;visibility:hidden;transform:translateY(-8px) scale(.98);
+  transition:opacity .3s var(--ease),transform .3s var(--ease),visibility 0s linear .3s;
+}
+.menu-dropdown.open{opacity:1;visibility:visible;transform:translateY(0) scale(1);transition:opacity .3s var(--ease),transform .3s var(--ease)}
+.menu-dropdown a{
+  display:flex;align-items:baseline;gap:.6rem;
+  padding:.7rem .9rem;border-radius:10px;
+  text-decoration:none;color:var(--ink);
+  font-size:.95rem;
+  transition:background .2s var(--ease-soft),padding-left .2s var(--ease-soft);
+}
+.menu-dropdown a:hover{background:var(--canvas-alt);padding-left:1.1rem}
+.menu-dropdown .idx{font-family:var(--font-mono);font-size:.72rem;color:var(--ink-faint)}
+
+/* ============ TOUR (fixed-viewport stepper) ============ */
+.tour{position:fixed;inset:0;z-index:1}
+.tour.settled{position:relative;inset:auto;height:100vh;height:100dvh}
+.stage{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;background:var(--dark)}
+.tour.settled .stage{position:absolute}
+.stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;will-change:transform;transform:translateZ(0)}
+.stage .poster-layer{position:absolute;inset:0;background-size:cover;background-position:center;opacity:1;transition:opacity .6s var(--ease-soft)}
+.stage.video-ready .poster-layer{opacity:0}
+
+.base-scrim{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 120% 90% at 50% 45%,rgba(10,10,18,0) 30%,rgba(10,9,7,.6) 100%);z-index:2}
+
+.load-ring{position:absolute;bottom:2rem;right:2rem;width:44px;height:44px;color:var(--dark-ink);z-index:5;opacity:.85;transition:opacity .4s var(--ease)}
+.load-ring.hidden{opacity:0;pointer-events:none}
+.load-ring circle{transition:stroke-dashoffset .1s linear}
+
+/* ---- start overlay (waypoint 0, the video's true first frame): a click or scroll is what plays
+   the built-in zoomout forward, nothing happens on its own ---- */
+.start-overlay{
+  position:absolute;inset:0;z-index:6;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  opacity:1;visibility:visible;pointer-events:auto;
+  transition:opacity .6s var(--ease-soft),visibility 0s linear 0s;
+}
+.stage:not(.show-start) .start-overlay{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .5s var(--ease-soft),visibility 0s linear .5s}
+.start-cue{
+  position:absolute;left:50%;bottom:8vh;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:.6rem;
+  color:var(--ink);opacity:.92;
+  text-shadow:0 1px 3px rgba(242,240,236,.85),0 2px 14px rgba(242,240,236,.5);
+  font-family:var(--font-mono);font-size:.72rem;letter-spacing:.08em;text-transform:lowercase;
+}
+.start-cue svg{width:14px;height:20px;animation:cue-bob 2.4s ease-in-out infinite;animation-delay:-1.2s}
+@keyframes cue-bob{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(7px);opacity:1}}
+
+/* card bands: shown/hidden discretely per waypoint, no scroll math */
+.band{
+  position:absolute;inset:0;
+  display:flex;align-items:center;
+  padding:0 var(--gutter);
+  opacity:0;visibility:hidden;pointer-events:none;
+  z-index:4;
+  transition:opacity .3s var(--ease-soft),visibility 0s linear .3s;
+}
+.band.active{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .1s var(--ease-soft),visibility 0s linear}
+.band::before{
+  content:"";position:absolute;inset:-4%;pointer-events:none;
+  opacity:.78;
+  background:radial-gradient(ellipse 78% 66% at var(--scrim-x,50%) 50%,rgba(6,5,4,.68) 0%,rgba(6,5,4,.42) 46%,rgba(6,5,4,0) 76%);
+}
+.card{
+  position:relative;z-index:1;
+  max-width:min(640px,86vw);
+  max-height:88vh;max-height:88dvh;overflow-y:auto;
+  background:rgba(24,22,19,.5);
+  backdrop-filter:blur(11px);
+  -webkit-backdrop-filter:blur(11px);
+  border:1px solid rgba(242,240,236,.14);
+  border-radius:22px;
+  padding:clamp(1.6rem,3vw,2.6rem);
+  color:var(--dark-ink);
+  text-shadow:var(--tshadow);
+  opacity:0;transform:translateY(16px);
+  transition:opacity .14s var(--ease-soft),transform .14s var(--ease-soft);
+}
+.band.active .card{opacity:1;transform:translateY(0)}
+.card.card-wide{max-width:min(920px,90vw)}
+.kicker{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.12em;text-transform:lowercase;color:var(--accent);margin-bottom:.9rem;display:flex;align-items:center;gap:.6rem}
+.kicker::before{content:"";width:22px;height:1px;background:var(--accent)}
+.card h2{font-size:clamp(1.7rem,3.4vw,2.6rem);line-height:1.08;letter-spacing:-.02em;margin-bottom:1rem}
+.card p.lede{font-size:clamp(1rem,1.4vw,1.15rem);color:var(--dark-ink);opacity:.92;max-width:52ch;margin-bottom:.9rem}
+.card .btn-row{display:flex;flex-wrap:wrap;gap:.9rem;margin-top:1.4rem}
+.btn-solid{
+  font-family:var(--font-mono);font-size:.8rem;letter-spacing:.02em;
+  background:var(--accent);color:var(--ink);
+  padding:.8rem 1.5rem;border-radius:99px;text-decoration:none;
+  transition:background .25s var(--ease-soft),transform .25s var(--ease);
+  text-shadow:none;display:inline-block;
+}
+.btn-solid:hover{background:var(--accent-hover);transform:translateY(-1px)}
+.btn-outline{
+  font-family:var(--font-mono);font-size:.8rem;letter-spacing:.02em;
+  border:1px solid rgba(242,240,236,.45);color:var(--dark-ink);
+  padding:.78rem 1.4rem;border-radius:99px;text-decoration:none;
+  transition:background .25s var(--ease-soft),border-color .25s var(--ease-soft);
+  text-shadow:none;display:inline-block;
+}
+.btn-outline:hover{background:rgba(242,240,236,.12);border-color:rgba(242,240,236,.8)}
+
+/* internal entrances, replayed each time a band becomes active: quick, barely-staggered, never a wait */
+.team-band .founder{opacity:0;filter:blur(4px);transition:opacity .16s var(--ease-soft),filter .16s var(--ease-soft)}
+.team-band.active .founder{opacity:1;filter:blur(0)}
+.team-band .founder:nth-child(1){transition-delay:0s}
+.team-band .founder:nth-child(2){transition-delay:.06s}
+
+.work-band .thumb{opacity:0;transform:scale(.96) translateY(8px);transition:opacity .18s var(--ease-soft),transform .18s var(--ease-soft)}
+.work-band.active .thumb{opacity:1;transform:scale(1) translateY(0)}
+.work-band .thumb:nth-child(1){transition-delay:0s}
+.work-band .thumb:nth-child(2){transition-delay:.05s}
+.work-band .thumb:nth-child(3){transition-delay:.1s}
+
+.contact-band .settle-1,.contact-band .settle-2,.contact-band .settle-3{opacity:0;transform:translateY(8px);transition:opacity .18s var(--ease-soft),transform .18s var(--ease-soft)}
+.contact-band.active .settle-1{opacity:1;transform:none;transition-delay:0s}
+.contact-band.active .settle-2{opacity:1;transform:none;transition-delay:.05s}
+.contact-band.active .settle-3{opacity:1;transform:none;transition-delay:.1s}
+
+/* per-band placement, matched to where each shot leaves room. services stacks as a real column:
+   the header sits at the top like a page header, the card tray sits in normal flow right under
+   it, so the two can never overlap no matter how tall either one gets. */
+.services-band{
+  justify-content:flex-start;align-items:center;flex-direction:column;
+  padding-top:9vh;gap:2.2rem;
+}
+.services-band h2{white-space:nowrap}
+/* about half the height of a normal header card - the computers need to stay in view below it */
+.services-band .card.services-banner{
+  max-width:min(1100px,94vw);width:100%;position:relative;z-index:3;
+  padding:clamp(.7rem,1.4vw,1.1rem) clamp(1.4rem,3vw,2.2rem);
+}
+.services-banner-row{display:flex;align-items:center;justify-content:space-between;gap:1.8rem;flex-wrap:wrap}
+.services-banner-row h2{margin-bottom:0;font-size:clamp(1.25rem,2vw,1.7rem)}
+.services-banner-row .btn-outline{flex-shrink:0}
+.services-banner .lede{font-size:.82rem;margin-bottom:.3rem}
+.services-banner .hotspot-hint{margin-top:.3rem}
+.services-band::before{--scrim-x:30%}
+.hotspot-hint{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.03em;opacity:.7;margin-top:1.1rem}
+/* the three buttons sit directly on the actual computer screens in the shot, so their left/top
+   are hand-set to the video's own composition - that part can't be structural, it's mapping to a
+   fixed point in the footage itself, not spacing elements relative to each other. kept below the
+   header and below the cards (which cover their own button once open) either way. */
+#band-services > .hotspot{z-index:1}
+/* the base .hotspot has a backdrop-filter blur behind its circle, meant for the large framed
+   articles on the press wall - on these small monitor screens that same blur reads as the screen
+   itself being blurred. drop it here: just the small glowing dot, nothing softening the video. */
+#band-services > .hotspot{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;border-color:transparent}
+#band-services > .hotspot:hover,#band-services > .hotspot:focus-visible{border-color:rgba(255,255,255,.7);background:rgba(242,240,236,.12)}
+/* the three cards, independent of where their buttons sit: one grid, equal columns, a single
+   shared gap, so the cards themselves stay evenly spaced and identically sized without any
+   hand-tuned per-card position. --services-header-bottom is set on #band-services (an ancestor)
+   by the JS block above and inherited down from there: whatever the header's real rendered height
+   turns out to be, the grid starts clear of it with room to spare, on any viewport, instead of a
+   guessed fixed percentage. */
+.services-grid{
+  position:absolute;left:var(--gutter);right:var(--gutter);
+  top:calc(var(--services-header-bottom,300px) + 1vh);
+  display:grid;grid-template-columns:repeat(3,1fr);column-gap:clamp(1rem,3vw,2.4rem);
+  z-index:2;pointer-events:none;
+}
+/* one column per service; the card is anchored to the top of its own column, centered within it. */
+.services-col{
+  position:relative;
+  pointer-events:none;
+}
+/* one shared width/height for all three - specificity high enough to always beat the open-order
+   shape classes (.card-vertical/.card-horizontal) used elsewhere on the site, so these three never
+   resize to fit their own copy; the longer "ongoing maintenance" card scrolls internally instead.
+   absolutely positioned from the same top-center point as the button (every column's button is
+   the same size, so this point lines up identically for all three), covering it once open.
+   centered with left:0;right:0;margin:auto rather than a translateX, so the transform property
+   stays free for the card's own open/close scale-and-fade animation. */
+#band-services .services-col .popup-card{
+  position:absolute;top:0;left:0;right:0;margin:0 auto;
+  width:min(360px,100%);height:min(520px,54vh);
+  display:flex;flex-direction:column;
+  z-index:2;pointer-events:auto;
+}
+#band-services .services-col .popup-card .clip-text{flex:1;min-height:0;overflow-y:auto}
+
+/* team sits narrow and to the left, so the framed articles on the wall stay clickable. the
+   founders card and the single article panel are the two columns of one flex row (that row
+   already lives inside the band's own gutter padding, so the panel's right edge lands on the same
+   page margin as everything else); the wall hotspots are pulled out of that flow entirely below,
+   so they never add an extra flex gap or consume a column of their own. */
+.team-band{justify-content:flex-start;align-items:center;gap:2.4rem}
+.team-band::before{--scrim-x:16%}
+.team-card-compact{max-width:min(560px,80vw) !important;position:relative;z-index:3;flex-shrink:0}
+.team-card-compact .founder img{width:6.5rem}
+.team-card-compact .founder-body{padding:.85rem 1.1rem}
+.team-card-compact .founder-body h3{font-size:1rem}
+.team-card-compact .founder-role{font-size:.64rem;margin-bottom:.4rem}
+.team-card-compact .founder-bio{font-size:.75rem;max-height:4.2em;line-height:1.5}
+.team-card-compact .founder-links{margin-top:.5rem}
+.team-card-compact .founder-links a{width:26px;height:26px}
+.team-card-compact .founder-links svg{width:12px;height:12px}
+.team-card-compact .chips{margin-top:1rem;gap:.5rem}
+.team-card-compact .chip{font-size:.66rem;padding:.45rem .8rem}
+.team-card-compact h2{font-size:1.6rem}
+/* the wall hotspots (dots on the framed articles behind the founders) stay absolutely positioned
+   over the whole band exactly as before - taken out of the flex row so they never add a column or
+   a gap of their own next to the founders card / article panel. */
+#wall-hotspots{position:absolute;inset:0;pointer-events:none;z-index:1}
+#wall-hotspots .hotspot{pointer-events:auto}
+/* the ONE shared article panel: the second (and only other) column in the same flex row as the
+   founders card - normal layout, not hand-tuned absolute coordinates. fixed width and height no
+   matter which article is open; the body scrolls internally instead of the panel resizing. */
+.article-panel{
+  flex:1;min-width:0;max-width:760px;
+  height:min(660px,82vh);
+  z-index:2;
+}
+#article-panel-body{height:100%;overflow-y:auto}
+#article-panel-body .kicker{font-size:1.3rem;margin-top:.3rem}
+#article-panel-body p{white-space:pre-line}
+/* the photo sits in its own smaller card, floated to the right, so the article text starts
+   beside it on the left and keeps flowing at full width once it clears the photo - instead of a
+   full-width block sitting on top of the copy, eating the space you'd read in. */
+.article-photo{
+  float:right;width:42%;max-width:280px;margin:0 0 1rem 1.4rem;
+  border-radius:16px;overflow:hidden;border:1px solid rgba(242,240,236,.18);
+  box-shadow:0 14px 34px rgba(0,0,0,.4);
+}
+/* contains the float, so the text block's own height isn't collapsed around it */
+#article-panel-body .clip-text{display:flow-root}
+@media (max-width:640px){
+  .article-photo{float:none;width:100%;max-width:none;margin:0 0 1rem}
+}
+/* the before/after slider uses the exact same box every plain article photo uses (width:100%,
+   the shared .clip-img aspect-ratio) - only its contents differ, never the frame itself. */
+/* matches the real screenshots' own aspect ratio (1400x879) - shown in full, not cropped to fit
+   the 4:3 box the plain article photos use */
+.ba-slider{position:relative;width:100%;aspect-ratio:1400/879;overflow:hidden;cursor:ew-resize;touch-action:pan-y;-webkit-user-select:none;user-select:none;display:block}
+.ba-slider .ba-img{position:absolute;inset:0;width:100%;height:100%;aspect-ratio:auto;object-fit:cover;display:block;pointer-events:none}
+.ba-slider .ba-after{clip-path:inset(0 50% 0 0)}
+.ba-line{position:absolute;top:0;bottom:0;left:50%;width:2px;background:rgba(242,240,236,.9);transform:translateX(-50%);pointer-events:none;box-shadow:0 0 10px rgba(0,0,0,.55)}
+.ba-handle{
+  position:absolute;top:50%;left:50%;width:36px;height:36px;border-radius:50%;
+  background:rgba(20,18,16,.85);border:1.5px solid rgba(242,240,236,.85);color:var(--dark-ink);
+  display:flex;align-items:center;justify-content:center;transform:translate(-50%,-50%);pointer-events:none;
+}
+.ba-label{
+  position:absolute;top:.6rem;z-index:1;pointer-events:none;
+  font-family:var(--font-mono);font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;
+  color:#fff;background:rgba(0,0,0,.55);padding:.3rem .6rem;border-radius:99px;
+}
+.ba-label-before{left:.6rem}
+.ba-label-after{right:.6rem}
+
+/* ---- hotspots on the monitors, and the popup cards they open ---- */
+.hotspot{
+  position:absolute;z-index:5;width:30px;height:30px;margin:-15px 0 0 -15px;
+  border-radius:50%;border:1.5px solid rgba(242,240,236,.75);background:rgba(24,22,19,.35);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  animation:hotspot-pulse 3.2s ease-in-out infinite;animation-delay:-1.6s;
+  transition:background .2s var(--ease-soft),transform .2s var(--ease-soft),border-color .2s var(--ease-soft);
+}
+.hotspot span{position:absolute;inset:0;margin:auto;width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.hotspot:hover,.hotspot:focus-visible{background:rgba(242,240,236,.18);border-color:#fff;transform:scale(1.12)}
+.hotspot.open span{background:#fff}
+@keyframes hotspot-pulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(242,240,236,.35)}
+  50%{box-shadow:0 0 0 9px rgba(242,240,236,0)}
+}
+/* the card style you picked: image-forward, bleeding to the edges, a bold plain title
+   underneath, a filled circular close button floating over the photo. one look, every card. */
+.popup-card{
+  position:relative;pointer-events:auto;width:300px;overflow:hidden;
+  background:rgba(20,18,16,.9);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid rgba(242,240,236,.16);border-radius:24px;
+  color:var(--dark-ink);text-shadow:var(--tshadow);
+  opacity:0;transform:scale(.92) translateY(8px);
+  transition:opacity .15s var(--ease-soft),transform .15s var(--ease-soft),width .18s var(--ease-soft);
+}
+.popup-card[hidden]{display:none}
+.popup-card .clip-img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:0;margin:0;display:block}
+.popup-card .clip-text{padding:1.2rem 1.4rem 1.5rem}
+.popup-card .kicker{
+  font-family:var(--font-body);text-transform:none;letter-spacing:-.01em;
+  font-size:1.25rem;font-weight:600;color:var(--dark-ink);opacity:1;margin-bottom:0;
+}
+.popup-card .kicker::before{content:none}
+/* shape is assigned live by open order (first two open = vertical, a third = horizontal),
+   never fixed to one hotspot, so it plays out the same regardless of which one is clicked third */
+.popup-card.card-vertical{width:300px;height:520px;display:flex;flex-direction:column}
+.popup-card.card-vertical .clip-text{flex:1;overflow-y:auto}
+.popup-card.card-horizontal{width:540px}
+.popup-card.card-horizontal.has-img{display:flex;align-items:stretch}
+.popup-card.card-horizontal.has-img .clip-img{width:220px;aspect-ratio:auto;flex-shrink:0}
+.popup-card.card-horizontal.has-img .clip-text{flex:1;min-width:0;align-self:center}
+/* corner marks, borrowed from the reference card */
+.popup-card::before,.popup-card::after{content:"";position:absolute;width:14px;height:14px;z-index:2;pointer-events:none}
+.popup-card::before{top:8px;left:8px;border-top:2px solid var(--accent);border-left:2px solid var(--accent)}
+.popup-card::after{bottom:8px;right:8px;border-bottom:2px solid var(--accent);border-right:2px solid var(--accent)}
+.popup-card p{font-size:.9rem;line-height:1.6;opacity:.85;margin-top:.5rem}
+.popup-card p:first-of-type{margin-top:.5rem}
+.popup-card.in{opacity:1;transform:scale(1) translateY(0)}
+.popup-close{
+  position:absolute;top:.7rem;right:.7rem;z-index:1;width:34px;height:34px;border-radius:50%;
+  background:rgba(20,18,16,.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;line-height:1;font-size:1.2rem;
+  color:#fff;text-shadow:none;opacity:1;transition:background .2s var(--ease-soft);
+}
+.popup-close:hover{background:rgba(20,18,16,.85)}
+.work-band{justify-content:center}
+.contact-band{align-items:flex-end;padding-bottom:6vh}
+
+/* ---- testimonials: one fixed box, centered, that never resizes; whatever's inside scrolls ---- */
+.testimonials-band{justify-content:center}
+.testimonials-box{
+  width:min(880px,92vw) !important;max-width:none !important;
+  height:min(78vh,640px);padding:0;display:flex;flex-direction:column;overflow:hidden;
+}
+.testimonials-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:clamp(1.8rem,3vw,2.6rem)}
+.testimonial-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:minmax(11.5rem,auto);gap:1.1rem;margin-top:1.6rem}
+/* card, not a flat tile: a real header/content/footer split, a lift on hover - the same shape a
+   filled-in review card will use later, just honest about being empty for now. one tile is a
+   featured 2x2 card (bigger mark, bigger note) the way a real standout quote will read once
+   there's a real quote to put there, the other two stack beside it. */
+.testimonial-tile{
+  border-radius:18px;padding:1.6rem 1.5rem;min-height:11.5rem;
+  display:flex;flex-direction:column;
+  border:1px solid rgba(242,240,236,.16);
+  box-shadow:0 10px 28px rgba(0,0,0,.22);
+  transition:transform .25s var(--ease-soft),box-shadow .25s var(--ease-soft),border-color .25s var(--ease-soft);
+}
+.testimonial-tile:hover{transform:translateY(-3px);box-shadow:0 16px 38px rgba(0,0,0,.3);border-color:rgba(242,240,236,.32)}
+.testimonial-tile.tile-accent{background:var(--accent-muted)}
+.testimonial-tile.tile-dark{background:rgba(8,7,6,.55)}
+.testimonial-tile.tile-light{background:rgba(242,240,236,.08)}
+.testimonial-tile.tile-feature{grid-column:span 2;grid-row:span 2;justify-content:center}
+.testimonial-mark{font-family:var(--font-word);font-size:2.6rem;line-height:1;color:var(--accent);opacity:.85}
+.tile-feature .testimonial-mark{font-size:3.4rem}
+.testimonial-note{font-size:.86rem;opacity:.82;margin-top:.7rem;line-height:1.6;flex:1}
+.tile-feature .testimonial-note{font-size:1.05rem}
+.testimonial-foot{
+  margin-top:1.1rem;padding-top:.9rem;border-top:1px solid rgba(242,240,236,.14);
+  display:flex;align-items:center;gap:.7rem;
+}
+.testimonial-avatar{
+  width:2.2rem;height:2.2rem;border-radius:50%;flex-shrink:0;
+  border:1.5px dashed rgba(242,240,236,.35);
+}
+.testimonial-who{font-family:var(--font-mono);font-size:.64rem;letter-spacing:.05em;text-transform:lowercase;line-height:1.5;opacity:.7}
+.testimonial-who strong{display:block;font-weight:500;opacity:.9}
+@media (max-width:860px){
+  .testimonial-grid{grid-template-columns:1fr}
+  .testimonial-tile.tile-feature{grid-column:auto;grid-row:auto}
+}
+
+/* ---- threshold: the sign is already right there in the aerial shot - the logo and the wordmark
+   both live in the footage itself, nothing redrawn on top of it. just a glass button sitting
+   underneath it, in the blank space on the sign board below the text. the shot doesn't need the
+   usual darkening scrim either: there's no card competing with the video for legibility here. ---- */
+.threshold-band{text-align:center}
+.threshold-band::before{content:none}
+.threshold-content{
+  position:absolute;left:50%;top:75%;transform:translate(-50%,-50%);
+  display:flex;flex-direction:column;align-items:center;pointer-events:auto;
+}
+.enter-glass-btn{
+  font-family:var(--font-word);font-size:1.1rem;letter-spacing:.01em;
+  color:#fff;padding:1rem 2.4rem;border-radius:99px;
+  border:1px solid rgba(255,255,255,.4);
+  background:rgba(255,255,255,.12);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  box-shadow:0 10px 34px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.3);
+  cursor:pointer;
+  transition:background .25s var(--ease-soft),transform .25s var(--ease-soft),box-shadow .25s var(--ease-soft);
+}
+.enter-glass-btn:hover,.enter-glass-btn:focus-visible{
+  background:rgba(255,255,255,.2);transform:translateY(-2px);
+  box-shadow:0 14px 40px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.4);
+}
+.enter-glass-btn:disabled{opacity:.55;cursor:default;pointer-events:none;transform:none}
+
+/* ---- step nav: bottom-right, a labeled Continue plus a small back arrow ---- */
+.step-nav{position:absolute;right:1.8rem;bottom:2.2rem;z-index:7;display:flex;flex-direction:row;gap:.7rem;align-items:center}
+.step-btn{
+  width:46px;height:46px;border-radius:50%;flex-shrink:0;
+  border:1px solid rgba(242,240,236,.4);background:rgba(24,22,19,.4);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  color:var(--dark-ink);display:flex;align-items:center;justify-content:center;
+  opacity:1;transition:opacity .3s var(--ease-soft),background .25s var(--ease-soft),border-color .25s var(--ease-soft),transform .25s var(--ease-soft);
+}
+.step-btn:hover{background:rgba(242,240,236,.14);border-color:rgba(242,240,236,.8)}
+.step-btn:active{transform:scale(.94)}
+.step-btn[hidden]{display:none}
+.step-btn svg{width:16px;height:16px}
+/* continue: the label slides out and fades as a colored dot grows from behind it to fill the
+   whole pill, revealing a second "Continue + arrow" layer in white - all one hover, no JS beyond
+   the existing click handler. */
+.step-next-btn{
+  position:relative;overflow:hidden;
+  width:auto;height:54px;border-radius:99px;padding:0 1.7rem;
+  background:transparent;border-color:rgba(242,240,236,.4);color:var(--dark-ink);
+  font-family:var(--font-mono);font-size:.85rem;letter-spacing:.02em;
+}
+.step-next-btn:hover{background:transparent;border-color:rgba(242,240,236,.7)}
+.step-next-btn svg{width:15px;height:15px}
+.step-next-label{
+  position:relative;z-index:1;display:inline-block;
+  transform:translateX(2px);
+  transition:transform .3s var(--ease-soft),opacity .3s var(--ease-soft);
+}
+.step-next-btn:hover .step-next-label{transform:translateX(26px);opacity:0}
+.step-next-reveal{
+  position:absolute;z-index:2;inset:0;
+  display:flex;align-items:center;justify-content:center;gap:.5rem;
+  color:var(--ink);opacity:0;transform:translateX(26px);
+  transition:transform .3s var(--ease-soft),opacity .3s var(--ease-soft);
+}
+.step-next-btn:hover .step-next-reveal{opacity:1;transform:translateX(0)}
+.step-next-blob{
+  position:absolute;z-index:0;left:18%;top:50%;width:10px;height:10px;border-radius:50%;
+  background:var(--accent);transform:translateY(-50%);opacity:0;
+  transition:left .3s var(--ease-soft),top .3s var(--ease-soft),width .3s var(--ease-soft),height .3s var(--ease-soft),transform .3s var(--ease-soft),border-radius .3s var(--ease-soft),opacity .2s var(--ease-soft);
+}
+.step-next-btn:hover .step-next-blob{left:0;top:0;width:100%;height:100%;transform:none;border-radius:99px;opacity:1}
+
+/* ---- dot rail ---- */
+.dot-rail{position:fixed;right:1.6rem;top:50%;transform:translateY(-50%);z-index:400;display:flex;flex-direction:column;gap:.9rem}
+.dot-rail button{-webkit-appearance:none;appearance:none;flex-shrink:0;padding:0;margin:0;position:relative;width:9px;height:9px;min-width:9px;border-radius:50%;background:rgba(242,240,236,.35);transition:background .3s var(--ease-soft),transform .3s var(--ease-soft)}
+@media (pointer:coarse){
+  .dot-rail button::after{content:"";position:absolute;top:50%;left:50%;width:44px;height:44px;transform:translate(-50%,-50%)}
+}
+.dot-rail button.active{background:var(--accent);transform:scale(1.3)}
+
+/* ============ WORK band specifics ============ */
+.work-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem;align-items:start}
+.work-blurb{min-height:9rem}
+.work-blurb .proj-name{font-size:1.3rem;margin-bottom:.4rem}
+.work-blurb .proj-tag{font-family:var(--font-mono);font-size:.7rem;color:var(--accent);letter-spacing:.06em;text-transform:lowercase;margin-bottom:.7rem;display:block}
+.thumbs{display:flex;flex-direction:column;gap:.7rem}
+.thumb{
+  display:flex;align-items:center;gap:.8rem;
+  background:rgba(242,240,236,.06);border:1px solid rgba(242,240,236,.16);
+  border-radius:12px;padding:.6rem;cursor:pointer;text-align:left;width:100%;
+  transition:background .25s var(--ease-soft),border-color .25s var(--ease-soft);
+}
+.thumb:hover,.thumb:focus-visible{background:rgba(242,240,236,.14);border-color:rgba(242,240,236,.4)}
+.thumb.active{border-color:var(--accent);background:var(--accent-muted)}
+.thumb img{width:64px;height:44px;object-fit:cover;border-radius:6px;flex-shrink:0;background:#2a2823}
+.thumb .ph{width:64px;height:44px;border-radius:6px;flex-shrink:0;background:rgba(242,240,236,.1);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:.6rem;color:var(--dark-ink);opacity:.6}
+.thumb .t-name{font-size:.92rem}
+.thumb .t-visit{margin-left:auto;font-family:var(--font-mono);font-size:.66rem;color:var(--accent);white-space:nowrap}
+.work-note{font-size:.82rem;color:var(--dark-ink);opacity:.7;margin-top:.9rem;max-width:44ch}
+.press-divider{display:flex;align-items:center;gap:.8rem;margin:1.3rem 0 1rem;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.08em;text-transform:lowercase;color:var(--dark-ink);opacity:.6}
+.press-divider::before,.press-divider::after{content:"";flex:1;height:1px;background:rgba(242,240,236,.2)}
+
+/* ============ PRESS CLIPS (merged into the work band) ============ */
+.clips{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem}
+/* compact: a thumb-style row per clip, not a card with a full image, so the merged Work
+   card stays short enough to never need its own scroll */
+.clips-compact{display:flex;flex-direction:column;gap:.5rem}
+.clips-compact .clip{flex-direction:row;align-items:center;gap:.7rem;padding:.5rem .7rem;border-radius:12px}
+.clips-compact .clip-img{display:none}
+.clips-compact .clip-body{padding:0;flex:1;min-width:0}
+.clips-compact .clip-title{font-size:.8rem;line-height:1.3;margin-top:.15rem;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical}
+.clips-compact .clip-status{display:none}
+.clip{
+  background:rgba(24,22,19,.5);border:1px solid rgba(242,240,236,.16);border-radius:14px;
+  overflow:hidden;text-decoration:none;color:var(--dark-ink);display:flex;flex-direction:column;
+}
+.clip .clip-img{width:100%;aspect-ratio:16/10;object-fit:cover;background:#2a2823}
+.clip .clip-img.ph{display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:.62rem;opacity:.55;padding:.5rem;text-align:center}
+.clip-body{padding:.9rem 1rem 1.1rem}
+.clip-cat{font-family:var(--font-mono);font-size:.62rem;color:var(--accent);letter-spacing:.06em;text-transform:lowercase}
+.clip-date{font-family:var(--font-mono);font-size:.62rem;color:var(--dark-ink);opacity:.55;margin-left:.5rem}
+.clip-title{font-size:.9rem;line-height:1.3;margin-top:.5rem}
+.clip-status{font-family:var(--font-mono);font-size:.6rem;opacity:.6;margin-top:.6rem;display:block}
+
+/* ============ TEAM band specifics: horizontal cards, stacked, Adam then Jackson ============ */
+.founders{display:flex;flex-direction:column;gap:1.1rem}
+.founder{background:rgba(24,22,19,.5);border:1px solid rgba(242,240,236,.16);border-radius:16px;overflow:hidden;display:flex;flex-direction:row;align-items:stretch}
+.founder img{width:9rem;flex-shrink:0;aspect-ratio:1/1;object-fit:cover}
+.founder-body{padding:1rem 1.3rem;flex:1;min-width:0}
+.founder-body h3{font-size:1.05rem;margin-bottom:.15rem}
+.founder-role{font-family:var(--font-mono);font-size:.66rem;color:var(--accent);letter-spacing:.05em;text-transform:lowercase;margin-bottom:.5rem;display:block}
+.founder-bio{font-size:.78rem;line-height:1.5;opacity:.88;max-height:4.6em;overflow:hidden;-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
+.founder-links{display:flex;gap:.55rem;margin-top:.6rem}
+.founder-links a{width:28px;height:28px;border-radius:50%;border:1px solid rgba(242,240,236,.3);display:flex;align-items:center;justify-content:center;transition:border-color .25s var(--ease-soft),background .25s var(--ease-soft)}
+.founder-links a:hover{background:rgba(242,240,236,.12);border-color:rgba(242,240,236,.7)}
+.founder-links svg{width:13px;height:13px}
+.chips{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.1rem}
+.chip{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.02em;padding:.5rem .9rem;border-radius:99px;border:1px solid rgba(242,240,236,.25);opacity:.9}
+.founder[data-founder-idx]{cursor:pointer;transition:border-color .25s var(--ease-soft),background .25s var(--ease-soft)}
+.founder[data-founder-idx]:hover,.founder[data-founder-idx]:focus-visible{border-color:rgba(242,240,236,.5);background:rgba(24,22,19,.68)}
+.founder-more{display:inline-block;margin-top:.5rem;font-family:var(--font-mono);font-size:.66rem;color:var(--accent);letter-spacing:.02em}
+
+/* ---- the big bio card a founder click opens ---- */
+.bio-modal{position:absolute;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:2rem}
+.bio-modal[hidden]{display:none}
+.bio-modal-backdrop{position:absolute;inset:0;background:rgba(8,7,6,.6);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;transition:opacity .3s var(--ease-soft)}
+.bio-modal-card{
+  position:relative;width:min(1160px,90vw);max-height:90vh;overflow-y:auto;
+  background:rgba(22,20,18,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border:1px solid rgba(242,240,236,.2);border-radius:26px;
+  padding:clamp(2.6rem,4.5vw,4.2rem);color:var(--dark-ink);text-shadow:var(--tshadow);
+  opacity:0;transform:scale(.94) translateY(10px);transition:opacity .3s var(--ease-soft),transform .3s var(--ease-soft);
+}
+.bio-modal.in .bio-modal-backdrop{opacity:1}
+.bio-modal.in .bio-modal-card{opacity:1;transform:scale(1) translateY(0)}
+.bio-modal-card .founder{background:none;border:none;padding:0}
+/* the full photo, never cropped: a defined square frame with the image fit (not filled) inside
+   it, so the whole face and frame always show regardless of the source photo's own aspect ratio */
+.bio-modal-card .founder img{width:13rem;aspect-ratio:1/1;object-fit:contain;background:rgba(0,0,0,.2);border-radius:16px}
+.bio-modal-card .founder-body{padding:0 0 0 1.8rem}
+.bio-modal-card .founder-body h3{font-size:1.8rem}
+.bio-modal-card .founder-role{font-size:.85rem}
+.bio-modal-card .founder-bio{font-size:1.15rem;line-height:1.7;max-height:none;-webkit-mask-image:none;mask-image:none;opacity:.92}
+@media (max-width:640px){
+  .bio-modal-card .founder{flex-direction:column}
+  .bio-modal-card .founder-body{padding:1rem 0 0}
+}
+
+/* ============ CONTACT band specifics ============ */
+.contact-card{
+  display:grid;grid-template-columns:1.5fr 1fr;
+  padding:0;overflow:hidden;
+  max-height:88vh;max-height:88dvh;
+}
+.contact-info-side{padding:clamp(1.6rem,3vw,2.6rem);overflow-y:auto}
+.contact-form-side{
+  background:rgba(10,9,7,.28);border-left:1px solid rgba(242,240,236,.14);
+  padding:clamp(1.4rem,2.4vw,2rem);display:flex;align-items:center;
+  max-height:88vh;max-height:88dvh;overflow-y:auto;
+}
+.plus-mark{position:absolute;width:16px;height:16px;color:rgba(242,240,236,.55);pointer-events:none}
+.plus-mark::before,.plus-mark::after{content:"";position:absolute;background:currentColor}
+.plus-mark::before{top:50%;left:0;width:100%;height:1.5px;transform:translateY(-50%)}
+.plus-mark::after{left:50%;top:0;height:100%;width:1.5px;transform:translateX(-50%)}
+.plus-mark.tl{top:-8px;left:-8px}
+.plus-mark.tr{top:-8px;right:-8px}
+.plus-mark.bl{bottom:-8px;left:-8px}
+.plus-mark.br{bottom:-8px;right:-8px}
+.info-tiles{display:flex;flex-direction:column;gap:.9rem;margin-top:1.5rem}
+.info-tile{display:flex;align-items:flex-start;gap:.8rem}
+.info-tile-icon{
+  flex-shrink:0;width:36px;height:36px;border-radius:10px;
+  background:rgba(242,240,236,.08);border:1px solid rgba(242,240,236,.16);
+  display:flex;align-items:center;justify-content:center;color:var(--accent);
+}
+.info-tile-icon svg{width:16px;height:16px}
+.info-label{font-size:.85rem;font-weight:600}
+.info-value{font-size:.78rem;opacity:.8;line-height:1.5}
+.contact-form{display:flex;flex-direction:column;gap:.75rem;width:100%}
+.contact-form label{font-family:var(--font-mono);font-size:.65rem;letter-spacing:.04em;color:var(--dark-ink);opacity:.7;text-transform:lowercase}
+.contact-form input,.contact-form textarea,.contact-form select{
+  font-family:var(--font-body);font-size:.88rem;color:var(--ink);
+  background:rgba(242,240,236,.94);border:1px solid rgba(242,240,236,.5);border-radius:10px;
+  padding:.65rem .8rem;width:100%;resize:vertical;
+}
+.contact-form select{-webkit-appearance:none;appearance:none;
+  background-image:url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 8"%3E%3Cpath d="M1 1.5 6 6.5 11 1.5" fill="none" stroke="%23696661" stroke-width="1.4" stroke-linecap="round"/%3E%3C/svg%3E');
+  background-repeat:no-repeat;background-position:right .8rem center;background-size:9px 6px;padding-right:2rem;
+}
+.contact-form textarea{min-height:4.5rem}
+.contact-form input:focus,.contact-form textarea:focus,.contact-form select:focus{outline:2px solid var(--accent);outline-offset:1px}
+.contact-direct{margin-top:1.1rem;font-size:.82rem;opacity:.85}
+.contact-direct a{color:var(--accent);text-decoration:underline}
+.form-note{font-family:var(--font-mono);font-size:.7rem;opacity:.65;margin-top:.6rem;min-height:1em}
+@media (max-width:860px){
+  .contact-card{grid-template-columns:1fr}
+  .contact-form-side{border-left:none;border-top:1px solid rgba(242,240,236,.14)}
+}
+
+/* ============ STATIC MOBILE / REDUCED-MOTION TOUR ============ */
+.tour-static{display:none}
+.static-stop{
+  position:relative;min-height:100vh;min-height:100dvh;display:flex;align-items:flex-end;
+  background-size:cover;background-position:center;
+  padding:6rem var(--gutter) 3.5rem;
+}
+.static-stop::before{content:"";position:absolute;inset:0;background:linear-gradient(rgba(10,9,7,.35),rgba(10,9,7,.82));}
+.static-stop .card{position:relative;z-index:1;max-width:640px;width:100%;opacity:1;transform:none}
+.static-stop .card-wide{max-width:100%}
+
+/* ============ FOOTER ============ */
+.site-footer{background:var(--dark);color:var(--dark-ink);padding:4.5rem var(--gutter) 2.5rem}
+.footer-top{display:flex;flex-wrap:wrap;gap:2.5rem;justify-content:space-between;padding-bottom:2.5rem;border-bottom:1px solid var(--hairline-dark)}
+.footer-brand{display:flex;align-items:center;gap:.6rem}
+.footer-brand img{height:22px;filter:invert(1)}
+.footer-brand span{font-family:var(--font-word);font-size:1rem}
+.footer-nav{display:flex;flex-wrap:wrap;gap:1.6rem}
+.footer-nav a{font-size:.88rem;text-decoration:none;color:var(--dark-ink);opacity:.75;transition:opacity .25s var(--ease-soft)}
+.footer-nav a:hover{opacity:1}
+.footer-contact{font-size:.88rem;opacity:.85;display:flex;flex-direction:column;gap:.4rem}
+.footer-contact a{text-decoration:underline;color:var(--dark-ink)}
+.footer-bottom{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;padding-top:1.6rem;font-size:.76rem;opacity:.55}
+.footer-bottom .legal{display:flex;gap:1.3rem}
+.footer-disclosure{max-width:56ch;opacity:.55;font-size:.74rem;margin-top:.5rem}
+
+/* ============ REDUCED MOTION ============ */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;scroll-behavior:auto !important}
+}
+
+/* ============ STATIC-HERO GATES ============ */
+@media (max-width:720px),
+       (orientation:portrait) and (max-width:1024px),
+       (orientation:portrait) and (pointer:coarse),
+       (orientation:landscape) and (pointer:coarse) and (max-height:560px),
+       (prefers-reduced-motion:reduce){
+  .tour{display:none}
+  .dot-rail{display:none}
+  .tour-static{display:block}
+  .card{max-width:100%}
+}
+
+/* a shallow scrub-capable window (short desktop browser, not a phone): give the content room */
+@media (max-height:640px){
+  .card{padding:clamp(1rem,2vw,1.5rem)}
+  .card h2{font-size:clamp(1.25rem,2.6vw,1.8rem);margin-bottom:.6rem}
+  .card p.lede{margin-bottom:.5rem}
+}
+
+@media (pointer:coarse){
+  .btn-solid,.btn-outline,.menu-pill,.btn-ghost,.thumb{min-height:44px}
+}
+
+@media (max-width:860px){
+  .work-grid{grid-template-columns:1fr}
+  .clips{grid-template-columns:1fr}
+  .founder{flex-direction:column}
+  .founder img{width:100%;aspect-ratio:16/9}
+  .card{max-width:92vw !important}
+}
+</style>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="chrome-scrim" aria-hidden="true"></div>
+<header class="chrome">
+  <a class="logo-home" href="#tour" id="logo-home" aria-label="Anchor Digital, back to the start">
+    <img src="assets/anchor-icon.png" alt="" aria-hidden="true">
+    <span>anchor digital</span>
+  </a>
+  <div class="chrome-right">
+    <a class="btn-ghost" href="#contact" data-jump="contact">Start a project</a>
+    <a class="btn-ghost" href="portal.html" id="client-portal-link">Anchor Client Portal</a>
+    <div class="menu-wrap">
+      <button class="menu-pill" id="menu-btn" aria-haspopup="true" aria-expanded="false">
+        Guide
+        <svg viewBox="0 0 12 8" fill="none" aria-hidden="true"><path d="M1 1.5 6 6.5 11 1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </button>
+      <nav class="menu-dropdown" id="menu-dropdown" aria-label="Jump to a section">
+        <a href="#services" data-jump="services"><span class="idx">01</span> Services</a>
+        <a href="#work" data-jump="work"><span class="idx">02</span> Work</a>
+        <a href="#team" data-jump="team"><span class="idx">03</span> Team</a>
+        <a href="#testimonials" data-jump="testimonials"><span class="idx">04</span> Testimonials</a>
+        <a href="#contact" data-jump="contact"><span class="idx">05</span> Contact</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<nav class="dot-rail" id="dot-rail" aria-label="Studio progress">
+  <button data-jump="threshold" aria-label="Entrance"></button>
+  <button data-jump="services" aria-label="Services"></button>
+  <button data-jump="work" aria-label="Work"></button>
+  <button data-jump="team" aria-label="Team"></button>
+  <button data-jump="testimonials" aria-label="Testimonials"></button>
+  <button data-jump="contact" aria-label="Contact"></button>
+</nav>
+
+<main id="main">
+  <section class="tour" id="tour">
+    <div class="stage show-start" id="stage">
+      <div class="poster-layer" id="poster-layer" style="background-image:url('assets/frame-start.jpg')"></div>
+      <video id="hero-video" preload="none" muted playsinline aria-hidden="true" tabindex="-1"></video>
+      <div class="base-scrim" aria-hidden="true"></div>
+      <svg class="load-ring" id="load-ring" viewBox="0 0 48 48" aria-hidden="true">
+        <circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3" opacity=".25"/>
+        <circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="126" style="stroke-dashoffset:var(--ld,126)" transform="rotate(-90 24 24)"/>
+      </svg>
+
+      <!-- START: the video's true first frame, tight on the sign. nothing happens until a click
+           or scroll plays the built-in zoomout forward to the threshold (the aerial view). -->
+      <div class="start-overlay" id="start-overlay">
+        <div class="start-cue" aria-hidden="true">
+          <svg viewBox="0 0 14 20" fill="none"><path d="M1 1 7 8 13 1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 11 7 18 13 11" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/></svg>
+          scroll or click to step inside
+        </div>
+      </div>
+
+      <!-- THRESHOLD: the aerial view the opening zoomout settles on. the sign is already right
+           there in the shot - no need to redraw it, just a way in underneath it. -->
+      <div class="band threshold-band" id="band-threshold" data-stop="threshold">
+        <div class="threshold-content">
+          <button class="enter-glass-btn" id="enter-btn">Click to enter the studio</button>
+        </div>
+      </div>
+
+      <!-- SERVICES: just the headline; everything else lives on the three screens -->
+      <div class="band services-band" id="band-services" data-stop="services">
+        <div class="card services-banner">
+          <div class="services-banner-row">
+            <h2>We close the gap.</h2>
+            <a class="btn-outline" href="#contact" data-jump="contact">Book a consultation</a>
+          </div>
+          <p class="lede">A digital development and strategy company helping small businesses and organizations modernize their digital presence.</p>
+          <p class="hotspot-hint">Click the computers for more information.</p>
+        </div>
+        <button class="hotspot" style="left:22.7%;top:34.3%" data-info="design" aria-label="Website Design & Development, more info"><span></span></button>
+        <button class="hotspot" style="left:38.5%;top:36.6%" data-info="innovation" aria-label="Brand Digital Systems, more info"><span></span></button>
+        <button class="hotspot" style="left:64.1%;top:38.9%" data-info="growth" aria-label="Ongoing Maintenance & Consulting, more info"><span></span></button>
+        <div class="services-grid">
+          <div class="services-col">
+            <div class="popup-card has-img" data-info="design" hidden>
+              <button class="popup-close" data-close aria-label="Close">&times;</button>
+              <img class="clip-img" src="assets/pillars/design.jpg" alt="">
+              <div class="clip-text">
+                <p class="kicker">website design &amp; development</p>
+                <p>Fully custom, conversion-focused websites built from the ground up. No templates, ever: every homepage starts as a concept built around your brand.</p>
+              </div>
+            </div>
+          </div>
+          <div class="services-col">
+            <div class="popup-card has-img" data-info="innovation" hidden>
+              <button class="popup-close" data-close aria-label="Close">&times;</button>
+              <img class="clip-img" src="assets/pillars/innovation.jpg" alt="">
+              <div class="clip-text">
+                <p class="kicker">brand digital systems</p>
+                <p>We build what your brand needs to capture leads and grow an audience you actually own, with modern features that feel current, not off-the-shelf.</p>
+              </div>
+            </div>
+          </div>
+          <div class="services-col">
+            <div class="popup-card has-img" data-info="growth" hidden>
+              <button class="popup-close" data-close aria-label="Close">&times;</button>
+              <img class="clip-img" src="assets/pillars/growth.jpg" alt="">
+              <div class="clip-text">
+                <p class="kicker">ongoing maintenance &amp; consulting</p>
+                <p>We stay in your corner after launch. Monthly care plans keep your site fast, secure, and evolving, with SEO monitoring and consulting built in.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WORK -->
+      <div class="band work-band" id="band-work" data-stop="work">
+        <div class="card card-wide">
+          <p class="kicker">02 &middot; work</p>
+          <h2 style="font-size:clamp(1.4rem,2.4vw,1.9rem)">Every project here started as an empty file and a conversation.</h2>
+          <div class="work-grid">
+            <div class="work-blurb" id="work-blurb"></div>
+            <div class="thumbs" id="work-thumbs"></div>
+          </div>
+          <p class="work-note">Out of respect for client privacy, we don't showcase the majority of our work here. Ask us during a call and we're happy to share more.</p>
+        </div>
+      </div>
+
+      <!-- TEAM (narrow, so the framed articles on the wall behind it stay clickable) -->
+      <div class="band team-band" id="band-team" data-stop="team">
+        <div class="card team-card-compact">
+          <p class="kicker">03 &middot; team</p>
+          <h2>Meet our founders.</h2>
+          <div class="founders" id="founders"></div>
+          <div class="chips">
+            <span class="chip">Client-first, always</span>
+            <span class="chip">Speed without sacrifice</span>
+          </div>
+          <p class="hotspot-hint">Click the buttons to read about our nonprofit initiative work. &rarr;</p>
+        </div>
+        <div class="popup-card article-panel" id="article-panel" hidden>
+          <button class="popup-close" data-close aria-label="Close">&times;</button>
+          <div class="article-panel-body" id="article-panel-body"></div>
+        </div>
+        <div id="wall-hotspots"></div>
+      </div>
+
+      <!-- TESTIMONIALS -->
+      <div class="band testimonials-band" id="band-testimonials" data-stop="testimonials">
+        <div class="card card-wide testimonials-box">
+          <div class="testimonials-scroll">
+            <p class="kicker">04 &middot; testimonials</p>
+            <h2 style="font-size:clamp(1.4rem,2.6vw,2rem)">What clients say.</h2>
+            <p class="lede">We're collecting these from recent clients now, real quotes will land in this grid, not placeholders. Ask us directly during a call if you'd like to hear from one sooner.</p>
+            <div class="testimonial-grid">
+              <div class="testimonial-tile tile-accent tile-feature">
+                <span class="testimonial-mark">&ldquo;</span>
+                <p class="testimonial-note">A client story is landing here soon.</p>
+                <div class="testimonial-foot"><span class="testimonial-avatar" aria-hidden="true"></span><span class="testimonial-who"><strong>Real client</strong>coming soon</span></div>
+              </div>
+              <div class="testimonial-tile tile-dark">
+                <span class="testimonial-mark">&ldquo;</span>
+                <p class="testimonial-note">Another one is on its way too.</p>
+                <div class="testimonial-foot"><span class="testimonial-avatar" aria-hidden="true"></span><span class="testimonial-who"><strong>Real client</strong>coming soon</span></div>
+              </div>
+              <div class="testimonial-tile tile-light">
+                <span class="testimonial-mark">&ldquo;</span>
+                <p class="testimonial-note">This spot is saved for a third.</p>
+                <div class="testimonial-foot"><span class="testimonial-avatar" aria-hidden="true"></span><span class="testimonial-who"><strong>Real client</strong>coming soon</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTACT -->
+      <div class="band contact-band" id="band-contact" data-stop="contact">
+        <div class="card card-wide contact-card">
+          <span class="plus-mark tl" aria-hidden="true"></span>
+          <span class="plus-mark tr" aria-hidden="true"></span>
+          <span class="plus-mark bl" aria-hidden="true"></span>
+          <span class="plus-mark br" aria-hidden="true"></span>
+          <div class="contact-info-side">
+            <p class="kicker settle-1">05 &middot; contact</p>
+            <h2 class="settle-1">Start a project</h2>
+            <p class="lede settle-2">Tell us what you need. We reply to everything, usually the same day.</p>
+            <div class="info-tiles settle-2">
+              <div class="info-tile">
+                <span class="info-tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span>
+                <div><p class="info-label">Email</p><p class="info-value">adam@anchordigitalco.com<br>jackson@anchordigitalco.com</p></div>
+              </div>
+              <div class="info-tile">
+                <span class="info-tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
+                <div><p class="info-label">Response time</p><p class="info-value">Usually the same day</p></div>
+              </div>
+            </div>
+          </div>
+          <div class="contact-form-side settle-3">
+            <form class="contact-form" id="contact-form">
+              <div>
+                <label for="cf-name">Name</label>
+                <input id="cf-name" name="name" type="text" required autocomplete="name">
+              </div>
+              <div>
+                <label for="cf-email">Email</label>
+                <input id="cf-email" name="email" type="email" required autocomplete="email">
+              </div>
+              <div>
+                <label for="cf-biz">Business name</label>
+                <input id="cf-biz" name="business" type="text" autocomplete="organization">
+              </div>
+              <div>
+                <label for="cf-type">What are you looking for?</label>
+                <select id="cf-type" name="type">
+                  <option value="">Not sure yet</option>
+                  <option>A new website</option>
+                  <option>A redesign of an existing site</option>
+                  <option>Ongoing care and updates</option>
+                  <option>Something else</option>
+                </select>
+              </div>
+              <div>
+                <label for="cf-budget">Budget range</label>
+                <select id="cf-budget" name="budget">
+                  <option value="">Prefer to discuss</option>
+                  <option>Under $2,000</option>
+                  <option>$2,000 &ndash; $5,000</option>
+                  <option>$5,000+</option>
+                </select>
+              </div>
+              <div>
+                <label for="cf-timeline">Timeline</label>
+                <select id="cf-timeline" name="timeline">
+                  <option value="">Just exploring</option>
+                  <option>As soon as possible</option>
+                  <option>1 to 3 months</option>
+                  <option>3+ months out</option>
+                </select>
+              </div>
+              <div>
+                <label for="cf-msg">Tell us about your business and what you're building</label>
+                <textarea id="cf-msg" name="message" required></textarea>
+              </div>
+              <div class="btn-row" style="margin-top:.2rem">
+                <button class="btn-solid" type="submit">Send it over</button>
+              </div>
+              <p class="form-note" id="form-note" aria-live="polite"></p>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="bio-modal" id="bio-modal" hidden>
+        <div class="bio-modal-backdrop" data-close-bio></div>
+        <div class="bio-modal-card">
+          <button class="popup-close" id="bio-modal-close" aria-label="Close" data-close-bio>&times;</button>
+          <div id="bio-modal-body"></div>
+        </div>
+      </div>
+
+      <div class="step-nav" id="step-nav">
+        <button class="step-btn" id="step-prev" aria-label="Go back a step" hidden>
+          <svg viewBox="0 0 16 16" fill="none"><path d="M10 3 5 8l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="step-btn step-next-btn" id="step-next" aria-label="Continue">
+          <span class="step-next-label">Continue</span>
+          <span class="step-next-reveal" aria-hidden="true">
+            <span>Continue</span>
+            <svg viewBox="0 0 16 16" fill="none"><path d="M6 3 11 8l-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="step-next-blob" aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= STATIC / MOBILE / REDUCED MOTION TOUR ================= -->
+  <section class="tour-static" id="tour-static">
+    <div class="static-stop" id="s-threshold" style="background-image:url('assets/frame-aerial.jpg')">
+      <div class="card">
+        <p class="kicker">anchor digital</p>
+        <h2>Step inside the studio.</h2>
+        <p class="lede">Everything below is real: our work, our people, and how to reach us.</p>
+      </div>
+    </div>
+    <div class="static-stop" id="s-services" style="background-image:url('assets/frame-computers.jpg')">
+      <div class="card card-wide">
+        <p class="kicker">01 &middot; what we do</p>
+        <h2>We close the gap.</h2>
+        <p class="lede">A digital development and strategy company helping small businesses and organizations modernize their digital presence. Every quote gets built from a conversation instead of a menu.</p>
+        <div style="display:grid;gap:1rem;margin-top:1.2rem">
+          <div><p class="kicker" style="margin-bottom:.3rem">Website Design &amp; Development</p><p style="font-size:.9rem;opacity:.9">We create fully custom, conversion-focused websites from the ground up. No templates, no shortcuts: every pixel is intentional.</p></div>
+          <div><p class="kicker" style="margin-bottom:.3rem">Brand Digital Systems</p><p style="font-size:.9rem;opacity:.9">We build what your brand needs to capture leads, turn them into customers, and grow an audience you actually own.</p></div>
+          <div><p class="kicker" style="margin-bottom:.3rem">Ongoing Maintenance &amp; Consulting</p><p style="font-size:.9rem;opacity:.9">We stay in your corner after launch. Monthly care plans keep your site fast, secure, and evolving with your business.</p></div>
+        </div>
+        <div class="btn-row"><a class="btn-solid" href="#s-contact">Book a consultation</a></div>
+      </div>
+    </div>
+    <div class="static-stop" id="s-work" style="background-image:url('assets/frame-whiteboard.jpg')">
+      <div class="card card-wide">
+        <p class="kicker">02 &middot; work</p>
+        <h2 style="font-size:clamp(1.4rem,5vw,1.9rem)">Every project here started as an empty file and a conversation.</h2>
+        <div style="display:flex;flex-direction:column;gap:.8rem;margin-top:1.2rem" id="work-thumbs-static"></div>
+        <p class="work-note">Out of respect for client privacy, we don't showcase the majority of our work here. Ask us during a call and we're happy to share more.</p>
+      </div>
+    </div>
+    <div class="static-stop" id="s-team" style="background-image:url('assets/frame-articles.jpg')">
+      <div class="card card-wide">
+        <p class="kicker">03 &middot; team</p>
+        <h2 style="font-size:clamp(1.3rem,5vw,1.8rem)">Meet our founders.</h2>
+        <div class="founders" id="founders-static"></div>
+        <div class="chips">
+          <span class="chip">Client-first, always</span>
+          <span class="chip">Speed without sacrifice</span>
+          <span class="chip">Built to last</span>
+        </div>
+        <div class="press-divider"><span>What's new at Anchor</span></div>
+        <div class="clips clips-compact" id="clips-static" style="grid-template-columns:1fr"></div>
+      </div>
+    </div>
+    <div class="static-stop" id="s-testimonials" style="background-image:url('assets/frame-chairs.jpg')">
+      <div class="card card-wide">
+        <p class="kicker">04 &middot; testimonials</p>
+        <h2 style="font-size:clamp(1.3rem,5vw,1.8rem)">What clients say.</h2>
+        <p class="lede">We're collecting these from recent clients now, real quotes will land in this grid, not placeholders. Ask us directly during a call if you'd like to hear from one sooner.</p>
+        <div class="testimonial-grid">
+          <div class="testimonial-tile tile-accent tile-feature"><span class="testimonial-mark">&ldquo;</span><p class="testimonial-note">A client story is landing here soon.</p><div class="testimonial-foot"><span class="testimonial-avatar" aria-hidden="true"></span><span class="testimonial-who"><strong>Real client</strong>coming soon</span></div></div>
+          <div class="testimonial-tile tile-dark"><span class="testimonial-mark">&ldquo;</span><p class="testimonial-note">Another one is on its way too.</p><div class="testimonial-foot"><span class="testimonial-avatar" aria-hidden="true"></span><span class="testimonial-who"><strong>Real client</strong>coming soon</span></div></div>
+          <div class="testimonial-tile tile-light"><span class="testimonial-mark">&ldquo;</span><p class="testimonial-note">This spot is saved for a third.</p><div class="testimonial-foot"><span class="testimonial-avatar" aria-hidden="true"></span><span class="testimonial-who"><strong>Real client</strong>coming soon</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="static-stop" id="s-contact" style="background-image:url('assets/frame-logowall.jpg')">
+      <div class="card card-wide">
+        <p class="kicker">05 &middot; contact</p>
+        <h2>Start a project</h2>
+        <p class="lede">Tell us what you need. We reply to everything, usually the same day.</p>
+        <form class="contact-form" id="contact-form-static">
+          <div><label for="cfs-name">Name</label><input id="cfs-name" name="name" type="text" required autocomplete="name"></div>
+          <div><label for="cfs-email">Email</label><input id="cfs-email" name="email" type="email" required autocomplete="email"></div>
+          <div><label for="cfs-biz">Business name</label><input id="cfs-biz" name="business" type="text" autocomplete="organization"></div>
+          <div><label for="cfs-type">What are you looking for?</label>
+            <select id="cfs-type" name="type">
+              <option value="">Not sure yet</option>
+              <option>A new website</option>
+              <option>A redesign of an existing site</option>
+              <option>Ongoing care and updates</option>
+              <option>Something else</option>
+            </select>
+          </div>
+          <div><label for="cfs-budget">Budget range</label>
+            <select id="cfs-budget" name="budget">
+              <option value="">Prefer to discuss</option>
+              <option>Under $2,000</option>
+              <option>$2,000 &ndash; $5,000</option>
+              <option>$5,000+</option>
+            </select>
+          </div>
+          <div><label for="cfs-timeline">Timeline</label>
+            <select id="cfs-timeline" name="timeline">
+              <option value="">Just exploring</option>
+              <option>As soon as possible</option>
+              <option>1 to 3 months</option>
+              <option>3+ months out</option>
+            </select>
+          </div>
+          <div><label for="cfs-msg">Tell us about your business and what you're building</label><textarea id="cfs-msg" name="message" required></textarea></div>
+          <div class="btn-row" style="margin-top:.2rem"><button class="btn-solid" type="submit">Send it over</button></div>
+          <p class="form-note" id="form-note-static" aria-live="polite"></p>
+        </form>
+        <p class="contact-direct">Prefer email directly&#63; <a href="mailto:adam@anchordigitalco.com">adam@anchordigitalco.com</a> &middot; <a href="mailto:jackson@anchordigitalco.com">jackson@anchordigitalco.com</a></p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer" id="contact-footer">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <img src="assets/anchor-icon.png" alt="Anchor Digital">
+        <span>anchor digital</span>
+      </div>
+      <nav class="footer-nav" aria-label="Footer">
+        <a href="#services" data-jump="services">Services</a>
+        <a href="#work" data-jump="work">Work</a>
+        <a href="#team" data-jump="team">Team</a>
+        <a href="#testimonials" data-jump="testimonials">Testimonials</a>
+        <a href="#contact" data-jump="contact">Contact</a>
+      </nav>
+      <div class="footer-contact">
+        <a href="mailto:adam@anchordigitalco.com">adam@anchordigitalco.com</a>
+        <a href="mailto:jackson@anchordigitalco.com">jackson@anchordigitalco.com</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span id="year"></span> Anchor Digital Studio LLC.</span>
+      <span class="legal"><span>Terms</span><span>Privacy</span></span>
+    </div>
+    <p class="footer-disclosure">The studio walkthrough in this site is a generated visualization built for this design, not a photo of a physical office. Team photos, project links, and press mentions are all real.</p>
+  </footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  var DATA = {
+    work: [
+      {name:"Score Signal", tag:"AI-Powered Web Tools", url:"https://getscoresignal.com",
+       img:"assets/work/score-signal-1.jpg",
+       desc:"The most ambitious project we've shipped. We led design, layout, and nearly every front-end feature for Score Signal, and conceived its AI helper ourselves, from the original idea through the interface."},
+      {name:"Ray Cuevo Training", tag:"Small Businesses", url:"https://raycuevotraining.com",
+       img:"assets/work/ray-cuevo.jpg",
+       desc:"A training site for Ray Cuevo, built to turn visitors into client inquiries in a competitive local fitness market."},
+      {name:"Marcus Bleecker", tag:"Personal Brands", url:"https://marcusbleecker.com",
+       img:"assets/work/marcus-bleecker.jpg",
+       desc:"A personal brand site for Marcus Bleecker, built to establish a strong digital presence and showcase his work and story."}
+    ],
+    clips: [
+      {id:"score-signal", cat:"AI-Powered Tool", date:"7/31/2026", title:"Score Signal, an AI-powered SAT and ACT tool, launches in partnership with Anchor Digital.", status:"Live now.", img:"assets/press/score-signal-launch.jpg", url:"https://getscoresignal.com",
+       body:[
+         "Score Signal was our most ambitious project to date. This was an idea-to-implementation build that took a conversation with a test prep company founder and turned it into a beautifully designed, scalable digital solution. Leveraging our frustrations with the college search process and knowledge of public databases, we conceived and created a unique data integration and recommendation engine.",
+         "Score Signal takes a user's SAT or ACT score and other relevant data, processes it against a sophisticated custom-designed algo to report the strength of the \"signal\" that the score provides about the user's admissibility, turning a confusing admissions question into a clear, specific answer in seconds.",
+         "We led the full front-end (design, layout, and nearly every interactive feature), scoped the backend specifications, and defined the reporting parameters, delivering to the client a refined product ready for final commercialization and integration.",
+         "The AI helper woven through the experience wasn't handed to us as a spec. We originated the idea ourselves, designed the concept, and built the interface, then implemented it end to end.",
+         "Score Signal is live now, and we're still involved as it grows."
+       ]},
+      {id:"fairtest", cat:"Non-Profit", date:"7/19/2026", title:"Anchor Digital partners with FairTest to redesign its test-optional research page.", status:"Currently in development.", imgBefore:"assets/press/fairtest-before.jpg", imgAfter:"assets/press/fairtest-after.jpg", url:null,
+       body:[
+         "FairTest, the National Center for Fair & Open Testing, has spent decades pushing back on the idea that a single test score should decide who gets in. Their test-optional college list, which tracks admissions policy at over 2,000 four-year schools, sees half a million visitors per year and is the go-to reference for students and counselors navigating test-optional admissions nationwide.",
+         "Our analysis of the previous page found that while it provided a searchable resource for students and their supporters, it missed the opportunity to drive its mission by providing insight into policies across colleges. We rebuilt the page to serve this dual policy and practical function by making more clear the trends and patterns across institutions.",
+         "The dynamic filterable database itself (state, region, school type, system) is still front and center, now paired with a chart that makes the overall split (test-optional, test-free, still requiring scores) legible at a glance instead of a wall of numbers.",
+         "This isn't a full site rebuild. It's a single page reimagined to more effectively use data to deliver its message. Done quickly and built to hold up as the underlying research keeps growing.",
+         "Currently in development. We'll share it here the day it ships."
+       ]},
+      {id:"a-better-chance", cat:"Non-Profit", date:"8/4/2026", title:"Anchor Digital partners with A Better Chance on a new site for its college-access mission.", status:"Currently in development.", img:"assets/press/a-better-chance.jpg", url:null,
+       body:[
+         "A Better Chance, a national non-profit organization, has spent more than sixty years placing talented young people of color at leading independent and boarding schools across the country.",
+         "ABC typically secures opportunities for their members and shares them via PDFs or spreadsheets of programs and partner opportunities.",
+         "Opportunity only counts if the right student can find it. So we are designing the experience around the people using it, not the org chart behind it. A student should be able to arrive, understand what is possible, and see their next step without having to hunt for it. Clear paths for students. Clear paths for families. Clear paths for the partner schools that make the network run.",
+         "We identified the inefficiency and proposed an advanced scalable digital solution that would not only serve their primary needs but would also expand their capabilities.",
+         "Help the organization stand apart and make it easier for students and families to find the programs and opportunities waiting for them.",
+         "We are building it to meet students where they are. Fast. Accessible. Designed for whatever device a student already has, not the one we wish they had. The kind of experience that feels effortless to use and hard to walk away from.",
+         "This is where strategy and build come together. We are not handing over a shell and calling it done. We shape the message, the structure, and the experience as one, so the presence feels as serious, and as warm, as the organization behind it, and so every page moves a student one step closer.",
+         "We took this on because it is work worth doing. A Better Chance is already changing lives. We are just making it easier for the next student to find their way in. That is the kind of project we want our name on.",
+         "It is currently in development. We will post the finished product here once it is live."
+       ]}
+    ],
+    founders: [
+      {name:"Adam Bello", role:"Co-Founder", img:"assets/team/adam-bello.jpg", linkedin:"https://www.linkedin.com/in/adam-bello-57067231a", email:"adam@anchordigitalco.com",
+       bio:"Adam Evans Bello is the Co-Founder of Anchor Digital. A native New Yorker, his diverse background across corporate, athletic, and international environments shapes his approach to brand differentiation and business growth. Adam is an undergraduate student-athlete at Bowdoin College, pursuing a B.A. in Government and Legal Studies with a minor in Economics while playing point guard on the Men's Basketball team. He and Jackson founded Anchor Digital to eliminate the gap between a business's actual value and its digital presence."},
+      {name:"Jackson Bleecker", role:"Co-Founder", img:"assets/team/jackson-bleecker.jpg", linkedin:"https://www.linkedin.com/in/jackson-bleecker/", email:"jackson@anchordigitalco.com",
+       bio:"Jackson Bleecker is the Co-Founder of Anchor Digital. A native of West Orange, New Jersey, his background spans startup strategy, global consulting, and competitive athletics. Jackson is an undergraduate student-athlete at Bowdoin College, pursuing a B.A. in Government and Legal Studies with a minor in Economics while competing as a shooting guard on the Men's Basketball team. He co-founded Anchor Digital on a simple conviction: small businesses deserve a digital presence that actually reflects their value."}
+    ]
+  };
+
+  var linkedinSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>';
+  var mailSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>';
+
+  function buildWork(container, isStatic){
+    var html = "";
+    DATA.work.forEach(function(p, i){
+      html += '<button class="thumb'+(i===0?' active':'')+'" data-idx="'+i+'" type="button">'+
+        (p.img ? '<img src="'+p.img+'" alt="">' : '<span class="ph">no photo</span>')+
+        '<span><span class="t-name">'+p.name+'</span></span>'+
+        '<span class="t-visit">visit &rarr;</span></button>';
+    });
+    container.innerHTML = html;
+    var blurbTarget = isStatic ? null : document.getElementById('work-blurb');
+    function setBlurb(i){
+      if(!blurbTarget) return;
+      var p = DATA.work[i];
+      blurbTarget.innerHTML = '<span class="proj-tag">'+p.tag+'</span><h3 class="proj-name">'+p.name+'</h3><p style="font-size:.88rem;opacity:.9;line-height:1.55">'+p.desc+'</p>';
+    }
+    if(blurbTarget) setBlurb(0);
+    container.querySelectorAll('.thumb').forEach(function(btn){
+      var i = +btn.getAttribute('data-idx');
+      var p = DATA.work[i];
+      btn.addEventListener('click', function(){
+        container.querySelectorAll('.thumb').forEach(function(b){b.classList.remove('active')});
+        btn.classList.add('active');
+        if(blurbTarget) setBlurb(i);
+        else window.open(p.url, '_blank', 'noopener');
+      });
+      if(isStatic){
+        var extra = document.createElement('div');
+        extra.style.cssText = 'padding:.4rem .2rem .8rem 4.4rem;font-size:.84rem;opacity:.85;line-height:1.5';
+        extra.textContent = p.desc;
+        btn.insertAdjacentElement('afterend', extra);
+      }
+    });
+  }
+
+  function buildClips(container){
+    var html = "";
+    DATA.clips.forEach(function(c, i){
+      var tilt = (i % 2 === 0) ? '-1.4deg' : '1.1deg';
+      // fairtest has no single c.img (it's a before/after pair for the interactive slider) - the
+      // static list has no dragging, so it just shows the "after" shot as a plain thumbnail here
+      var thumb = c.img || c.imgAfter;
+      var inner = (thumb ? '<img class="clip-img" src="'+thumb+'" alt="">' : '<span class="clip-img ph">no image on file yet</span>')+
+        '<div class="clip-body"><span class="clip-cat">'+c.cat+'</span><span class="clip-date">'+c.date+'</span>'+
+        '<p class="clip-title">'+c.title+'</p><span class="clip-status">'+c.status+'</span></div>';
+      if(c.url){
+        html += '<a class="clip" style="--tilt:'+tilt+'" href="'+c.url+'" target="_blank" rel="noopener">'+inner+'</a>';
+      } else {
+        html += '<div class="clip" style="--tilt:'+tilt+'">'+inner+'</div>';
+      }
+    });
+    container.innerHTML = html;
+  }
+
+  function buildFounders(container, expandable){
+    var html = "";
+    DATA.founders.forEach(function(f, i){
+      html += '<div class="founder"'+(expandable ? ' data-founder-idx="'+i+'" tabindex="0" role="button" aria-label="Read '+f.name+'\'s full bio"' : '')+'>'+
+        '<img src="'+f.img+'" alt="'+f.name+'">'+
+        '<div class="founder-body"><h3>'+f.name+'</h3><span class="founder-role">'+f.role+'</span>'+
+        '<p class="founder-bio">'+f.bio+'</p>'+
+        (expandable ? '<span class="founder-more">Read full bio &rarr;</span>' : '')+
+        '<div class="founder-links">'+
+        '<a href="'+f.linkedin+'" target="_blank" rel="noopener" aria-label="'+f.name+' on LinkedIn">'+linkedinSvg+'</a>'+
+        '<a href="mailto:'+f.email+'" aria-label="Email '+f.name+'">'+mailSvg+'</a>'+
+        '</div></div></div>';
+    });
+    container.innerHTML = html;
+  }
+
+  // the same three real articles, shown as clickable frames on the "press" wall - each dot sits in
+  // the middle of one of the ten framed clippings there.
+  var ARTICLE_POSITIONS = [
+    {left:'60.2%', top:'42.5%'},
+    {left:'75.5%', top:'42.5%'},
+    {left:'60.2%', top:'76.9%'}
+  ];
+  // only the wall's trigger buttons are built here now - their content lives in the ONE shared
+  // article panel below, rendered on demand, not one pre-built card per article.
+  function buildArticleWall(hotspotHost){
+    if(!hotspotHost) return;
+    var hotspotHtml = "";
+    DATA.clips.forEach(function(c, i){
+      var pos = ARTICLE_POSITIONS[i] || ARTICLE_POSITIONS[ARTICLE_POSITIONS.length - 1];
+      hotspotHtml += '<button class="hotspot" style="left:'+pos.left+';top:'+pos.top+'" data-info="'+c.id+'" aria-label="'+c.title+', more info"><span></span></button>';
+    });
+    hotspotHost.innerHTML = hotspotHtml;
+  }
+
+  buildWork(document.getElementById('work-thumbs'), false);
+  buildWork(document.getElementById('work-thumbs-static'), true);
+  buildClips(document.getElementById('clips-static'));
+  buildArticleWall(document.getElementById('wall-hotspots'));
+  buildFounders(document.getElementById('founders'), true);
+  buildFounders(document.getElementById('founders-static'), false);
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  function wireMailtoForm(formId, noteId){
+    var form = document.getElementById(formId);
+    if(!form) return;
+    function val(name){
+      var el = form.querySelector('[name="' + name + '"]');
+      return el ? el.value.trim() : '';
+    }
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var name = val('name'), email = val('email'), biz = val('business'), msg = val('message');
+      var type = val('type'), budget = val('budget'), timeline = val('timeline');
+      var subject = "New project inquiry" + (biz ? ", " + biz : "");
+      var body = "Name: " + name + "\nEmail: " + email +
+        (biz ? "\nBusiness: " + biz : "") +
+        (type ? "\nLooking for: " + type : "") +
+        (budget ? "\nBudget: " + budget : "") +
+        (timeline ? "\nTimeline: " + timeline : "") +
+        "\n\n" + msg;
+      var href = "mailto:adam@anchordigitalco.com?cc=jackson@anchordigitalco.com&subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+      window.location.href = href;
+      var note = document.getElementById(noteId);
+      if(note) note.textContent = "Opening your email app, almost there.";
+    });
+  }
+  wireMailtoForm('contact-form', 'form-note');
+  wireMailtoForm('contact-form-static', 'form-note-static');
+
+  // ============ MENU DROPDOWN ============
+  var menuBtn = document.getElementById('menu-btn');
+  var menuDropdown = document.getElementById('menu-dropdown');
+  function closeMenu(){ menuDropdown.classList.remove('open'); menuBtn.setAttribute('aria-expanded','false'); }
+  function toggleMenu(){
+    var open = menuDropdown.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  menuBtn.addEventListener('click', toggleMenu);
+  document.addEventListener('click', function(e){
+    if(!menuDropdown.contains(e.target) && e.target !== menuBtn && !menuBtn.contains(e.target)) closeMenu();
+  });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeMenu(); });
+
+  // ============ STATIC-HERO GATES ============
+  var GATES = [
+    '(max-width: 720px)',
+    '(orientation: portrait) and (max-width: 1024px)',
+    '(orientation: portrait) and (pointer: coarse)',
+    '(orientation: landscape) and (pointer: coarse) and (max-height: 560px)',
+    '(prefers-reduced-motion: reduce)'
+  ];
+  var MQLS = GATES.map(function(q){ return matchMedia(q); });
+  function gatesMatch(){ return MQLS.some(function(m){ return m.matches; }); }
+
+  // ============ WAYPOINTS (discrete stepper, not scroll-scrubbed) ============
+  // this footage opens on its own zoomout: tight on the sign, out to an aerial view of the whole
+  // building (roof sign and all), then it would keep descending toward the door - but threshold
+  // stops it right at that aerial view, on a click or scroll, not before and not further down.
+  var WAYPOINTS = [
+    {id:'start',        t:0},
+    {id:'threshold',    t:7.7},
+    {id:'services',     t:14.2},
+    {id:'work',         t:18.1},
+    {id:'team',         t:22.2},
+    {id:'testimonials', t:26.7},
+    {id:'contact',      t:29.9}
+  ];
+  var FLOOR = 1; // threshold: the landing, and the floor for scroll/arrow-back navigation
+  var LAST = WAYPOINTS.length - 1;
+  var idxOf = {};
+  WAYPOINTS.forEach(function(w,i){ idxOf[w.id] = i; });
+
+  var tourEl = document.getElementById('tour');
+  var stageEl = document.getElementById('stage');
+  var video = document.getElementById('hero-video');
+  var ring = document.getElementById('load-ring');
+  var stepPrev = document.getElementById('step-prev');
+  var stepNext = document.getElementById('step-next');
+
+  var idx = 0;
+  var animating = false;
+  var transitionId = 0; // bumped whenever a transition is superseded, so an orphaned frame loop can't fight a new one
+  var lastStepAt = 0;
+  var MS_PER_VIDEO_SEC = 1000;  // one steady walking pace for every move, entering included
+  var MIN_STEP_MS = 550;
+  var MAX_STEP_MS = 40000;
+  var COOLDOWN_MS = 380;
+  function stepDuration(fromIdx, toIdx){
+    var dt = Math.abs(WAYPOINTS[toIdx].t - WAYPOINTS[fromIdx].t);
+    return Math.max(MIN_STEP_MS, Math.min(MAX_STEP_MS, dt * MS_PER_VIDEO_SEC));
+  }
+  var scrubActive = false; // true once this device is running the fixed-viewport stepper
+
+  function lockScroll(){ document.documentElement.classList.add('locked'); }
+  function unlockScroll(){ document.documentElement.classList.remove('locked'); }
+
+  var bandEls = {};
+  WAYPOINTS.forEach(function(w){
+    if(w.id === 'start') return; // no band for it - nothing shows until the walk-in has landed
+    bandEls[w.id] = document.getElementById('band-' + w.id);
+  });
+
+  function showCard(id){
+    Object.keys(bandEls).forEach(function(key){
+      bandEls[key].classList.toggle('active', key === id);
+    });
+    stageEl.classList.toggle('show-start', id === 'start');
+    if(id === 'threshold') resetEnterButton(); // re-enable the button whenever we land back here
+    closeAllHotspotCards(); // any stop change closes whatever hotspot cards were left open
+    closeFounderBio();
+  }
+  function hideAllCards(){ showCard(null); } // used mid-transition: no card showing at all
+  function resetEnterButton(){
+    var btn = document.getElementById('enter-btn');
+    if(btn) btn.disabled = false;
+  }
+
+  function updateChrome(){
+    var w = WAYPOINTS[idx];
+    document.querySelectorAll('.dot-rail button').forEach(function(btn){
+      btn.classList.toggle('active', btn.getAttribute('data-jump') === w.id);
+    });
+    stepPrev.hidden = idx <= FLOOR;
+    stepNext.hidden = idx <= FLOOR || idx >= LAST; // never before entering (still at the threshold), never after (contact)
+  }
+
+  // ---- gated seeks (never overlap seeks on the video element) ----
+  var seekBusy = false, pendingTime = null;
+  function requestSeek(t){
+    if(!video.duration || isNaN(video.duration)) return;
+    t = Math.min(video.duration - 0.02, Math.max(0, t));
+    if(seekBusy){ pendingTime = t; return; }
+    seekBusy = true;
+    try{ video.currentTime = t; } catch(e){ seekBusy = false; }
+  }
+  video.addEventListener('seeked', function(){
+    seekBusy = false;
+    if(pendingTime !== null){ var t = pendingTime; pendingTime = null; requestSeek(t); }
+  });
+  video.addEventListener('error', function(){ seekBusy = false; pendingTime = null; });
+
+  // walking steps ease OUT only: full speed the instant you act, decelerating into the landing.
+  // an ease-in start reads as latency between the click and anything visibly happening.
+  var easeOut = function(p){ return 1 - Math.pow(1 - p, 3); };
+
+  // ---- the core: animate the video from the current waypoint's time to a target waypoint's time ----
+  function goTo(target){
+    if(!scrubActive) return;
+    if(animating) return;
+    if(target < 0 || target >= WAYPOINTS.length) return;
+    if(target === idx) return;
+    animating = true;
+    var myId = ++transitionId;
+    hideAllCards(); // hide every card while the video is in motion
+    document.body.classList.add('in-motion'); // hide the logo/menu/dots while walking; they return at rest
+    var fromT = WAYPOINTS[idx].t, toT = WAYPOINTS[target].t;
+    var dur = stepDuration(idx, target);
+    var start = performance.now();
+    // the card pops up the instant the motion is visually done, not when the raw timer hits dur:
+    // easeOut's tail is a long, barely-moving glide toward the exact final pixel, so waiting for
+    // elapsed===dur reads as lag even after the video looks stopped. reveal as soon as the eased
+    // position is within a hair of its destination instead - this scales with the ease curve itself,
+    // not a fixed guess of how long that tail happens to take on any given hop.
+    var revealed = false;
+    var EASE_REVEAL_AT = 0.86;
+    function reveal(){
+      if(revealed) return;
+      revealed = true;
+      idx = target;
+      animating = false; // free to act again the instant the card is up, the tiny motion tail left
+      lastStepAt = performance.now(); // finishes quietly on its own and can't be interrupted mid-seek
+      document.body.classList.remove('in-motion');
+      showCard(WAYPOINTS[idx].id);
+      updateChrome();
+    }
+    function frame(now){
+      if(myId !== transitionId) return; // superseded (a reset or a newer jump); stop cleanly, no more seeks
+      var elapsed = now - start;
+      var p = Math.min(1, elapsed / dur);
+      var eased = easeOut(p);
+      if(!revealed){
+        requestSeek(fromT + (toT - fromT) * eased);
+        // the moment we decide to reveal, snap straight to the exact target frame instead of
+        // continuing to ease through the last stretch - otherwise the card (and its hotspots)
+        // appear over a still-mid-seek, softer frame instead of the sharp one it lands on.
+        if(eased >= EASE_REVEAL_AT){
+          requestSeek(toT);
+          reveal();
+        }
+      }
+      if(p < 1){
+        requestAnimationFrame(frame);
+      } else {
+        animating = false;
+        lastStepAt = performance.now();
+        reveal();
+        if(idx === LAST){
+          tourEl.classList.add('settled');
+          unlockScroll();
+        }
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function next(){ goTo(idx + 1); }
+  function prev(){ if(idx <= FLOOR) return; goTo(idx - 1); }
+  // scrolling/arrow-keys never advance past the threshold: that step takes a deliberate click
+  function scrollNext(){ if(idx === FLOOR) return; next(); }
+
+  function canStep(){
+    return scrubActive && !animating && (performance.now() - lastStepAt) > COOLDOWN_MS;
+  }
+
+  function resetToLanding(){
+    if(!scrubActive) return;
+    transitionId++; // invalidate any in-flight goTo() so it can't seek against us
+    animating = false;
+    document.body.classList.remove('in-motion');
+    tourEl.classList.remove('settled');
+    lockScroll();
+    window.scrollTo(0,0);
+    idx = 0;
+    lastStepAt = performance.now();
+    requestSeek(0);
+    showCard('start');
+    updateChrome();
+  }
+
+  // ---- input: wheel / touch / keyboard, all funnel into next()/prev() ----
+  // once settled at the end, the page is a normal scrollable document again (the footer lives below):
+  // let the browser handle scrolling there instead of hijacking it.
+  // any open card with its own scrollable content (the article panel, a founder bio, a services
+  // card) works the same way: scrolling inside it just scrolls it, full stop - it never advances
+  // the section, no matter how far you scroll or where the content's own edge is. only once that
+  // card is closed does scrolling go back to driving the tour.
+  function insideOpenCard(target){
+    return !!target.closest('.popup-card:not([hidden]), .bio-modal-card');
+  }
+  function onWheel(e){
+    if(!scrubActive || tourEl.classList.contains('settled')) return;
+    if(insideOpenCard(e.target)) return;
+    e.preventDefault();
+    if(!canStep()) return;
+    if(e.deltaY > 4) scrollNext();
+    else if(e.deltaY < -4) prev();
+  }
+  var touchStartY = null;
+  var touchInCard = false;
+  function onTouchStart(e){
+    if(!scrubActive) return;
+    touchStartY = e.touches[0].clientY;
+    touchInCard = insideOpenCard(e.target);
+  }
+  function onTouchMove(e){
+    if(!scrubActive || tourEl.classList.contains('settled') || touchInCard) return;
+    e.preventDefault();
+  }
+  function onTouchEnd(e){
+    if(!scrubActive || touchStartY === null || tourEl.classList.contains('settled') || touchInCard){
+      touchStartY = null; touchInCard = false; return;
+    }
+    var dy = touchStartY - (e.changedTouches[0] ? e.changedTouches[0].clientY : touchStartY);
+    touchStartY = null;
+    if(!canStep()) return;
+    if(dy > 30) scrollNext();
+    else if(dy < -30) prev();
+  }
+  function onKeydown(e){
+    if(!scrubActive || tourEl.classList.contains('settled')) return;
+    var downKeys = ['ArrowDown','PageDown',' '];
+    var upKeys = ['ArrowUp','PageUp'];
+    if(downKeys.indexOf(e.key) !== -1){
+      e.preventDefault();
+      if(canStep()) scrollNext();
+    } else if(upKeys.indexOf(e.key) !== -1){
+      e.preventDefault();
+      if(canStep()) prev();
+    }
+  }
+
+  stepNext.addEventListener('click', function(){ if(canStep()) scrollNext(); });
+  stepPrev.addEventListener('click', function(){ if(canStep()) prev(); });
+
+  // the start overlay says "scroll or click to step inside": a plain click on it should do what
+  // scrolling does. only live while idx is actually 0 ('start'), so it never eats clicks anywhere
+  // else in the tour.
+  document.getElementById('start-overlay').addEventListener('click', function(){
+    if(!scrubActive || idx !== 0) return;
+    if(canStep()) next();
+  });
+
+  // ============ streamed blob loader (unchanged mechanics, gated by device capability) ============
+  var VIDEO_URL = 'assets/hero-scrub.mp4';
+  var VIDEO_BYTES = 17517578;
+  var started = false;
+  function startBlobFetch(){
+    if(started) return;
+    if(gatesMatch()) return; // static-hero gate: never fetch the video
+    started = true;
+    loadHeroBlob().catch(failVideo);
+  }
+  var posterImg = new Image();
+  posterImg.onload = startBlobFetch;
+  posterImg.onerror = startBlobFetch;
+  posterImg.src = 'assets/frame-start.jpg';
+  setTimeout(startBlobFetch, 4000);
+
+  function loadHeroBlob(){
+    var ctrl = new AbortController();
+    var watchdog = setTimeout(function(){ ctrl.abort(); }, 20000);
+    return fetch(VIDEO_URL, {signal: ctrl.signal}).then(function(res){
+      var total = Number(res.headers.get('Content-Length')) || VIDEO_BYTES;
+      var reader = res.body.getReader();
+      var chunks = [];
+      var got = 0, lastRing = 0;
+      function pump(){
+        return reader.read().then(function(result){
+          if(result.done){
+            clearTimeout(watchdog);
+            ring.style.setProperty('--ld', 0);
+            ring.classList.add('hidden');
+            var blob = new Blob(chunks);
+            video.src = URL.createObjectURL(blob);
+            video.load();
+            video.addEventListener('canplay', function(){
+              // if a transition is already mid-flight (the visitor didn't wait for the video to
+              // finish loading before clicking to enter), don't fight it with a stale
+              // seek to the old waypoint: its own frame loop was already calling requestSeek every
+              // tick, those just had nowhere to go until now, so let its very next tick catch up
+              // on its own instead of jumping the video first and correcting a frame later.
+              if(!animating) requestSeek(WAYPOINTS[idx].t);
+              stageEl.classList.add('video-ready');
+            }, {once:true});
+            return;
+          }
+          clearTimeout(watchdog);
+          watchdog = setTimeout(function(){ ctrl.abort(); }, 20000);
+          chunks.push(result.value);
+          got += result.value.length;
+          var frac = Math.min(1, got/total);
+          var now = performance.now();
+          if(now - lastRing > 100 || frac === 1){
+            lastRing = now;
+            ring.style.setProperty('--ld', Math.round(126 * (1 - frac)));
+          }
+          return pump();
+        });
+      }
+      return pump();
+    });
+  }
+  function failVideo(){
+    ring.classList.add('hidden');
+    stageEl.classList.add('video-failed');
+  }
+
+  function enableScrubMode(){
+    if(scrubActive) return;
+    scrubActive = true;
+    lockScroll();
+    document.addEventListener('wheel', onWheel, {passive:false});
+    document.addEventListener('touchstart', onTouchStart, {passive:true});
+    document.addEventListener('touchmove', onTouchMove, {passive:false});
+    document.addEventListener('touchend', onTouchEnd, {passive:true});
+    document.addEventListener('keydown', onKeydown);
+    // re-sync the frame and the visible card to wherever we left off (a resize or a settings
+    // flip can bring this mode back mid-tour, not just from a fresh load); at idx 0 ('start')
+    // that's simply the video's own opening frame, with nothing shown until a click or scroll
+    // walks it forward to the threshold.
+    requestSeek(WAYPOINTS[idx].t);
+    showCard(WAYPOINTS[idx].id);
+    updateChrome();
+  }
+  function disableScrubMode(){
+    if(!scrubActive) return;
+    scrubActive = false;
+    transitionId++; // orphan any in-flight goTo() loop so it stops seeking a hidden video
+    animating = false;
+    document.body.classList.remove('in-motion');
+    tourEl.classList.remove('settled');
+    unlockScroll();
+    document.removeEventListener('wheel', onWheel);
+    document.removeEventListener('touchstart', onTouchStart);
+    document.removeEventListener('touchmove', onTouchMove);
+    document.removeEventListener('touchend', onTouchEnd);
+    document.removeEventListener('keydown', onKeydown);
+  }
+  function applyHeroMode(){
+    if(gatesMatch()) disableScrubMode(); else enableScrubMode();
+  }
+  MQLS.forEach(function(m){ m.addEventListener('change', applyHeroMode); });
+  applyHeroMode();
+
+  // ============ SERVICES HEADER CLEARANCE: measured, not guessed. The header card's height moves
+  // with copy changes and text wrapping, so instead of hard-coding a percentage that has to be
+  // re-tuned by hand every time, measure its real rendered bottom edge and expose it as a CSS
+  // variable; the popup cards below then clear it via max(dot-position, header-bottom + margin),
+  // never picking a fixed spot that can drift out of sync with what's actually on screen. ============
+  var servicesBandEl = document.getElementById('band-services');
+  var servicesBannerEl = document.querySelector('.services-banner');
+  function measureServicesHeader(){
+    if(!servicesBandEl || !servicesBannerEl) return;
+    var bandTop = servicesBandEl.getBoundingClientRect().top;
+    var bannerBottom = servicesBannerEl.getBoundingClientRect().bottom;
+    servicesBandEl.style.setProperty('--services-header-bottom', Math.max(0, bannerBottom - bandTop) + 'px');
+  }
+  measureServicesHeader();
+  window.addEventListener('resize', measureServicesHeader);
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(measureServicesHeader);
+
+  // ============ NAV JUMPS (menu, dot rail, footer, in-card links, logo) ============
+  function jumpTo(id){
+    closeMenu();
+    if(!scrubActive){
+      var target = document.getElementById('s-' + id) || document.getElementById(id) || document.getElementById('s-threshold');
+      if(target) target.scrollIntoView({behavior:'smooth'});
+      return;
+    }
+    if(animating) return;
+    if(tourEl.classList.contains('settled')){
+      tourEl.classList.remove('settled');
+      lockScroll();
+      window.scrollTo(0,0);
+    }
+    var target2 = idxOf[id];
+    if(target2 === undefined) return;
+    goTo(target2);
+  }
+  // the Guide menu is a jump, not another walk: cut straight to the stop, no animated travel through it
+  function instantJumpTo(id){
+    closeMenu();
+    if(!scrubActive){
+      var s = document.getElementById('s-' + id) || document.getElementById(id) || document.getElementById('s-threshold');
+      if(s) s.scrollIntoView({behavior:'smooth'});
+      return;
+    }
+    var target2 = idxOf[id];
+    if(target2 === undefined) return;
+    transitionId++; // cancel anything still mid-flight so it can't fight this cut
+    animating = false;
+    document.body.classList.remove('in-motion');
+    if(tourEl.classList.contains('settled')){
+      tourEl.classList.remove('settled');
+      lockScroll();
+    }
+    idx = target2;
+    requestSeek(WAYPOINTS[idx].t);
+    showCard(WAYPOINTS[idx].id);
+    updateChrome();
+    if(idx === LAST){ tourEl.classList.add('settled'); unlockScroll(); }
+    lastStepAt = performance.now();
+  }
+  document.querySelectorAll('[data-jump]').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault();
+      var id = el.getAttribute('data-jump');
+      if(el.closest('#menu-dropdown')) instantJumpTo(id);
+      else jumpTo(id);
+    });
+  });
+  document.getElementById('logo-home').addEventListener('click', function(e){
+    e.preventDefault();
+    closeMenu();
+    if(!scrubActive){
+      var t = document.getElementById('s-threshold');
+      if(t) t.scrollIntoView({behavior:'smooth'});
+      return;
+    }
+    resetToLanding();
+  });
+
+  // the client portal itself isn't live yet - the page it links to says so honestly and points
+  // to a real email instead of pretending to log anyone in.
+
+  // ============ ENTER (threshold -> services) ============
+  var enterBtn = document.getElementById('enter-btn');
+  if(enterBtn){
+    enterBtn.addEventListener('click', function(){
+      if(idx !== FLOOR) return;
+      if(!canStep()) return;
+      enterBtn.disabled = true;
+      next();
+    });
+  }
+
+  // ============ HOTSPOTS (computers and the wall of articles): click one, its card opens; several
+  // can be open at once, and the tray reflows on its own (flexbox) to make room as more join it.
+  // Shape follows OPEN ORDER, not which hotspot it is: whichever two are open first are the tall
+  // vertical cards, and a third one joining them becomes the wide horizontal one, no matter which
+  // three get clicked or in what order. ============
+  var openOrder = [];
+  function applyCardShapes(){
+    openOrder.forEach(function(info, i){
+      var card = document.querySelector('.popup-card[data-info="' + info + '"]');
+      if(!card) return;
+      card.classList.toggle('card-vertical', i < 2);
+      card.classList.toggle('card-horizontal', i >= 2);
+    });
+  }
+  function openHotspotCard(info){
+    var card = document.querySelector('.popup-card[data-info="' + info + '"]');
+    var dot = document.querySelector('.hotspot[data-info="' + info + '"]');
+    if(!card || !card.hidden) return;
+    card.hidden = false;
+    if(dot) dot.classList.add('open');
+    if(openOrder.indexOf(info) === -1) openOrder.push(info);
+    applyCardShapes();
+    requestAnimationFrame(function(){ card.classList.add('in'); });
+  }
+  function closeHotspotCard(info){
+    var card = document.querySelector('.popup-card[data-info="' + info + '"]');
+    var dot = document.querySelector('.hotspot[data-info="' + info + '"]');
+    if(!card || card.hidden) return;
+    card.classList.remove('in');
+    if(dot) dot.classList.remove('open');
+    var i = openOrder.indexOf(info);
+    if(i !== -1) openOrder.splice(i, 1);
+    applyCardShapes();
+    setTimeout(function(){ card.hidden = true; card.classList.remove('card-vertical','card-horizontal'); }, 150);
+  }
+  function closeAllHotspotCards(){
+    // queried fresh (not the cached popupCards list): this can run before that list, and before
+    // build*() has even inserted the wall's cards, during the very first applyHeroMode() at load.
+    // :not(.article-panel) - that one card is closed through hideArticlePanel() below instead, it
+    // isn't part of the open-order/shape system this loop manages.
+    document.querySelectorAll('.popup-card:not(.article-panel)').forEach(function(card){
+      if(!card.hidden) closeHotspotCard(card.getAttribute('data-info'));
+    });
+    openOrder = [];
+    hideArticlePanel();
+  }
+
+  // ============ ARTICLE PANEL (team wall): ONE shared panel, not one per article. A single piece
+  // of state - which article is active, or none - drives it; there is no per-card open/closed
+  // boolean to fall out of sync, so nothing can ever be open at the same time as anything else.
+  // Opening a different article swaps this panel's content in place; it never creates a second
+  // panel, which is what made cards pile up and overlap before. ============
+  var activeArticle = null;
+  var articlePanelEl = document.getElementById('article-panel');
+  var articlePanelBody = document.getElementById('article-panel-body');
+  // every card uses the exact same photo box (.clip-img's width:100%;aspect-ratio:4/3, set once in
+  // the shared CSS) whether it holds one plain image or this before/after pair - only what's inside
+  // the box differs, never the box itself.
+  function renderArticleMedia(c){
+    if(c.imgBefore && c.imgAfter){
+      return '<div class="ba-slider" data-ba tabindex="0" role="slider" aria-label="Before and after redesign" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">'+
+        '<img class="clip-img ba-img ba-before" src="'+c.imgBefore+'" alt="Before">'+
+        '<img class="clip-img ba-img ba-after" src="'+c.imgAfter+'" alt="After">'+
+        '<div class="ba-line" aria-hidden="true"></div>'+
+        '<div class="ba-handle" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 7-5 5 5 5M15 7l5 5-5 5"/></svg></div>'+
+        '<span class="ba-label ba-label-before" aria-hidden="true">Before</span>'+
+        '<span class="ba-label ba-label-after" aria-hidden="true">After</span>'+
+        '</div>';
+    }
+    return c.img ? '<img class="clip-img" src="'+c.img+'" alt="">' : '';
+  }
+  // drag (mouse or touch, one pointer-event API for both) or arrow-key the handle to reveal more
+  // of the after shot - a plain CSS clip-path on the after image, so no canvas/library involved
+  function initBeforeAfterSlider(el){
+    var after = el.querySelector('.ba-after');
+    var line = el.querySelector('.ba-line');
+    var handle = el.querySelector('.ba-handle');
+    if(!after || !line || !handle) return;
+    function setPos(pct){
+      pct = Math.max(0, Math.min(100, pct));
+      after.style.clipPath = 'inset(0 ' + (100 - pct) + '% 0 0)';
+      line.style.left = pct + '%';
+      handle.style.left = pct + '%';
+      el.setAttribute('aria-valuenow', String(Math.round(pct)));
+    }
+    function pctFromEvent(e){
+      var rect = el.getBoundingClientRect();
+      var x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      return (x / rect.width) * 100;
+    }
+    var dragging = false;
+    el.addEventListener('pointerdown', function(e){
+      dragging = true;
+      if(el.setPointerCapture) el.setPointerCapture(e.pointerId);
+      setPos(pctFromEvent(e));
+    });
+    el.addEventListener('pointermove', function(e){ if(dragging) setPos(pctFromEvent(e)); });
+    el.addEventListener('pointerup', function(){ dragging = false; });
+    el.addEventListener('pointercancel', function(){ dragging = false; });
+    el.addEventListener('keydown', function(e){
+      var cur = parseFloat(el.getAttribute('aria-valuenow')) || 50;
+      if(e.key === 'ArrowLeft'){ setPos(cur - 5); e.preventDefault(); }
+      else if(e.key === 'ArrowRight'){ setPos(cur + 5); e.preventDefault(); }
+    });
+    setPos(50);
+  }
+  function renderArticleBody(c){
+    // the photo is a small floated card INSIDE the text block (not a full-width block above it),
+    // so the copy starts beside it on the left and wraps to full width once past the photo.
+    var media = '<div class="article-photo">'+renderArticleMedia(c)+'</div>';
+    var link = c.url ? '<a class="btn-outline" style="margin-top:1rem;display:inline-block" href="'+c.url+'" target="_blank" rel="noopener">Visit site</a>' : '';
+    var paras = (c.body || []).map(function(p){ return '<p>'+p+'</p>'; }).join('');
+    return '<div class="clip-text">'+
+      media+
+      '<span class="clip-cat" style="display:block;margin-top:.6rem">'+c.cat+' &middot; '+c.date+'</span>'+
+      '<p class="kicker" style="margin-top:.3rem">'+c.title+'</p>'+
+      paras+
+      '<span class="clip-status" style="display:block;margin-top:.8rem;opacity:.7">'+c.status+'</span>'+
+      link+
+      '</div>';
+  }
+  function showArticlePanel(id){
+    if(!articlePanelEl || !articlePanelBody) return;
+    var c = DATA.clips.filter(function(x){ return x.id === id; })[0];
+    if(!c) return;
+    activeArticle = id;
+    articlePanelBody.innerHTML = renderArticleBody(c);
+    articlePanelBody.scrollTop = 0;
+    var slider = articlePanelBody.querySelector('.ba-slider');
+    if(slider) initBeforeAfterSlider(slider);
+    articlePanelEl.hidden = false;
+    requestAnimationFrame(function(){ articlePanelEl.classList.add('in'); });
+    document.querySelectorAll('#wall-hotspots .hotspot').forEach(function(b){
+      b.classList.toggle('open', b.getAttribute('data-info') === id);
+    });
+  }
+  function hideArticlePanel(){
+    if(!activeArticle || !articlePanelEl) return;
+    var closingId = activeArticle;
+    activeArticle = null;
+    articlePanelEl.classList.remove('in');
+    document.querySelectorAll('#wall-hotspots .hotspot').forEach(function(b){ b.classList.remove('open'); });
+    setTimeout(function(){
+      // only actually hide it if nothing reopened the panel in the meantime
+      if(activeArticle === null) articlePanelEl.hidden = true;
+    }, 150);
+  }
+  function toggleArticlePanel(id){
+    if(activeArticle === id) hideArticlePanel();
+    else showArticlePanel(id);
+  }
+
+  document.querySelectorAll('.hotspot').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var info = btn.getAttribute('data-info');
+      if(btn.closest('#wall-hotspots')){ toggleArticlePanel(info); return; }
+      if(btn.classList.contains('open')) closeHotspotCard(info);
+      else openHotspotCard(info);
+    });
+  });
+  document.querySelectorAll('.popup-close').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var card = btn.closest('.popup-card');
+      if(!card) return;
+      if(card.id === 'article-panel'){ hideArticlePanel(); return; }
+      closeHotspotCard(card.getAttribute('data-info'));
+    });
+  });
+
+  // ============ FOUNDER BIO MODAL: click a founder, the full bio opens big and centered ============
+  var bioModal = document.getElementById('bio-modal');
+  var bioModalBody = document.getElementById('bio-modal-body');
+  function openFounderBio(i){
+    var f = DATA.founders[i];
+    if(!f || !bioModal) return;
+    bioModalBody.innerHTML = '<div class="founder">'+
+      '<img src="'+f.img+'" alt="'+f.name+'">'+
+      '<div class="founder-body"><h3>'+f.name+'</h3><span class="founder-role">'+f.role+'</span>'+
+      '<p class="founder-bio">'+f.bio+'</p>'+
+      '<div class="founder-links">'+
+      '<a href="'+f.linkedin+'" target="_blank" rel="noopener" aria-label="'+f.name+' on LinkedIn">'+linkedinSvg+'</a>'+
+      '<a href="mailto:'+f.email+'" aria-label="Email '+f.name+'">'+mailSvg+'</a>'+
+      '</div></div></div>';
+    bioModal.hidden = false;
+    requestAnimationFrame(function(){ bioModal.classList.add('in'); });
+  }
+  function closeFounderBio(){
+    if(!bioModal || bioModal.hidden) return;
+    bioModal.classList.remove('in');
+    setTimeout(function(){ bioModal.hidden = true; }, 300);
+  }
+  document.querySelectorAll('.founder[data-founder-idx]').forEach(function(el){
+    el.addEventListener('click', function(e){
+      if(e.target.closest('a')) return; // let the LinkedIn/email links behave normally
+      openFounderBio(+el.getAttribute('data-founder-idx'));
+    });
+    el.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        openFounderBio(+el.getAttribute('data-founder-idx'));
+      }
+    });
+  });
+  if(bioModal){
+    bioModal.querySelectorAll('[data-close-bio]').forEach(function(el){
+      el.addEventListener('click', closeFounderBio);
+    });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape') closeFounderBio();
+    });
+  }
+})();
+</script>

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Client Portal - Anchor Digital</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;600;700&family=Varela+Round&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --dark:#1F1E1C;
+    --dark-ink:#F2F0EC;
+    --accent:#FFFFFF;
+    --accent-hover:#C9C6C0;
+    --ink:#131313;
+    --font-body:'Karla',Helvetica Neue,Arial,sans-serif;
+    --font-word:'Varela Round',Helvetica Neue,Arial,sans-serif;
+    --font-mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --ease-soft:cubic-bezier(.4,0,.2,1);
+    --tshadow:0 1px 2px rgba(10,9,7,.9),0 3px 14px rgba(10,9,7,.6),0 12px 46px rgba(10,9,7,.55);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:var(--font-body);color:var(--dark-ink);
+    min-height:100vh;min-height:100dvh;
+    background:#0c0b0a;
+    display:flex;align-items:center;justify-content:center;
+    padding:2rem 1.25rem;
+    position:relative;
+  }
+  .portal-bg{
+    position:fixed;inset:0;z-index:0;
+    background-image:url('assets/pillars/innovation.jpg');
+    background-size:cover;background-position:center;
+  }
+  .portal-scrim{
+    position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(ellipse 90% 80% at 50% 40%,rgba(10,9,7,.35) 0%,rgba(10,9,7,.72) 100%);
+  }
+  .portal-home{
+    position:fixed;top:1.6rem;left:1.6rem;z-index:3;
+    display:flex;align-items:center;gap:.5rem;
+    font-family:var(--font-word);font-size:.98rem;color:var(--dark-ink);
+    text-decoration:none;text-shadow:var(--tshadow);
+    opacity:.9;transition:opacity .25s var(--ease-soft);
+  }
+  .portal-home:hover{opacity:1}
+  .portal-home svg{width:16px;height:16px}
+  .portal-card{
+    position:relative;z-index:2;
+    width:100%;max-width:26rem;
+    padding:clamp(1.8rem,4vw,2.6rem);
+    border-radius:24px;
+    background:rgba(255,255,255,.1);
+    border:1px solid rgba(255,255,255,.28);
+    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    box-shadow:0 20px 60px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.2);
+  }
+  .portal-kicker{
+    font-family:var(--font-mono);font-size:.7rem;letter-spacing:.12em;text-transform:lowercase;
+    color:var(--accent);display:flex;align-items:center;gap:.55rem;margin-bottom:1.1rem;
+  }
+  .portal-kicker::before{content:"";width:20px;height:1px;background:var(--accent)}
+  .portal-card h1{
+    font-size:clamp(1.4rem,3vw,1.7rem);line-height:1.2;margin:0 0 .5rem;font-weight:600;
+    text-shadow:var(--tshadow);
+  }
+  .portal-lede{font-size:.9rem;opacity:.85;margin:0 0 1.7rem;line-height:1.55}
+  .portal-field{margin-bottom:1.1rem}
+  .portal-field label{
+    display:block;font-family:var(--font-mono);font-size:.7rem;letter-spacing:.04em;
+    text-transform:lowercase;opacity:.75;margin-bottom:.45rem;
+  }
+  .portal-field input{
+    width:100%;padding:.8rem .9rem;border-radius:12px;
+    background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.22);
+    color:var(--dark-ink);font-family:var(--font-body);font-size:.92rem;
+    transition:border-color .2s var(--ease-soft),background .2s var(--ease-soft);
+  }
+  .portal-field input::placeholder{color:rgba(242,240,236,.4)}
+  .portal-field input:focus{outline:none;border-color:rgba(255,255,255,.55);background:rgba(0,0,0,.3)}
+  .portal-submit{
+    width:100%;margin-top:.4rem;padding:.9rem 1rem;border-radius:99px;border:0;cursor:pointer;
+    background:var(--accent);color:var(--ink);font-family:var(--font-mono);font-size:.82rem;letter-spacing:.02em;
+    transition:background .25s var(--ease-soft),transform .25s var(--ease-soft);
+  }
+  .portal-submit:hover{background:var(--accent-hover);transform:translateY(-1px)}
+  .portal-note{
+    margin-top:1.5rem;padding-top:1.3rem;border-top:1px solid rgba(255,255,255,.18);
+    font-size:.82rem;line-height:1.6;opacity:.85;
+  }
+  .portal-note a{color:var(--dark-ink);text-decoration:underline;text-underline-offset:2px}
+  .portal-status{
+    margin-top:1rem;padding:.8rem 1rem;border-radius:12px;
+    background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.3);
+    font-size:.82rem;line-height:1.5;opacity:0;max-height:0;overflow:hidden;
+    transition:opacity .3s var(--ease-soft),max-height .3s var(--ease-soft),margin-top .3s var(--ease-soft);
+  }
+  .portal-status.show{opacity:1;max-height:200px;margin-top:1rem}
+</style>
+</head>
+<body>
+  <div class="portal-bg" aria-hidden="true"></div>
+  <div class="portal-scrim" aria-hidden="true"></div>
+
+  <a class="portal-home" href="index.html" aria-label="Back to Anchor Digital">
+    <svg viewBox="0 0 16 16" fill="none"><path d="M10 3 5 8l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    anchor digital
+  </a>
+
+  <div class="portal-card">
+    <p class="portal-kicker">client portal</p>
+    <h1>Login to your account</h1>
+    <p class="portal-lede">Enter your email to access your project dashboard.</p>
+    <form id="portal-form">
+      <div class="portal-field">
+        <label for="portal-email">Email</label>
+        <input id="portal-email" type="email" placeholder="you@company.com" autocomplete="email" required>
+      </div>
+      <div class="portal-field">
+        <label for="portal-password">Password</label>
+        <input id="portal-password" type="password" placeholder="••••••••" autocomplete="current-password" required>
+      </div>
+      <button class="portal-submit" type="submit">Log in</button>
+      <div class="portal-status" id="portal-status" role="status" aria-live="polite"></div>
+    </form>
+    <p class="portal-note">
+      Client accounts are set up individually as projects kick off, this isn't live yet, so
+      logging in below just shows you a preview of what your dashboard will look like. Email
+      <a href="mailto:adam@anchordigitalco.com">adam@anchordigitalco.com</a> or
+      <a href="mailto:jackson@anchordigitalco.com">jackson@anchordigitalco.com</a> to get connected for real.
+    </p>
+  </div>
+
+  <script>
+  (function(){
+    "use strict";
+    var form = document.getElementById('portal-form');
+    var status = document.getElementById('portal-status');
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      status.textContent = "Taking you to a preview of your dashboard...";
+      status.classList.add('show');
+      setTimeout(function(){ window.location.href = 'dashboard.html'; }, 500);
+    });
+  })();
+  </script>
+</body>
+</html>
