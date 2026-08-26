@@ -1543,11 +1543,14 @@ body.video-failed .card{max-width:100%}
     var start = performance.now();
     // the card pops up the instant the motion is visually done, not when the raw timer hits dur:
     // easeOut's tail is a long, barely-moving glide toward the exact final pixel, so waiting for
-    // elapsed===dur reads as lag even after the video looks stopped. reveal as soon as the eased
-    // position is within a hair of its destination instead - this scales with the ease curve itself,
-    // not a fixed guess of how long that tail happens to take on any given hop.
+    // elapsed===dur reads as lag even after the video looks stopped. reveal once the INTERPOLATED
+    // position is within a small fixed amount of real video-time of the target, rather than a fixed
+    // percentage of the ease curve - a percentage skips a bigger absolute chunk of footage (and
+    // reads as a jump) on a long hop than a short one, since dur scales with the hop's own length.
+    // capping the absolute remaining video-time instead keeps the final snap equally imperceptible
+    // regardless of hop length, while naturally revealing earlier (in wall-clock ms) on longer hops.
     var revealed = false;
-    var EASE_REVEAL_AT = 0.995;
+    var SNAP_THRESHOLD_SEC = 0.15;
     function reveal(){
       if(revealed) return;
       revealed = true;
@@ -1564,11 +1567,14 @@ body.video-failed .card{max-width:100%}
       var p = Math.min(1, elapsed / dur);
       var eased = easeOut(p);
       if(!revealed){
-        requestSeek(fromT + (toT - fromT) * eased);
+        var interp = fromT + (toT - fromT) * eased;
+        requestSeek(interp);
         // the moment we decide to reveal, snap straight to the exact target frame instead of
         // continuing to ease through the last stretch - otherwise the card (and its hotspots)
         // appear over a still-mid-seek, softer frame instead of the sharp one it lands on.
-        if(eased >= EASE_REVEAL_AT){
+        // gated on p>=0.3 too so a very short hop (small |toT-fromT|) can't satisfy the
+        // video-time threshold right out of the gate and skip the glide entirely.
+        if(p >= 1 || (p >= 0.3 && Math.abs(toT - interp) <= SNAP_THRESHOLD_SEC)){
           requestSeek(toT);
           reveal();
         }
