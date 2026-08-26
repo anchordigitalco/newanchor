@@ -30,7 +30,10 @@
     display:flex;align-items:center;justify-content:center;
     padding:2rem 1.25rem;
     position:relative;
+    visibility:hidden;
   }
+  body.ready{visibility:visible}
+  a{color:inherit}
   .portal-bg{
     position:fixed;inset:0;z-index:0;
     background-image:url('assets/pillars/innovation.jpg');
@@ -85,9 +88,10 @@
   .portal-submit{
     width:100%;margin-top:.4rem;padding:.9rem 1rem;border-radius:99px;border:0;cursor:pointer;
     background:var(--accent);color:var(--ink);font-family:var(--font-mono);font-size:.82rem;letter-spacing:.02em;
-    transition:background .25s var(--ease-soft),transform .25s var(--ease-soft);
+    transition:background .25s var(--ease-soft),transform .25s var(--ease-soft),opacity .2s var(--ease-soft);
   }
   .portal-submit:hover{background:var(--accent-hover);transform:translateY(-1px)}
+  .portal-submit:disabled{opacity:.55;cursor:default;transform:none}
   .portal-note{
     margin-top:1.5rem;padding-top:1.3rem;border-top:1px solid rgba(255,255,255,.18);
     font-size:.82rem;line-height:1.6;opacity:.85;
@@ -114,7 +118,7 @@
   <div class="portal-card">
     <p class="portal-kicker">client portal</p>
     <h1>Login to your account</h1>
-    <p class="portal-lede">Enter your email to access your project dashboard.</p>
+    <p class="portal-lede">Enter your email and password to access your project dashboard.</p>
     <form id="portal-form">
       <div class="portal-field">
         <label for="portal-email">Email</label>
@@ -128,25 +132,62 @@
       <div class="portal-status" id="portal-status" role="status" aria-live="polite"></div>
     </form>
     <p class="portal-note">
-      Client accounts are set up individually as projects kick off, this isn't live yet, so
-      logging in below just shows you a preview of what your dashboard will look like. Email
-      <a href="mailto:adam@anchordigitalco.com">adam@anchordigitalco.com</a> or
-      <a href="mailto:jackson@anchordigitalco.com">jackson@anchordigitalco.com</a> to get connected for real.
+      Client accounts are set up individually as projects kick off. If you don't have login
+      details yet, email <a href="mailto:adam@anchordigitalco.com">adam@anchordigitalco.com</a>
+      or <a href="mailto:jackson@anchordigitalco.com">jackson@anchordigitalco.com</a> to get connected.
     </p>
   </div>
 
-  <script>
-  (function(){
-    "use strict";
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    var SUPABASE_URL = 'https://sroncqqparjklohbyidt.supabase.co';
+    var SUPABASE_ANON_KEY = 'sb_publishable_5buinIijAx9Y_3ZpJ3d_BA_Jd-5cpyw';
+    var supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
     var form = document.getElementById('portal-form');
+    var submitBtn = form.querySelector('.portal-submit');
     var status = document.getElementById('portal-status');
-    form.addEventListener('submit', function(e){
-      e.preventDefault();
-      status.textContent = "Taking you to a preview of your dashboard...";
+
+    function showStatus(text){
+      status.textContent = text;
       status.classList.add('show');
-      setTimeout(function(){ window.location.href = 'dashboard.html'; }, 500);
+    }
+
+    (async function init(){
+      try {
+        var res = await supabase.auth.getUser();
+        if(res && res.data && res.data.user){
+          window.location.replace('dashboard.html');
+          return;
+        }
+      } catch (err) {
+        console.error('portal auth check error', err);
+      }
+      document.body.classList.add('ready');
+    })();
+
+    form.addEventListener('submit', async function(e){
+      e.preventDefault();
+      var email = document.getElementById('portal-email').value.trim();
+      var password = document.getElementById('portal-password').value;
+      submitBtn.disabled = true;
+      showStatus('Logging in...');
+      try {
+        var result = await supabase.auth.signInWithPassword({ email: email, password: password });
+        if(result.error){
+          showStatus("That email or password didn't work. Double-check it, or email adam@anchordigitalco.com if you're not sure what's on file.");
+          submitBtn.disabled = false;
+          return;
+        }
+        showStatus('Taking you to your dashboard...');
+        window.location.href = 'dashboard.html';
+      } catch (err) {
+        console.error('sign in error', err);
+        showStatus("Something went wrong logging in, try again in a moment.");
+        submitBtn.disabled = false;
+      }
     });
-  })();
   </script>
 </body>
 </html>

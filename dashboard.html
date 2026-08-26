@@ -29,7 +29,9 @@
     font-family:var(--font-body);color:var(--dark-ink);background:var(--dark);
     min-height:100vh;min-height:100dvh;
     display:flex;
+    visibility:hidden;
   }
+  body.ready{visibility:visible}
   a{color:inherit}
 
   /* ---- sidebar ---- */
@@ -58,8 +60,9 @@
   .sidebar-link:hover{background:rgba(242,240,236,.06);color:var(--dark-ink)}
   .sidebar-link.active{background:rgba(242,240,236,.1);color:var(--dark-ink)}
   button.sidebar-link{background:none;border:0;font-family:inherit;text-align:left;cursor:pointer;width:100%}
+  .sidebar-foot{border-top:1px solid var(--hairline);padding-top:.6rem;margin-top:.6rem;display:flex;flex-direction:column;gap:.2rem}
   .sidebar-toggle{
-    margin-top:auto;display:flex;align-items:center;gap:.6rem;
+    margin-top:.6rem;display:flex;align-items:center;gap:.6rem;
     padding:.7rem .6rem;border-radius:10px;border:1px solid var(--hairline);background:none;
     color:var(--ink-faint);font-family:var(--font-mono);font-size:.72rem;cursor:pointer;
     transition:background .2s var(--ease-soft),color .2s var(--ease-soft);
@@ -72,14 +75,15 @@
 
   /* ---- main ---- */
   .main{flex:1;min-width:0;padding:clamp(1.5rem,3vw,2.6rem)}
-  .preview-banner{
+  .status-banner{
     display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;
     padding:.9rem 1.2rem;border-radius:14px;margin-bottom:1.8rem;
     background:rgba(242,240,236,.06);border:1px solid var(--hairline);
     font-size:.82rem;line-height:1.5;color:var(--ink-faint);
   }
-  .preview-banner strong{color:var(--dark-ink);font-weight:600}
-  .preview-banner a{text-decoration:underline;color:var(--dark-ink)}
+  .status-banner[hidden]{display:none}
+  .status-banner strong{color:var(--dark-ink);font-weight:600}
+  .status-banner a{text-decoration:underline;color:var(--dark-ink)}
   .main-head{margin-bottom:1.8rem}
   .main-head h1{font-size:clamp(1.5rem,3vw,2rem);margin:0 0 .3rem;font-weight:600}
   .main-head p{margin:0;color:var(--ink-faint);font-size:.92rem}
@@ -89,9 +93,9 @@
     padding:1.3rem 1.4rem;border-radius:16px;background:var(--panel);border:1px solid var(--hairline);
   }
   .stat-card .stat-label{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.04em;text-transform:lowercase;color:var(--ink-faint);margin-bottom:.7rem}
-  .stat-card .stat-value{font-size:1.6rem;font-weight:600;color:var(--ink-faint)}
+  .stat-card .stat-value{font-size:1.6rem;font-weight:600;color:var(--ink-faint);margin:0}
 
-  .content-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:1.5rem;align-items:start}
+  .content-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:1.5rem;align-items:start;margin-bottom:1.5rem}
   @media (max-width:900px){.content-grid{grid-template-columns:1fr}}
 
   .panel{background:var(--panel);border:1px solid var(--hairline);border-radius:18px;padding:1.6rem}
@@ -112,6 +116,40 @@
     transition:background .25s var(--ease-soft),transform .25s var(--ease-soft);
   }
   .schedule-fallback:hover{background:var(--accent-hover);transform:translateY(-1px)}
+
+  /* ---- activity list ---- */
+  .activity-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0}
+  .activity-item{padding:.8rem 0;border-bottom:1px solid var(--hairline)}
+  .activity-item:last-child{border-bottom:0;padding-bottom:0}
+  .activity-item:first-child{padding-top:0}
+  .activity-item p{margin:0;font-size:.86rem;line-height:1.5}
+  .activity-item time{display:block;margin-top:.3rem;font-family:var(--font-mono);font-size:.68rem;color:var(--ink-faint)}
+
+  /* ---- drive ---- */
+  .drive-dropzone{
+    border:1.5px dashed var(--hairline);border-radius:14px;
+    padding:2rem 1rem;text-align:center;cursor:pointer;
+    transition:border-color .2s var(--ease-soft),background .2s var(--ease-soft);
+  }
+  .drive-dropzone:hover,.drive-dropzone.dragover{border-color:rgba(242,240,236,.5);background:rgba(242,240,236,.04)}
+  .drive-dropzone svg{width:24px;height:24px;color:var(--ink-faint);margin-bottom:.6rem}
+  .drive-dropzone p{margin:0;font-size:.84rem;color:var(--ink-faint)}
+  .drive-dropzone .drive-hint{font-size:.72rem;margin-top:.3rem;opacity:.7}
+  .drive-file-list{list-style:none;margin:1.1rem 0 0;padding:0;display:flex;flex-direction:column;gap:.5rem}
+  .drive-file{
+    display:flex;align-items:center;justify-content:space-between;gap:.8rem;
+    padding:.65rem .9rem;border-radius:10px;background:rgba(242,240,236,.05);
+    font-size:.82rem;
+  }
+  .drive-file-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .drive-file-actions{display:flex;gap:.3rem;flex-shrink:0}
+  .drive-file-actions button{
+    background:none;border:0;color:var(--ink-faint);cursor:pointer;padding:.3rem;
+    display:flex;transition:color .2s var(--ease-soft);
+  }
+  .drive-file-actions button:hover{color:var(--dark-ink)}
+  .drive-file-actions svg{width:15px;height:15px}
+  .drive-status{font-size:.78rem;color:var(--ink-faint);margin-top:.7rem}
 
   /* ---- studio assistant (chat widget) ---- */
   .assistant-launcher{
@@ -143,7 +181,7 @@
   .assistant-head .assistant-sub{margin:.2rem 0 0;font-size:.74rem;color:var(--ink-faint)}
 
   .assistant-messages{flex:1;overflow-y:auto;padding:1rem 1.1rem;display:flex;flex-direction:column;gap:.7rem}
-  .assistant-msg{max-width:85%;padding:.6rem .8rem;border-radius:14px;font-size:.84rem;line-height:1.5}
+  .assistant-msg{max-width:85%;padding:.6rem .8rem;border-radius:14px;font-size:.84rem;line-height:1.5;white-space:pre-wrap}
   .assistant-msg.bot{align-self:flex-start;background:rgba(242,240,236,.07);color:var(--dark-ink);border-bottom-left-radius:4px}
   .assistant-msg.user{align-self:flex-end;background:var(--accent);color:var(--ink);border-bottom-right-radius:4px}
   .assistant-typing{align-self:flex-start;display:flex;gap:.3rem;padding:.7rem .8rem;border-radius:14px;background:rgba(242,240,236,.07);border-bottom-left-radius:4px}
@@ -194,6 +232,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>
         <span>Schedule a Meeting</span>
       </a>
+      <a class="sidebar-link" href="#drive">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        <span>Drive</span>
+      </a>
       <a class="sidebar-link" href="#activity">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
         <span>Activity</span>
@@ -202,33 +244,36 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
         <span>Contact Us</span>
       </a>
+    </div>
+    <div class="sidebar-foot">
+      <button class="sidebar-link" id="nav-logout" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
+        <span>Log out</span>
+      </button>
       <a class="sidebar-link" href="index.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
         <span>Back to site</span>
       </a>
+      <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Collapse sidebar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        <span>Collapse</span>
+      </button>
     </div>
-    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Collapse sidebar">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-      <span>Collapse</span>
-    </button>
   </nav>
 
   <main class="main" id="top">
-    <div class="preview-banner">
-      <strong>Preview</strong>
-      <span>This is a mockup of what your dashboard will look like, not live data yet. Real project details show up here once your account is connected. Email <a href="mailto:adam@anchordigitalco.com">adam@anchordigitalco.com</a> to get set up.</span>
-    </div>
+    <div class="status-banner" id="status-banner" hidden></div>
 
     <div class="main-head">
-      <h1>Your project dashboard</h1>
-      <p>An overview of where things stand, once your project is underway.</p>
+      <h1 id="main-heading">Your project dashboard</h1>
+      <p id="main-sub">An overview of where things stand, once your project is underway.</p>
     </div>
 
     <div class="stat-grid">
-      <div class="stat-card"><p class="stat-label">project status</p><p class="stat-value">TBD</p></div>
-      <div class="stat-card"><p class="stat-label">next milestone</p><p class="stat-value">TBD</p></div>
-      <div class="stat-card"><p class="stat-label">open items</p><p class="stat-value">TBD</p></div>
-      <div class="stat-card"><p class="stat-label">last update</p><p class="stat-value">TBD</p></div>
+      <div class="stat-card"><p class="stat-label">project status</p><p class="stat-value" id="stat-status">TBD</p></div>
+      <div class="stat-card"><p class="stat-label">next milestone</p><p class="stat-value" id="stat-milestone">TBD</p></div>
+      <div class="stat-card"><p class="stat-label">open items</p><p class="stat-value" id="stat-open-items">TBD</p></div>
+      <div class="stat-card"><p class="stat-label">last update</p><p class="stat-value" id="stat-last-update">TBD</p></div>
     </div>
 
     <div class="content-grid">
@@ -246,8 +291,21 @@
       <div class="panel" id="activity">
         <h2>Activity</h2>
         <p class="panel-sub">Updates on your project will show up here.</p>
-        <div class="empty-state">No activity yet. This fills in once your project kicks off.</div>
+        <div id="activity-body"><div class="empty-state">No activity yet. This fills in once your project kicks off.</div></div>
       </div>
+    </div>
+
+    <div class="panel" id="drive">
+      <h2>Drive</h2>
+      <p class="panel-sub">Drop images or documents here that you'd like us to use on your site.</p>
+      <div class="drive-dropzone" id="drive-dropzone" tabindex="0" role="button" aria-label="Upload files">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 21h14"/></svg>
+        <p>Drag files here, or click to browse</p>
+        <p class="drive-hint">Images and documents, uploaded straight to your private folder</p>
+        <input type="file" id="drive-file-input" multiple hidden>
+      </div>
+      <ul class="drive-file-list" id="drive-file-list"></ul>
+      <p class="drive-status" id="drive-status"></p>
     </div>
   </main>
 
@@ -259,7 +317,7 @@
   <div class="assistant-panel" id="assistant-panel" role="dialog" aria-label="Studio assistant" aria-hidden="true">
     <div class="assistant-head">
       <p class="assistant-title">Studio assistant</p>
-      <p class="assistant-sub">Preview, not connected to a live model yet</p>
+      <p class="assistant-sub">Ask about your project</p>
     </div>
     <div class="assistant-messages" id="assistant-messages"></div>
     <div class="assistant-inputwrap">
@@ -271,15 +329,211 @@
   </div>
 
   <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
-  <script>
-  (function(){
-    "use strict";
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    var SUPABASE_URL = 'https://sroncqqparjklohbyidt.supabase.co';
+    var SUPABASE_ANON_KEY = 'sb_publishable_5buinIijAx9Y_3ZpJ3d_BA_Jd-5cpyw';
+    var DRIVE_BUCKET = 'client-files';
+    var supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    var currentUser = null;
+
+    // ---- sidebar collapse ----
     var sidebar = document.getElementById('sidebar');
     var toggle = document.getElementById('sidebar-toggle');
     toggle.addEventListener('click', function(){
       var collapsed = sidebar.classList.toggle('collapsed');
       toggle.querySelector('span').textContent = collapsed ? 'Expand' : 'Collapse';
       toggle.setAttribute('aria-label', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
+    });
+
+    // ---- log out ----
+    document.getElementById('nav-logout').addEventListener('click', async function(){
+      try { await supabase.auth.signOut(); } catch (err) { console.error('sign out error', err); }
+      window.location.href = 'portal.html';
+    });
+
+    // ---- status banner ----
+    function showBanner(html){
+      var el = document.getElementById('status-banner');
+      el.innerHTML = html;
+      el.hidden = false;
+    }
+
+    // ---- stats + activity ----
+    function formatDate(iso){
+      if(!iso) return null;
+      try {
+        return new Date(iso).toLocaleDateString(undefined, { year:'numeric', month:'short', day:'numeric' });
+      } catch (err) { return null; }
+    }
+
+    function renderProject(project){
+      document.getElementById('stat-status').textContent = (project && project.status) || 'TBD';
+      document.getElementById('stat-milestone').textContent = (project && project.next_milestone) || 'TBD';
+      document.getElementById('stat-open-items').textContent = (project && typeof project.open_items === 'number') ? String(project.open_items) : 'TBD';
+      document.getElementById('stat-last-update').textContent = (project && formatDate(project.last_update_at)) || 'TBD';
+    }
+
+    function renderActivity(rows){
+      var body = document.getElementById('activity-body');
+      if(!rows || rows.length === 0){
+        body.innerHTML = '<div class="empty-state">No activity yet. This fills in once your project kicks off.</div>';
+        return;
+      }
+      var list = document.createElement('ul');
+      list.className = 'activity-list';
+      rows.forEach(function(row){
+        var item = document.createElement('li');
+        item.className = 'activity-item';
+        var p = document.createElement('p');
+        p.textContent = row.message;
+        var time = document.createElement('time');
+        time.textContent = formatDate(row.created_at) || '';
+        item.appendChild(p);
+        item.appendChild(time);
+        list.appendChild(item);
+      });
+      body.innerHTML = '';
+      body.appendChild(list);
+    }
+
+    async function loadDashboardData(user){
+      try {
+        var profileRes = await supabase.from('profiles').select('company_name').eq('id', user.id).maybeSingle();
+        var projectRes = await supabase.from('projects').select('status,next_milestone,open_items,last_update_at').eq('client_id', user.id).maybeSingle();
+        var activityRes = await supabase.from('activity').select('message,created_at').eq('client_id', user.id).order('created_at', { ascending: false }).limit(10);
+
+        var companyName = profileRes.data && profileRes.data.company_name;
+        if(companyName){
+          document.getElementById('main-heading').textContent = companyName + '’s project dashboard';
+        }
+
+        if(projectRes.data){
+          document.getElementById('main-sub').textContent = 'Here’s where things stand right now.';
+          renderProject(projectRes.data);
+        } else {
+          showBanner('<strong>Not set up yet</strong><span>Your project record hasn’t been created yet, once it is, real status and milestones will show up here. Email <a href="mailto:adam@anchordigitalco.com">adam@anchordigitalco.com</a> with any questions in the meantime.</span>');
+          renderProject(null);
+        }
+
+        renderActivity(activityRes.data);
+      } catch (err) {
+        console.error('dashboard data load error', err);
+        showBanner('<strong>Couldn’t load your data</strong><span>Something went wrong pulling your project info. Try refreshing, or email <a href="mailto:adam@anchordigitalco.com">adam@anchordigitalco.com</a> if it keeps happening.</span>');
+      }
+    }
+
+    // ---- drive ----
+    var driveDropzone = document.getElementById('drive-dropzone');
+    var driveFileInput = document.getElementById('drive-file-input');
+    var driveFileList = document.getElementById('drive-file-list');
+    var driveStatus = document.getElementById('drive-status');
+
+    function humanFileSize(bytes){
+      if(typeof bytes !== 'number') return '';
+      var units = ['B','KB','MB','GB'];
+      var i = 0;
+      while(bytes >= 1024 && i < units.length - 1){ bytes /= 1024; i++; }
+      return bytes.toFixed(i === 0 ? 0 : 1) + ' ' + units[i];
+    }
+
+    async function refreshDriveFiles(){
+      if(!currentUser) return;
+      var res = await supabase.storage.from(DRIVE_BUCKET).list(currentUser.id, { sortBy: { column: 'created_at', order: 'desc' } });
+      driveFileList.innerHTML = '';
+      if(res.error){
+        driveStatus.textContent = 'Could not load your files right now.';
+        return;
+      }
+      var files = (res.data || []).filter(function(f){ return f.name && f.id; });
+      if(files.length === 0){
+        driveStatus.textContent = 'No files yet.';
+        return;
+      }
+      driveStatus.textContent = '';
+      files.forEach(function(file){
+        var path = currentUser.id + '/' + file.name;
+        var li = document.createElement('li');
+        li.className = 'drive-file';
+
+        var name = document.createElement('span');
+        name.className = 'drive-file-name';
+        name.textContent = file.name + (file.metadata && file.metadata.size ? ' · ' + humanFileSize(file.metadata.size) : '');
+        li.appendChild(name);
+
+        var actions = document.createElement('span');
+        actions.className = 'drive-file-actions';
+
+        var downloadBtn = document.createElement('button');
+        downloadBtn.type = 'button';
+        downloadBtn.setAttribute('aria-label', 'Download ' + file.name);
+        downloadBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>';
+        downloadBtn.addEventListener('click', async function(){
+          var signed = await supabase.storage.from(DRIVE_BUCKET).createSignedUrl(path, 60);
+          if(signed.data && signed.data.signedUrl){
+            window.open(signed.data.signedUrl, '_blank', 'noopener');
+          }
+        });
+        actions.appendChild(downloadBtn);
+
+        var deleteBtn = document.createElement('button');
+        deleteBtn.type = 'button';
+        deleteBtn.setAttribute('aria-label', 'Delete ' + file.name);
+        deleteBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>';
+        deleteBtn.addEventListener('click', async function(){
+          deleteBtn.disabled = true;
+          await supabase.storage.from(DRIVE_BUCKET).remove([path]);
+          refreshDriveFiles();
+        });
+        actions.appendChild(deleteBtn);
+
+        li.appendChild(actions);
+        driveFileList.appendChild(li);
+      });
+    }
+
+    async function uploadDriveFiles(fileListArg){
+      if(!currentUser) return;
+      var files = Array.prototype.slice.call(fileListArg);
+      if(files.length === 0) return;
+      driveStatus.textContent = 'Uploading ' + files.length + (files.length === 1 ? ' file...' : ' files...');
+      for(var i = 0; i < files.length; i++){
+        var file = files[i];
+        var path = currentUser.id + '/' + Date.now() + '-' + file.name;
+        var res = await supabase.storage.from(DRIVE_BUCKET).upload(path, file);
+        if(res.error){
+          console.error('upload error', res.error);
+        }
+      }
+      driveStatus.textContent = 'Done.';
+      refreshDriveFiles();
+    }
+
+    driveDropzone.addEventListener('click', function(){ driveFileInput.click(); });
+    driveDropzone.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); driveFileInput.click(); }
+    });
+    driveFileInput.addEventListener('change', function(){
+      uploadDriveFiles(driveFileInput.files);
+      driveFileInput.value = '';
+    });
+    ['dragenter','dragover'].forEach(function(evt){
+      driveDropzone.addEventListener(evt, function(e){
+        e.preventDefault(); e.stopPropagation();
+        driveDropzone.classList.add('dragover');
+      });
+    });
+    ['dragleave','drop'].forEach(function(evt){
+      driveDropzone.addEventListener(evt, function(e){
+        e.preventDefault(); e.stopPropagation();
+        driveDropzone.classList.remove('dragover');
+      });
+    });
+    driveDropzone.addEventListener('drop', function(e){
+      if(e.dataTransfer && e.dataTransfer.files){
+        uploadDriveFiles(e.dataTransfer.files);
+      }
     });
 
     // ---- studio assistant (chat widget) ----
@@ -290,6 +544,7 @@
     var assistantSend = document.getElementById('assistant-send');
     var assistantGreeted = false;
     var assistantBusy = false;
+    var assistantHistory = [];
 
     function assistantAutoResize(){
       assistantInput.style.height = '0px';
@@ -323,28 +578,26 @@
       if(typing) typing.remove();
     }
 
-    // ---- INTEGRATION POINT ----
-    // This is the only function to change once a backend exists. Right now it's
-    // a stub that waits briefly, then returns an honest "not connected yet"
-    // reply. To go live: stand up a small server-side endpoint (a serverless
-    // function is enough) that holds ANTHROPIC_API_KEY and calls the Claude
-    // API, then swap the body below for something like:
-    //
-    //   fetch('/api/chat', {
-    //     method: 'POST',
-    //     headers: {'Content-Type': 'application/json'},
-    //     body: JSON.stringify({ message: text })
-    //   }).then(function(res){ return res.json(); })
-    //     .then(function(data){ ... data.reply ... });
-    //
-    // Never put an Anthropic API key in this file, or in any file the browser
-    // downloads, it must live only on a server you control.
-    function assistantGetReply(text){
-      return new Promise(function(resolve){
-        setTimeout(function(){
-          resolve("I'm not hooked up to a live model yet, this is just the interface. Once Adam or Jackson connect a backend, I'll be able to actually answer that. For now, reach them directly at adam@anchordigitalco.com or jackson@anchordigitalco.com.");
-        }, 900);
-      });
+    // ---- talks to the studio-assistant Supabase Edge Function, which holds
+    // ANTHROPIC_API_KEY server-side and calls Claude. Falls back to an honest
+    // message if the function isn't deployed yet or the call fails. ----
+    async function assistantGetReply(text){
+      try {
+        var res = await supabase.functions.invoke('studio-assistant', {
+          body: { message: text, history: assistantHistory }
+        });
+        if(res.error || !res.data){
+          console.error('assistant function error', res.error);
+          return "The assistant isn't connected yet, email adam@anchordigitalco.com or jackson@anchordigitalco.com in the meantime.";
+        }
+        if(res.data.error){
+          return res.data.error;
+        }
+        return res.data.reply || "Sorry, I couldn't put together a reply to that.";
+      } catch (err) {
+        console.error('assistant call failed', err);
+        return "The assistant isn't connected yet, email adam@anchordigitalco.com or jackson@anchordigitalco.com in the meantime.";
+      }
     }
 
     function assistantUpdateSendState(){
@@ -365,6 +618,8 @@
       assistantGetReply(text).then(function(reply){
         assistantHideTyping();
         assistantAddMessage('bot', reply);
+        assistantHistory.push({ role: 'user', content: text });
+        assistantHistory.push({ role: 'assistant', content: reply });
         assistantBusy = false;
         assistantInput.disabled = false;
         assistantUpdateSendState();
@@ -379,7 +634,7 @@
       assistantLauncher.setAttribute('aria-expanded', 'true');
       if(!assistantGreeted){
         assistantGreeted = true;
-        assistantAddMessage('bot', "Hi, I'm the Anchor Digital studio assistant. I'm still in preview and not connected to a live model yet, but once I am, I'll be able to answer questions about your project here.");
+        assistantAddMessage('bot', "Hi, I'm the Anchor Digital studio assistant. Ask me anything about your project.");
       }
       assistantInput.focus();
     }
@@ -396,12 +651,9 @@
       else assistantOpen();
     });
 
-    var navAssistant = document.getElementById('nav-assistant');
-    if(navAssistant){
-      navAssistant.addEventListener('click', function(){
-        assistantOpen();
-      });
-    }
+    document.getElementById('nav-assistant').addEventListener('click', function(){
+      assistantOpen();
+    });
 
     assistantSend.addEventListener('click', assistantSendMessage);
 
@@ -419,7 +671,24 @@
         assistantClose();
       }
     });
-  })();
+
+    // ---- auth gate + boot ----
+    (async function init(){
+      try {
+        var res = await supabase.auth.getUser();
+        if(res.error || !res.data || !res.data.user){
+          window.location.replace('portal.html');
+          return;
+        }
+        currentUser = res.data.user;
+        await loadDashboardData(currentUser);
+        await refreshDriveFiles();
+      } catch (err) {
+        console.error('dashboard init error', err);
+        showBanner('<strong>Something went wrong</strong><span>Try refreshing the page. If it keeps happening, email <a href="mailto:adam@anchordigitalco.com">adam@anchordigitalco.com</a>.</span>');
+      }
+      document.body.classList.add('ready');
+    })();
   </script>
 </body>
 </html>
