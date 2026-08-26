@@ -873,7 +873,7 @@ body.video-failed .card{max-width:100%}
               <button class="popup-close" data-close aria-label="Close">&times;</button>
               <img class="clip-img" src="assets/pillars/design.jpg" alt="">
               <div class="clip-text">
-                <p class="kicker">website design &amp; development</p>
+                <p class="kicker">Website Design &amp; Development</p>
                 <p>Fully custom, conversion-focused websites built from the ground up. No templates, ever: every homepage starts as a concept built around your brand.</p>
               </div>
             </div>
@@ -883,7 +883,7 @@ body.video-failed .card{max-width:100%}
               <button class="popup-close" data-close aria-label="Close">&times;</button>
               <img class="clip-img" src="assets/pillars/innovation.jpg" alt="">
               <div class="clip-text">
-                <p class="kicker">brand digital systems</p>
+                <p class="kicker">Brand Digital Systems</p>
                 <p>We build what your brand needs to capture leads and grow an audience you actually own, with modern features that feel current, not off-the-shelf.</p>
               </div>
             </div>
@@ -893,7 +893,7 @@ body.video-failed .card{max-width:100%}
               <button class="popup-close" data-close aria-label="Close">&times;</button>
               <img class="clip-img" src="assets/pillars/growth.jpg" alt="">
               <div class="clip-text">
-                <p class="kicker">ongoing maintenance &amp; consulting</p>
+                <p class="kicker">Ongoing Maintenance &amp; Consulting</p>
                 <p>We stay in your corner after launch. Monthly care plans keep your site fast, secure, and evolving, with SEO monitoring and consulting built in.</p>
               </div>
             </div>
@@ -1888,6 +1888,11 @@ body.video-failed .card{max-width:100%}
     var card = document.querySelector('.popup-card[data-info="' + info + '"]');
     var dot = document.querySelector('.hotspot[data-info="' + info + '"]');
     if(!card || !card.hidden) return;
+    // only one of these three at a time - two open together can overlap (the buttons they
+    // belong to aren't evenly spaced, so neither is the room between their cards)
+    openOrder.slice().forEach(function(otherInfo){
+      if(otherInfo !== info) closeHotspotCard(otherInfo);
+    });
     card.hidden = false;
     if(dot) dot.classList.add('open');
     if(openOrder.indexOf(info) === -1) openOrder.push(info);
