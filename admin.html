@@ -65,11 +65,20 @@
     position:sticky;top:0;
   }
   .sidebar.collapsed{width:72px;padding:1.4rem .7rem}
-  .sidebar-brand{display:flex;align-items:center;gap:.6rem;padding:.4rem .5rem 1.4rem;border-bottom:1px solid var(--hairline);margin-bottom:1.1rem;text-decoration:none;transition:opacity .2s var(--ease-soft)}
+  .sidebar-brand{display:flex;align-items:center;flex-wrap:wrap;gap:.6rem;padding:.4rem .5rem 1.4rem;border-bottom:1px solid var(--hairline);margin-bottom:1.1rem;text-decoration:none;transition:opacity .2s var(--ease-soft)}
   .sidebar-brand:hover{opacity:.8}
   .sidebar-brand img{height:22px;width:auto;flex-shrink:0}
   .sidebar-brand span{font-family:var(--font-word);font-size:.98rem;white-space:nowrap;overflow:hidden;transition:opacity .2s var(--ease-soft)}
   .sidebar.collapsed .sidebar-brand span{opacity:0;width:0}
+  /* a small badge rather than cramming "· admin" onto the same line as the wordmark - the
+     230px sidebar doesn't have room for both, and clipping it via overflow:hidden used to hard
+     cut mid-word into unreadable leftover characters instead of wrapping cleanly. */
+  .sidebar-brand-tag{
+    font-family:var(--font-mono);font-size:.62rem;letter-spacing:.05em;text-transform:lowercase;
+    color:var(--ink-faint);padding:.15rem .45rem;border:1px solid var(--hairline);border-radius:99px;
+    white-space:nowrap;transition:opacity .2s var(--ease-soft);
+  }
+  .sidebar.collapsed .sidebar-brand-tag{display:none}
   .sidebar-nav{display:flex;flex-direction:column;gap:.2rem;flex:1}
   .sidebar-link{
     display:flex;align-items:center;gap:.8rem;padding:.7rem .6rem;border-radius:10px;
@@ -189,7 +198,7 @@
      left to collapse from, so it's hidden too. */
   @media (max-width:640px){
     .sidebar{width:64px;padding:1rem .5rem}
-    .sidebar-brand span,.sidebar-link span,.sidebar-toggle,.sidebar-whoami{display:none}
+    .sidebar-brand span,.sidebar-brand-tag,.sidebar-link span,.sidebar-toggle,.sidebar-whoami{display:none}
     .sidebar-brand{justify-content:center;padding-left:0;padding-right:0}
     .sidebar-link{justify-content:center;padding-left:.4rem;padding-right:.4rem}
     .main{padding:1.2rem}
@@ -253,7 +262,8 @@
   <nav class="sidebar" id="sidebar">
     <a class="sidebar-brand" href="/" aria-label="Anchor Digital, back to the site">
       <img src="assets/anchor-icon.png" alt="">
-      <span>anchor digital · admin</span>
+      <span>anchor digital</span>
+      <span class="sidebar-brand-tag">admin</span>
     </a>
     <div class="sidebar-nav">
       <button class="sidebar-link active" id="nav-clients" type="button">
