@@ -88,7 +88,7 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
   transition:opacity .3s var(--ease-soft);
 }
 .logo-home:hover{opacity:.75}
-.logo-home img{height:26px;width:auto}
+.logo-home img{height:26px;width:auto;filter:invert(1)}
 .logo-home span{
   font-family:var(--font-word);
   font-size:1.05rem;
@@ -1244,14 +1244,15 @@ body.video-failed .card{max-width:100%}
       html += '<button class="thumb'+(i===0?' active':'')+'" data-idx="'+i+'" type="button">'+
         (p.img ? '<img src="'+p.img+'" alt="">' : '<span class="ph">no photo</span>')+
         '<span><span class="t-name">'+p.name+'</span></span>'+
-        '<span class="t-visit">visit &rarr;</span></button>';
+        '<span class="t-visit">view</span></button>';
     });
     container.innerHTML = html;
     var blurbTarget = isStatic ? null : document.getElementById('work-blurb');
     function setBlurb(i){
       if(!blurbTarget) return;
       var p = DATA.work[i];
-      blurbTarget.innerHTML = '<span class="proj-tag">'+p.tag+'</span><h3 class="proj-name">'+p.name+'</h3><p style="font-size:.88rem;opacity:.9;line-height:1.55">'+p.desc+'</p>';
+      var link = p.url ? '<a class="btn-outline" href="'+p.url+'" target="_blank" rel="noopener" style="margin-top:.9rem;display:inline-block">Visit site &rarr;</a>' : '';
+      blurbTarget.innerHTML = '<span class="proj-tag">'+p.tag+'</span><h3 class="proj-name">'+p.name+'</h3><p style="font-size:.88rem;opacity:.9;line-height:1.55">'+p.desc+'</p>'+link;
     }
     if(blurbTarget) setBlurb(0);
     container.querySelectorAll('.thumb').forEach(function(btn){
@@ -1672,7 +1673,7 @@ body.video-failed .card{max-width:100%}
 
   // ============ streamed blob loader (unchanged mechanics, gated by device capability) ============
   var VIDEO_URL = 'assets/hero-scrub.mp4';
-  var VIDEO_BYTES = 17517578;
+  var VIDEO_BYTES = 25099634;
   var started = false;
   function startBlobFetch(){
     if(started) return;
