@@ -1526,7 +1526,11 @@ body.video-failed .card{max-width:100%}
 
   // walking steps ease OUT only: full speed the instant you act, decelerating into the landing.
   // an ease-in start reads as latency between the click and anything visibly happening.
-  var easeOut = function(p){ return 1 - Math.pow(1 - p, 3); };
+  // the exponent controls how front-loaded the motion is: a higher one reaches "basically
+  // there" at a lower fraction of p, which is what the intro hop below needs, since it's by
+  // far the longest hop on the site and a cubic's tail stays flat for too long in real time.
+  var easeOutPow = function(p, k){ return 1 - Math.pow(1 - p, k); };
+  var easeOut = function(p){ return easeOutPow(p, 3); };
 
   // ---- the core: animate the video from the current waypoint's time to a target waypoint's time ----
   function goTo(target){
@@ -1540,6 +1544,14 @@ body.video-failed .card{max-width:100%}
     document.body.classList.add('in-motion'); // hide the logo/menu/dots while walking; they return at rest
     var fromT = WAYPOINTS[idx].t, toT = WAYPOINTS[target].t;
     var dur = stepDuration(idx, target);
+    var isIntro = WAYPOINTS[idx].id === 'start' && WAYPOINTS[target].id === 'threshold';
+    // the intro is both the longest hop AND (per the slower MS_PER_VIDEO_SEC_INTRO pace above)
+    // now the slowest-paced one, so a shared cubic curve leaves its content-time threshold
+    // firing very late in wall-clock terms - the button reads as waiting even once the video
+    // has visually stopped moving. a steeper curve gets close to the target sooner without
+    // skipping any more real footage at reveal time, so it doesn't reintroduce the earlier
+    // harsh-jump bug; it's scoped to just this hop so the other, already-tuned hops don't change.
+    var ease = isIntro ? function(p){ return easeOutPow(p, 5); } : easeOut;
     var start = performance.now();
     // the card pops up the instant the motion is visually done, not when the raw timer hits dur:
     // easeOut's tail is a long, barely-moving glide toward the exact final pixel, so waiting for
@@ -1565,7 +1577,7 @@ body.video-failed .card{max-width:100%}
       if(myId !== transitionId) return; // superseded (a reset or a newer jump); stop cleanly, no more seeks
       var elapsed = now - start;
       var p = Math.min(1, elapsed / dur);
-      var eased = easeOut(p);
+      var eased = ease(p);
       if(!revealed){
         var interp = fromT + (toT - fromT) * eased;
         requestSeek(interp);
@@ -1573,11 +1585,10 @@ body.video-failed .card{max-width:100%}
         // continuing to ease through the last stretch - otherwise the card (and its hotspots)
         // appear over a still-mid-seek, softer frame instead of the sharp one it lands on.
         // gated on p>=0.3 too so a very short hop (small |toT-fromT|) can't satisfy the
-        // video-time threshold right out of the gate and skip the glide entirely. the
-        // p>=0.65 fallback matters on the longest hops (the opening zoom-out is 7.7 real
-        // seconds, by far the longest on the site): a cubic ease-out's tail is so flat that
-        // the content-time threshold alone doesn't fire until very late wall-clock-wise on a
-        // long hop, reading as the buttons lagging well after the motion already looks done.
+        // video-time threshold right out of the gate and skip the glide entirely. the p>=0.65
+        // fallback is a safety net for any hop whose curve stays flatter than expected near
+        // the end (the steeper intro curve above already clears the content-time threshold
+        // well before 0.65 in practice, so this mostly guards the other, cubic hops).
         if(p >= 1 || (p >= 0.3 && (Math.abs(toT - interp) <= SNAP_THRESHOLD_SEC || p >= 0.65))){
           requestSeek(toT);
           reveal();
