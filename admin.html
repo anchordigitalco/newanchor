@@ -268,6 +268,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>
         <span>Upcoming meetings</span>
       </button>
+      <button class="sidebar-link" id="nav-files" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        <span>Files</span>
+      </button>
     </div>
     <div class="sidebar-foot">
       <p class="sidebar-whoami" id="admin-whoami"></p>
@@ -344,6 +348,19 @@
       <div class="panel">
         <div id="meetings-list"></div>
         <button class="btn btn-quiet" id="meetings-refresh" type="button" style="margin-top:1rem">Refresh</button>
+      </div>
+    </div>
+
+    <div class="view" id="view-files" hidden>
+      <div class="main-head">
+        <h1>Files</h1>
+        <p>Every client's Drive folder, in one place.</p>
+      </div>
+      <div class="inbox">
+        <div class="inbox-list" id="files-list"></div>
+        <div class="inbox-thread" id="files-thread">
+          <div class="inbox-empty">Select a client to see their files.</div>
+        </div>
       </div>
     </div>
 
@@ -432,8 +449,8 @@
     });
 
     // ---- sidebar: view switching + collapse ----
-    var views = { clients: document.getElementById('view-clients'), messages: document.getElementById('view-messages'), meetings: document.getElementById('view-meetings') };
-    var navButtons = { clients: document.getElementById('nav-clients'), messages: document.getElementById('nav-messages'), meetings: document.getElementById('nav-meetings') };
+    var views = { clients: document.getElementById('view-clients'), messages: document.getElementById('view-messages'), meetings: document.getElementById('view-meetings'), files: document.getElementById('view-files') };
+    var navButtons = { clients: document.getElementById('nav-clients'), messages: document.getElementById('nav-messages'), meetings: document.getElementById('nav-meetings'), files: document.getElementById('nav-files') };
 
     function setView(name){
       Object.keys(views).forEach(function(key){
@@ -442,10 +459,12 @@
       });
       if(name === 'messages') renderMessagesInbox();
       if(name === 'meetings') loadMeetings();
+      if(name === 'files') renderFilesInbox();
     }
     navButtons.clients.addEventListener('click', function(){ setView('clients'); });
     navButtons.messages.addEventListener('click', function(){ setView('messages'); });
     navButtons.meetings.addEventListener('click', function(){ setView('meetings'); });
+    navButtons.files.addEventListener('click', function(){ setView('files'); });
 
     var sidebar = document.getElementById('sidebar');
     var sidebarToggle = document.getElementById('sidebar-toggle');
@@ -667,6 +686,91 @@
       body.scrollTop = body.scrollHeight;
     }
 
+    // ---- files view: every client's Drive folder, browsable from one place ----
+    var selectedFilesClientId = null;
+
+    function renderFilesInbox(){
+      var listEl = document.getElementById('files-list');
+      listEl.innerHTML = '';
+
+      if(profileRows.length === 0){
+        var empty = document.createElement('div');
+        empty.className = 'empty-state';
+        empty.style.margin = '1rem';
+        empty.textContent = 'No client accounts yet.';
+        listEl.appendChild(empty);
+        renderFilesThread(null);
+        return;
+      }
+
+      profileRows.forEach(function(profile){
+        var row = document.createElement('div');
+        row.className = 'inbox-row' + (profile.id === selectedFilesClientId ? ' active' : '');
+
+        var avatar = document.createElement('span');
+        avatar.className = 'inbox-avatar';
+        avatar.textContent = clientInitial(profile);
+
+        var body = document.createElement('span');
+        body.className = 'inbox-row-body';
+        var name = document.createElement('span');
+        name.className = 'inbox-row-name';
+        name.textContent = profile.company_name || profile.email;
+        var preview = document.createElement('span');
+        preview.className = 'inbox-row-preview';
+        preview.textContent = profile.email;
+        body.appendChild(name);
+        body.appendChild(preview);
+
+        row.appendChild(avatar);
+        row.appendChild(body);
+
+        row.addEventListener('click', function(){
+          selectedFilesClientId = profile.id;
+          renderFilesInbox();
+        });
+
+        listEl.appendChild(row);
+      });
+
+      var current = selectedFilesClientId
+        ? profileRows.filter(function(p){ return p.id === selectedFilesClientId; })[0]
+        : null;
+      renderFilesThread(current);
+    }
+
+    function renderFilesThread(profile){
+      var el = document.getElementById('files-thread');
+      el.innerHTML = '';
+
+      if(!profile){
+        var empty = document.createElement('div');
+        empty.className = 'inbox-empty';
+        empty.textContent = 'Select a client to see their files.';
+        el.appendChild(empty);
+        return;
+      }
+
+      var head = document.createElement('div');
+      head.className = 'inbox-thread-head';
+      var name = document.createElement('p');
+      name.className = 'name';
+      name.textContent = profile.company_name || profile.email;
+      var email = document.createElement('p');
+      email.className = 'email';
+      email.textContent = profile.email;
+      head.appendChild(name);
+      head.appendChild(email);
+
+      var body = document.createElement('div');
+      body.className = 'inbox-thread-body';
+
+      el.appendChild(head);
+      el.appendChild(body);
+
+      loadDriveFiles(profile.id, body);
+    }
+
     // ---- meetings view: live Calendly data via the list-meetings function ----
     async function loadMeetings(){
       var el = document.getElementById('meetings-list');
@@ -885,8 +989,8 @@
       closeDrawer();
     });
 
-    async function loadDriveFiles(clientId){
-      var el = document.getElementById('d-drive-list');
+    async function loadDriveFiles(clientId, targetEl){
+      var el = targetEl || document.getElementById('d-drive-list');
       el.textContent = 'Loading...';
       var res = await supabase.storage.from(DRIVE_BUCKET).list(clientId, { sortBy: { column: 'created_at', order: 'desc' } });
       if(res.error){
