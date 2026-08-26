@@ -1023,6 +1023,19 @@
       });
     }
 
+    var ADMIN_FIRST_NAMES = {
+      'adam@anchordigitalco.com': 'Adam',
+      'jackson@anchordigitalco.com': 'Jackson'
+    };
+    function adminGreeting(email){
+      var name = ADMIN_FIRST_NAMES[(email || '').toLowerCase()];
+      if(!name){
+        var local = (email || '').split('@')[0];
+        name = local.charAt(0).toUpperCase() + local.slice(1);
+      }
+      return 'Hi ' + name;
+    }
+
     // ---- auth + admin gate ----
     (async function init(){
       try {
@@ -1036,7 +1049,7 @@
           window.location.replace('/dashboard');
           return;
         }
-        document.getElementById('admin-whoami').textContent = userRes.data.user.email;
+        document.getElementById('admin-whoami').textContent = adminGreeting(userRes.data.user.email);
         await loadClients();
       } catch (err) {
         console.error('admin init error', err);
