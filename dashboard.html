@@ -246,7 +246,7 @@
 <body>
 
   <nav class="sidebar" id="sidebar">
-    <a class="sidebar-brand" href="index.html" aria-label="Anchor Digital, back to the site">
+    <a class="sidebar-brand" href="/" aria-label="Anchor Digital, back to the site">
       <img src="assets/anchor-icon.png" alt="">
       <span>anchor digital</span>
     </a>
@@ -286,7 +286,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
         <span>Log out</span>
       </button>
-      <a class="sidebar-link" href="index.html">
+      <a class="sidebar-link" href="/">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
         <span>Back to site</span>
       </a>
@@ -407,7 +407,7 @@
     // ---- log out ----
     document.getElementById('nav-logout').addEventListener('click', async function(){
       try { await supabase.auth.signOut(); } catch (err) { console.error('sign out error', err); }
-      window.location.href = 'portal.html';
+      window.location.href = '/portal';
     });
 
     // ---- status banner ----
@@ -734,7 +734,7 @@
       try {
         var res = await supabase.auth.getUser();
         if(res.error || !res.data || !res.data.user){
-          window.location.replace('portal.html');
+          window.location.replace('/portal');
           return;
         }
         currentUser = res.data.user;

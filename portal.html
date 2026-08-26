@@ -127,7 +127,7 @@
   <div class="portal-bg" aria-hidden="true"></div>
   <div class="portal-scrim" aria-hidden="true"></div>
 
-  <a class="portal-home" href="index.html" aria-label="Back to Anchor Digital">
+  <a class="portal-home" href="/" aria-label="Back to Anchor Digital">
     <svg viewBox="0 0 16 16" fill="none"><path d="M10 3 5 8l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
     anchor digital
   </a>
@@ -223,13 +223,13 @@
       try {
         var adminRes = await supabase.rpc('am_i_admin');
         if(!adminRes.error && adminRes.data === true){
-          window.location.href = 'admin.html';
+          window.location.href = '/admin';
           return;
         }
       } catch (err) {
         console.error('admin check error', err);
       }
-      window.location.href = 'dashboard.html';
+      window.location.href = '/dashboard';
     }
 
     (async function init(){
@@ -294,7 +294,7 @@
         var signUpRes = await supabase.auth.signUp({
           email: email2,
           password: password,
-          options: { emailRedirectTo: window.location.origin + '/portal.html' }
+          options: { emailRedirectTo: window.location.origin + '/portal' }
         });
         if(!signUpRes.error){
           if(signUpRes.data && signUpRes.data.session){
