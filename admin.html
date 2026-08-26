@@ -17,12 +17,32 @@
     --accent:#FFFFFF;
     --accent-hover:#C9C6C0;
     --ink:#131313;
-    --hairline:rgba(242,240,236,.12);
+    --ink-rgb:242,240,236;
+    --hairline:rgba(var(--ink-rgb),.12);
+    --field-bg:rgba(0,0,0,.2);
     --font-body:'Inter',Helvetica Neue,Arial,sans-serif;
     --font-word:'Varela Round',Helvetica Neue,Arial,sans-serif;
     --font-mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
     --ease-soft:cubic-bezier(.4,0,.2,1);
   }
+  /* ---- daytime palette: same monochrome relationship, inverted ---- */
+  html[data-theme="light"]{
+    --dark:#F5F4F1;
+    --panel:#FFFFFF;
+    --dark-ink:#1A1918;
+    --ink-faint:#6B6862;
+    --accent:#131313;
+    --accent-hover:#3A3733;
+    --ink:#FFFFFF;
+    --ink-rgb:20,18,16;
+    --field-bg:rgba(20,18,16,.05);
+  }
+  html[data-theme="light"] .panel,
+  html[data-theme="light"] .inbox,
+  html[data-theme="light"] .meeting-card{box-shadow:0 1px 3px rgba(20,18,16,.06)}
+  .theme-toggle .theme-icon-moon{display:none}
+  html[data-theme="light"] .theme-toggle .theme-icon-sun{display:none}
+  html[data-theme="light"] .theme-toggle .theme-icon-moon{display:block}
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
   body{
@@ -59,8 +79,8 @@
   .sidebar-link svg{width:17px;height:17px;flex-shrink:0}
   .sidebar-link span{overflow:hidden;transition:opacity .2s var(--ease-soft)}
   .sidebar.collapsed .sidebar-link span{opacity:0;width:0}
-  .sidebar-link:hover{background:rgba(242,240,236,.06);color:var(--dark-ink)}
-  .sidebar-link.active{background:rgba(242,240,236,.1);color:var(--dark-ink)}
+  .sidebar-link:hover{background:rgba(var(--ink-rgb),.06);color:var(--dark-ink)}
+  .sidebar-link.active{background:rgba(var(--ink-rgb),.1);color:var(--dark-ink)}
   .sidebar-foot{border-top:1px solid var(--hairline);padding-top:.6rem;margin-top:.6rem;display:flex;flex-direction:column;gap:.2rem}
   .sidebar-whoami{padding:.3rem .6rem 1rem;font-size:.72rem;color:var(--ink-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .sidebar.collapsed .sidebar-whoami{opacity:0}
@@ -70,7 +90,7 @@
     color:var(--ink-faint);font-family:var(--font-mono);font-size:.72rem;cursor:pointer;
     transition:background .2s var(--ease-soft),color .2s var(--ease-soft);
   }
-  .sidebar-toggle:hover{background:rgba(242,240,236,.06);color:var(--dark-ink)}
+  .sidebar-toggle:hover{background:rgba(var(--ink-rgb),.06);color:var(--dark-ink)}
   .sidebar-toggle svg{width:15px;height:15px;flex-shrink:0;transition:transform .25s var(--ease-soft)}
   .sidebar.collapsed .sidebar-toggle svg{transform:rotate(180deg)}
   .sidebar.collapsed .sidebar-toggle span{opacity:0;width:0}
@@ -91,10 +111,10 @@
   .add-field{flex:1;min-width:180px}
   .add-field label{display:block;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.04em;text-transform:lowercase;color:var(--ink-faint);margin-bottom:.4rem}
   .add-field input{
-    width:100%;padding:.65rem .8rem;border-radius:10px;background:rgba(0,0,0,.2);
+    width:100%;padding:.65rem .8rem;border-radius:10px;background:var(--field-bg);
     border:1px solid var(--hairline);color:var(--dark-ink);font-family:var(--font-body);font-size:.86rem;
   }
-  .add-field input:focus{outline:none;border-color:rgba(242,240,236,.4)}
+  .add-field input:focus{outline:none;border-color:rgba(var(--ink-rgb),.4)}
   .btn{
     padding:.65rem 1.2rem;border-radius:99px;border:0;cursor:pointer;
     background:var(--accent);color:var(--ink);font-family:var(--font-mono);font-size:.78rem;
@@ -103,7 +123,7 @@
   .btn:hover{background:var(--accent-hover)}
   .btn:disabled{opacity:.5;cursor:default}
   .btn-quiet{background:none;border:1px solid var(--hairline);color:var(--ink-faint)}
-  .btn-quiet:hover{background:rgba(242,240,236,.06);color:var(--dark-ink)}
+  .btn-quiet:hover{background:rgba(var(--ink-rgb),.06);color:var(--dark-ink)}
   .form-status{font-size:.78rem;color:var(--ink-faint);margin-top:.7rem}
 
   .client-table{width:100%;border-collapse:collapse}
@@ -114,12 +134,12 @@
   .client-table td{padding:.75rem .6rem;border-bottom:1px solid var(--hairline);font-size:.85rem;vertical-align:middle}
   .client-table tr:last-child td{border-bottom:0}
   .client-table tr.is-clickable{cursor:pointer;transition:background .15s var(--ease-soft)}
-  .client-table tr.is-clickable:hover{background:rgba(242,240,236,.04)}
+  .client-table tr.is-clickable:hover{background:rgba(var(--ink-rgb),.04)}
   .badge{
     display:inline-block;padding:.2rem .6rem;border-radius:99px;font-family:var(--font-mono);font-size:.66rem;
     border:1px solid var(--hairline);color:var(--ink-faint);
   }
-  .badge.active{color:var(--dark-ink);border-color:rgba(242,240,236,.35)}
+  .badge.active{color:var(--dark-ink);border-color:rgba(var(--ink-rgb),.35)}
   .row-actions{display:flex;gap:.4rem}
   .row-actions button{
     background:none;border:0;color:var(--ink-faint);cursor:pointer;padding:.3rem;display:flex;
@@ -140,10 +160,10 @@
     display:flex;align-items:center;gap:.7rem;padding:.8rem 1rem;cursor:pointer;
     border-bottom:1px solid var(--hairline);transition:background .15s var(--ease-soft);
   }
-  .inbox-row:hover{background:rgba(242,240,236,.05)}
-  .inbox-row.active{background:rgba(242,240,236,.09)}
+  .inbox-row:hover{background:rgba(var(--ink-rgb),.05)}
+  .inbox-row.active{background:rgba(var(--ink-rgb),.09)}
   .inbox-avatar{
-    width:36px;height:36px;border-radius:50%;background:rgba(242,240,236,.1);flex-shrink:0;
+    width:36px;height:36px;border-radius:50%;background:rgba(var(--ink-rgb),.1);flex-shrink:0;
     display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:.8rem;
   }
   .inbox-row-body{min-width:0;flex:1}
@@ -192,15 +212,15 @@
   .drawer-field{margin-bottom:.8rem}
   .drawer-field label{display:block;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.04em;text-transform:lowercase;color:var(--ink-faint);margin-bottom:.35rem}
   .drawer-field input{
-    width:100%;padding:.6rem .75rem;border-radius:10px;background:rgba(0,0,0,.2);
+    width:100%;padding:.6rem .75rem;border-radius:10px;background:var(--field-bg);
     border:1px solid var(--hairline);color:var(--dark-ink);font-family:var(--font-body);font-size:.85rem;
   }
-  .drawer-field input:focus{outline:none;border-color:rgba(242,240,236,.4)}
+  .drawer-field input:focus{outline:none;border-color:rgba(var(--ink-rgb),.4)}
   .activity-item{padding:.65rem 0;border-bottom:1px solid var(--hairline);font-size:.82rem;line-height:1.5}
   .activity-item time{display:block;margin-top:.25rem;font-family:var(--font-mono);font-size:.66rem;color:var(--ink-faint)}
   .activity-add{display:flex;gap:.5rem;margin-top:.9rem}
-  .activity-add input{flex:1;padding:.6rem .75rem;border-radius:10px;background:rgba(0,0,0,.2);border:1px solid var(--hairline);color:var(--dark-ink);font-family:var(--font-body);font-size:.84rem}
-  .activity-add input:focus{outline:none;border-color:rgba(242,240,236,.4)}
+  .activity-add input{flex:1;padding:.6rem .75rem;border-radius:10px;background:var(--field-bg);border:1px solid var(--hairline);color:var(--dark-ink);font-family:var(--font-body);font-size:.84rem}
+  .activity-add input:focus{outline:none;border-color:rgba(var(--ink-rgb),.4)}
   .drive-file{display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.55rem 0;border-bottom:1px solid var(--hairline);font-size:.82rem}
   .drive-file:last-child{border-bottom:0}
   .drive-file-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -209,7 +229,7 @@
 
   .msg-list{display:flex;flex-direction:column;gap:.6rem;max-height:340px;overflow-y:auto;padding-right:.3rem}
   .msg-bubble{max-width:85%;padding:.55rem .75rem;border-radius:12px;font-size:.82rem;line-height:1.5;white-space:pre-wrap}
-  .msg-bubble.assistant{align-self:flex-start;background:rgba(242,240,236,.07)}
+  .msg-bubble.assistant{align-self:flex-start;background:rgba(var(--ink-rgb),.07)}
   .msg-bubble.user{align-self:flex-end;background:var(--accent);color:var(--ink)}
 </style>
 </head>
@@ -236,6 +256,11 @@
     </div>
     <div class="sidebar-foot">
       <p class="sidebar-whoami" id="admin-whoami"></p>
+      <button class="sidebar-toggle theme-toggle" id="theme-toggle" type="button">
+        <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <span id="theme-toggle-label">Switch to daytime</span>
+      </button>
       <button class="sidebar-link" id="nav-logout" type="button">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
         <span>Log out</span>
@@ -368,6 +393,25 @@
     var allowedRows = [];   // rows from allowed_clients
     var profileRows = [];   // rows from profiles, each with nested projects[]/activity[]/messages[]
     var activeClient = null; // the profile row currently open in the drawer
+
+    // ---- daytime/nighttime toggle: applied first, synchronously, so there's
+    // no flash of the wrong theme once the body is revealed below ----
+    var THEME_KEY = 'anchor-theme';
+    function setTheme(theme){
+      document.documentElement.setAttribute('data-theme', theme);
+      try { localStorage.setItem(THEME_KEY, theme); } catch (err) {}
+      var label = document.getElementById('theme-toggle-label');
+      if(label) label.textContent = theme === 'light' ? 'Switch to nighttime' : 'Switch to daytime';
+    }
+    (function(){
+      var stored = null;
+      try { stored = localStorage.getItem(THEME_KEY); } catch (err) {}
+      setTheme(stored === 'light' ? 'light' : 'dark');
+    })();
+    document.getElementById('theme-toggle').addEventListener('click', function(){
+      var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      setTheme(isLight ? 'dark' : 'light');
+    });
 
     // ---- sidebar: view switching + collapse ----
     var views = { clients: document.getElementById('view-clients'), messages: document.getElementById('view-messages'), meetings: document.getElementById('view-meetings') };

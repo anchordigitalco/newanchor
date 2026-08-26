@@ -365,6 +365,15 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
 @media (max-width:640px){
   .article-photo{float:none;width:100%;max-width:none;margin:0 0 1rem}
 }
+/* a real footer row for the article card - status on the left, the visit-site action on the
+   right, separated from the body copy by a hairline, instead of two loose stacked spans. clear:
+   both so it always sits below the floated photo even on a short article. */
+.article-foot{
+  clear:both;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+  margin-top:1.4rem;padding-top:1rem;border-top:1px solid rgba(242,240,236,.14);
+}
+.article-foot .clip-status{margin:0}
+.article-foot .btn-outline{margin:0 !important}
 /* the before/after slider uses the exact same box every plain article photo uses (width:100%,
    the shared .clip-img aspect-ratio) - only its contents differ, never the frame itself. */
 /* matches the real screenshots' own aspect ratio (1400x879) - shown in full, not cropped to fit
@@ -1963,15 +1972,14 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
     // the photo is a small floated card INSIDE the text block (not a full-width block above it),
     // so the copy starts beside it on the left and wraps to full width once past the photo.
     var media = '<div class="article-photo">'+renderArticleMedia(c)+'</div>';
-    var link = c.url ? '<a class="btn-outline" style="margin-top:1rem;display:inline-block" href="'+c.url+'" target="_blank" rel="noopener">Visit site</a>' : '';
+    var link = c.url ? '<a class="btn-outline" href="'+c.url+'" target="_blank" rel="noopener">Visit site</a>' : '';
     var paras = (c.body || []).map(function(p){ return '<p>'+p+'</p>'; }).join('');
     return '<div class="clip-text">'+
       media+
       '<span class="clip-cat" style="display:block;margin-top:.6rem">'+c.cat+' &middot; '+c.date+'</span>'+
       '<p class="kicker" style="margin-top:.3rem">'+c.title+'</p>'+
       paras+
-      '<span class="clip-status" style="display:block;margin-top:.8rem;opacity:.7">'+c.status+'</span>'+
-      link+
+      '<div class="article-foot"><span class="clip-status">'+c.status+'</span>'+link+'</div>'+
       '</div>';
   }
   function showArticlePanel(id){
