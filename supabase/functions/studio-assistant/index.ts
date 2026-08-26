@@ -9,11 +9,40 @@
 // Secret: supabase secrets set ANTHROPIC_API_KEY=sk-ant-...
 
 import { createClient } from "jsr:@supabase/supabase-js@2";
+import nodemailer from "npm:nodemailer@6.9.14";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+const NOTIFY_RECIPIENTS = ["adam@anchordigitalco.com", "jackson@anchordigitalco.com"];
+
+// Adam/Jackson get an email every time a client sends the assistant a
+// message, so a real question doesn't just sit unread in the admin panel.
+// Best-effort: a failed notification never blocks the client's own reply.
+async function notifyNewMessage(who: string, message: string, reply: string) {
+  const gmailUser = Deno.env.get("GMAIL_USER");
+  const gmailPass = Deno.env.get("GMAIL_APP_PASSWORD");
+  if (!gmailUser || !gmailPass) {
+    console.error("GMAIL_USER/GMAIL_APP_PASSWORD not set, skipping message notification.");
+    return;
+  }
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: { user: gmailUser, pass: gmailPass },
+    });
+    await transporter.sendMail({
+      from: `Anchor Digital Portal <${gmailUser}>`,
+      to: NOTIFY_RECIPIENTS,
+      subject: `New portal message from ${who}`,
+      text: `${who} just messaged the studio assistant:\n\n"${message}"\n\nThe assistant replied:\n\n"${reply}"\n\nFull conversation history: check the Messages tab in the admin portal.`,
+    });
+  } catch (err) {
+    console.error("message notification email error:", err);
+  }
+}
 
 const SYSTEM_PROMPT = `You are the Anchor Digital studio assistant, embedded in a client's
 project portal. Anchor Digital is a small web design/development studio run by Adam and
@@ -133,6 +162,9 @@ Deno.serve(async (req) => {
       { client_id: user.id, role: "assistant", content: reply },
     ]);
     if (logError) console.error("message log error:", logError);
+
+    const who = profile?.company_name || user.email || "A client";
+    await notifyNewMessage(who, message, reply);
 
     return json({ reply }, 200);
   } catch (err) {
