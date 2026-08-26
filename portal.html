@@ -94,6 +94,7 @@
   .portal-field input::placeholder{color:rgba(242,240,236,.4)}
   .portal-field input:focus{outline:none;border-color:rgba(255,255,255,.55);background:rgba(0,0,0,.3)}
   .portal-hint{font-size:.76rem;opacity:.7;margin:.5rem 0 0;line-height:1.5}
+  .portal-recaptcha{margin:.7rem 0 0}
   .portal-submit{
     width:100%;margin-top:.4rem;padding:.9rem 1rem;border-radius:99px;border:0;cursor:pointer;
     background:var(--accent);color:var(--ink);font-family:var(--font-mono);font-size:.82rem;letter-spacing:.02em;
@@ -147,6 +148,7 @@
         <label for="portal-password">Password</label>
         <input id="portal-password" type="password" placeholder="••••••••" autocomplete="current-password" minlength="8">
         <p class="portal-hint">First time here? Set a password and we'll send a verification link to confirm it's you before your account is created.</p>
+        <div class="portal-recaptcha" id="portal-recaptcha"></div>
       </div>
       <button class="portal-submit" type="submit" id="portal-submit">Continue</button>
       <div class="portal-status" id="portal-status" role="status" aria-live="polite"></div>
@@ -161,13 +163,23 @@
     </p>
   </div>
 
+  <script src="https://www.google.com/recaptcha/api.js?render=explicit&onload=onPortalRecaptchaLoad" async defer></script>
   <script type="module">
     import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
     var SUPABASE_URL = 'https://sroncqqparjklohbyidt.supabase.co';
     var SUPABASE_ANON_KEY = 'sb_publishable_5buinIijAx9Y_3ZpJ3d_BA_Jd-5cpyw';
+    var PORTAL_AUTH_URL = SUPABASE_URL + '/functions/v1/portal-auth';
+    var RECAPTCHA_SITE_KEY = '6LdnG3ktAAAAAJhRqdG25qLHFC0VlQqRHP1lrXnd';
     var supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    var recaptchaWidgetId = null;
+    window.onPortalRecaptchaLoad = function(){
+      var el = document.getElementById('portal-recaptcha');
+      if(!el || typeof grecaptcha === 'undefined') return;
+      recaptchaWidgetId = grecaptcha.render('portal-recaptcha', { sitekey: RECAPTCHA_SITE_KEY });
+    };
 
     var step = 'email';
     var form = document.getElementById('portal-form');
@@ -197,6 +209,7 @@
       lede.textContent = 'Enter your email to get started.';
       passwordField.hidden = true;
       passwordInput.value = '';
+      if(typeof grecaptcha !== 'undefined' && recaptchaWidgetId !== null) grecaptcha.reset(recaptchaWidgetId);
       backSwitch.hidden = true;
       submitBtn.textContent = 'Continue';
       submitBtn.disabled = false;
@@ -277,45 +290,54 @@
       // step === 'password'
       var email2 = emailInput.value.trim();
       var password = passwordInput.value;
+
+      var recaptchaToken = (typeof grecaptcha !== 'undefined' && recaptchaWidgetId !== null)
+        ? grecaptcha.getResponse(recaptchaWidgetId) : '';
+      if(!recaptchaToken){
+        showStatus('Please check the "I\'m not a robot" box before continuing.');
+        return;
+      }
+
       submitBtn.disabled = true;
       showStatus('Logging in...');
       try {
-        var signInRes = await supabase.auth.signInWithPassword({ email: email2, password: password });
-        if(!signInRes.error){
+        var res = await fetch(PORTAL_AUTH_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+          body: JSON.stringify({
+            email: email2,
+            password: password,
+            recaptchaToken: recaptchaToken,
+            redirectTo: window.location.origin + '/portal'
+          })
+        });
+        var result = await res.json();
+
+        if(typeof grecaptcha !== 'undefined' && recaptchaWidgetId !== null) grecaptcha.reset(recaptchaWidgetId);
+
+        if(result.status === 'signed_in' && result.session){
           showStatus('Taking you in...');
+          await supabase.auth.setSession({ access_token: result.session.access_token, refresh_token: result.session.refresh_token });
           await redirectAfterLogin();
           return;
         }
 
-        // no account yet for this (allowlisted) email, or wrong password.
-        // try creating the account, Supabase sends a verification email and
-        // won't issue a session until it's confirmed.
-        showStatus('Setting up your account...');
-        var signUpRes = await supabase.auth.signUp({
-          email: email2,
-          password: password,
-          options: { emailRedirectTo: window.location.origin + '/portal' }
-        });
-        if(!signUpRes.error){
-          if(signUpRes.data && signUpRes.data.session){
-            showStatus('Taking you in...');
-            await redirectAfterLogin();
-            return;
-          }
+        if(result.status === 'check_email'){
           showStatus('Check your email, we sent a verification link. Click it to confirm your account, then come back and log in with the password you just set.');
           submitBtn.disabled = false;
           return;
         }
 
-        var msg = signUpRes.error.message || '';
-        if(/registered|exists/i.test(msg)){
+        // result.status === 'error'
+        if(result.error === 'wrong_password'){
           showStatus("That password doesn't look right, try again, or email adam@anchordigitalco.com if you're stuck.");
         } else {
-          showStatus("That didn't go through (" + msg + "). Try a different password, or email adam@anchordigitalco.com if it keeps happening.");
+          showStatus("That didn't go through (" + (result.error || 'unknown error') + "). Try a different password, or email adam@anchordigitalco.com if it keeps happening.");
         }
         submitBtn.disabled = false;
       } catch (err) {
         console.error('login/signup error', err);
+        if(typeof grecaptcha !== 'undefined' && recaptchaWidgetId !== null) grecaptcha.reset(recaptchaWidgetId);
         showStatus('Something went wrong, try again in a moment.');
         submitBtn.disabled = false;
       }
