@@ -1459,15 +1459,20 @@ body.video-failed .card{max-width:100%}
   var animating = false;
   var transitionId = 0; // bumped whenever a transition is superseded, so an orphaned frame loop can't fight a new one
   var lastStepAt = 0;
-  var MS_PER_VIDEO_SEC = 600;  // one steady walking pace for every move, entering included - real-time
+  var MS_PER_VIDEO_SEC = 600;  // one steady walking pace for every move after entering - real-time
                                  // (1000) read as sluggish across repeated feedback, not just the reveal
                                  // timing within a hop but the hop's own motion taking too long
+  var MS_PER_VIDEO_SEC_INTRO = 800; // the opening zoom-out (start -> threshold) reads better a bit
+                                      // more deliberate than the rest, kept slower on its own rather
+                                      // than reverting the general pace everything else was sped up to
   var MIN_STEP_MS = 380;
   var MAX_STEP_MS = 40000;
   var COOLDOWN_MS = 380;
   function stepDuration(fromIdx, toIdx){
     var dt = Math.abs(WAYPOINTS[toIdx].t - WAYPOINTS[fromIdx].t);
-    return Math.max(MIN_STEP_MS, Math.min(MAX_STEP_MS, dt * MS_PER_VIDEO_SEC));
+    var isIntro = WAYPOINTS[fromIdx].id === 'start' && WAYPOINTS[toIdx].id === 'threshold';
+    var pace = isIntro ? MS_PER_VIDEO_SEC_INTRO : MS_PER_VIDEO_SEC;
+    return Math.max(MIN_STEP_MS, Math.min(MAX_STEP_MS, dt * pace));
   }
   var scrubActive = false; // true once this device is running the fixed-viewport stepper
 
