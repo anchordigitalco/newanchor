@@ -303,9 +303,9 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
   position:relative;
   pointer-events:none;
 }
-/* one shared width/height for all three - specificity high enough to always beat the open-order
-   shape classes (.card-vertical/.card-horizontal) used elsewhere on the site, so these three never
-   resize to fit their own copy; the longer "ongoing maintenance" card scrolls internally instead.
+/* one shared width/height for all three, fixed no matter how many are open or in what order (an
+   earlier open-order-based shape system that changed a card's size/layout has been removed, it
+   contradicted this); the longer "ongoing maintenance" card scrolls internally instead.
    absolutely positioned from the same top-center point as the button (every column's button is
    the same size, so this point lines up identically for all three), covering it once open.
    centered with left:0;right:0;margin:auto rather than a translateX, so the transform property
@@ -433,14 +433,6 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
   font-size:1.25rem;font-weight:600;color:var(--dark-ink);opacity:1;margin-bottom:0;
 }
 .popup-card .kicker::before{content:none}
-/* shape is assigned live by open order (first two open = vertical, a third = horizontal),
-   never fixed to one hotspot, so it plays out the same regardless of which one is clicked third */
-.popup-card.card-vertical{width:300px;height:520px;display:flex;flex-direction:column}
-.popup-card.card-vertical .clip-text{flex:1;overflow-y:auto}
-.popup-card.card-horizontal{width:540px}
-.popup-card.card-horizontal.has-img{display:flex;align-items:stretch}
-.popup-card.card-horizontal.has-img .clip-img{width:220px;aspect-ratio:auto;flex-shrink:0}
-.popup-card.card-horizontal.has-img .clip-text{flex:1;min-width:0;align-self:center}
 /* corner marks, borrowed from the reference card */
 .popup-card::before,.popup-card::after{content:"";position:absolute;width:14px;height:14px;z-index:2;pointer-events:none}
 .popup-card::before{top:8px;left:8px;border-top:2px solid var(--accent);border-left:2px solid var(--accent)}
@@ -1879,26 +1871,15 @@ body.video-failed .card{max-width:100%}
 
   // ============ HOTSPOTS (computers and the wall of articles): click one, its card opens; several
   // can be open at once, and the tray reflows on its own (flexbox) to make room as more join it.
-  // Shape follows OPEN ORDER, not which hotspot it is: whichever two are open first are the tall
-  // vertical cards, and a third one joining them becomes the wide horizontal one, no matter which
-  // three get clicked or in what order. ============
-  var openOrder = [];
-  function applyCardShapes(){
-    openOrder.forEach(function(info, i){
-      var card = document.querySelector('.popup-card[data-info="' + info + '"]');
-      if(!card) return;
-      card.classList.toggle('card-vertical', i < 2);
-      card.classList.toggle('card-horizontal', i >= 2);
-    });
-  }
+  // the services cards are always the same fixed size, no matter how many are open or in what
+  // order (an earlier open-order-based shape system existed here and shrank the third card's
+  // photo down to a thumbnail strip, contradicting that, removed it). ============
   function openHotspotCard(info){
     var card = document.querySelector('.popup-card[data-info="' + info + '"]');
     var dot = document.querySelector('.hotspot[data-info="' + info + '"]');
     if(!card || !card.hidden) return;
     card.hidden = false;
     if(dot) dot.classList.add('open');
-    if(openOrder.indexOf(info) === -1) openOrder.push(info);
-    applyCardShapes();
     requestAnimationFrame(function(){ card.classList.add('in'); });
   }
   function closeHotspotCard(info){
@@ -1907,20 +1888,15 @@ body.video-failed .card{max-width:100%}
     if(!card || card.hidden) return;
     card.classList.remove('in');
     if(dot) dot.classList.remove('open');
-    var i = openOrder.indexOf(info);
-    if(i !== -1) openOrder.splice(i, 1);
-    applyCardShapes();
-    setTimeout(function(){ card.hidden = true; card.classList.remove('card-vertical','card-horizontal'); }, 150);
+    setTimeout(function(){ card.hidden = true; }, 150);
   }
   function closeAllHotspotCards(){
     // queried fresh (not the cached popupCards list): this can run before that list, and before
     // build*() has even inserted the wall's cards, during the very first applyHeroMode() at load.
-    // :not(.article-panel) - that one card is closed through hideArticlePanel() below instead, it
-    // isn't part of the open-order/shape system this loop manages.
+    // :not(.article-panel) - that one card is closed through hideArticlePanel() below instead.
     document.querySelectorAll('.popup-card:not(.article-panel)').forEach(function(card){
       if(!card.hidden) closeHotspotCard(card.getAttribute('data-info'));
     });
-    openOrder = [];
     hideArticlePanel();
   }
 
