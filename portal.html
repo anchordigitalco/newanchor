@@ -73,6 +73,7 @@
   }
   .portal-lede{font-size:.9rem;opacity:.85;margin:0 0 1.7rem;line-height:1.55}
   .portal-field{margin-bottom:1.1rem}
+  .portal-field[hidden]{display:none}
   .portal-field label{
     display:block;font-family:var(--font-mono);font-size:.7rem;letter-spacing:.04em;
     text-transform:lowercase;opacity:.75;margin-bottom:.45rem;
@@ -83,8 +84,10 @@
     color:var(--dark-ink);font-family:var(--font-body);font-size:.92rem;
     transition:border-color .2s var(--ease-soft),background .2s var(--ease-soft);
   }
+  .portal-field input:read-only{opacity:.6}
   .portal-field input::placeholder{color:rgba(242,240,236,.4)}
   .portal-field input:focus{outline:none;border-color:rgba(255,255,255,.55);background:rgba(0,0,0,.3)}
+  .portal-hint{font-size:.76rem;opacity:.7;margin:.5rem 0 0;line-height:1.5}
   .portal-submit{
     width:100%;margin-top:.4rem;padding:.9rem 1rem;border-radius:99px;border:0;cursor:pointer;
     background:var(--accent);color:var(--ink);font-family:var(--font-mono);font-size:.82rem;letter-spacing:.02em;
@@ -92,6 +95,14 @@
   }
   .portal-submit:hover{background:var(--accent-hover);transform:translateY(-1px)}
   .portal-submit:disabled{opacity:.55;cursor:default;transform:none}
+  .portal-switch{margin-top:1rem;text-align:center}
+  .portal-switch[hidden]{display:none}
+  .portal-switch button{
+    background:none;border:0;padding:0;cursor:pointer;
+    font-family:var(--font-body);font-size:.82rem;color:var(--dark-ink);
+    text-decoration:underline;text-underline-offset:2px;opacity:.85;
+  }
+  .portal-switch button:hover{opacity:1}
   .portal-note{
     margin-top:1.5rem;padding-top:1.3rem;border-top:1px solid rgba(255,255,255,.18);
     font-size:.82rem;line-height:1.6;opacity:.85;
@@ -117,24 +128,28 @@
 
   <div class="portal-card">
     <p class="portal-kicker">client portal</p>
-    <h1>Login to your account</h1>
-    <p class="portal-lede">Enter your email and password to access your project dashboard.</p>
+    <h1 id="portal-heading">Login to your account</h1>
+    <p class="portal-lede" id="portal-lede">Enter your email to get started.</p>
     <form id="portal-form">
       <div class="portal-field">
         <label for="portal-email">Email</label>
         <input id="portal-email" type="email" placeholder="you@company.com" autocomplete="email" required>
       </div>
-      <div class="portal-field">
+      <div class="portal-field" id="portal-field-password" hidden>
         <label for="portal-password">Password</label>
-        <input id="portal-password" type="password" placeholder="••••••••" autocomplete="current-password" required>
+        <input id="portal-password" type="password" placeholder="••••••••" autocomplete="current-password" minlength="8">
+        <p class="portal-hint">First time here? Set a password and we'll send a verification link to confirm it's you before your account is created.</p>
       </div>
-      <button class="portal-submit" type="submit">Log in</button>
+      <button class="portal-submit" type="submit" id="portal-submit">Continue</button>
       <div class="portal-status" id="portal-status" role="status" aria-live="polite"></div>
     </form>
+    <p class="portal-switch" id="portal-switch" hidden>
+      <button type="button" id="portal-back">Use a different email</button>
+    </p>
     <p class="portal-note">
-      Client accounts are set up individually as projects kick off. If you don't have login
-      details yet, email <a href="mailto:adam@anchordigitalco.com">adam@anchordigitalco.com</a>
-      or <a href="mailto:jackson@anchordigitalco.com">jackson@anchordigitalco.com</a> to get connected.
+      Portal accounts can only be created for an email already on our client list. If yours
+      isn't set up yet, email <a href="mailto:adam@anchordigitalco.com">adam@anchordigitalco.com</a>
+      or <a href="mailto:jackson@anchordigitalco.com">jackson@anchordigitalco.com</a> to get added.
     </p>
   </div>
 
@@ -145,20 +160,74 @@
     var SUPABASE_ANON_KEY = 'sb_publishable_5buinIijAx9Y_3ZpJ3d_BA_Jd-5cpyw';
     var supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    var step = 'email';
     var form = document.getElementById('portal-form');
-    var submitBtn = form.querySelector('.portal-submit');
+    var submitBtn = document.getElementById('portal-submit');
     var status = document.getElementById('portal-status');
+    var heading = document.getElementById('portal-heading');
+    var lede = document.getElementById('portal-lede');
+    var emailInput = document.getElementById('portal-email');
+    var passwordField = document.getElementById('portal-field-password');
+    var passwordInput = document.getElementById('portal-password');
+    var backSwitch = document.getElementById('portal-switch');
+    var backBtn = document.getElementById('portal-back');
 
     function showStatus(text){
       status.textContent = text;
       status.classList.add('show');
+    }
+    function clearStatus(){
+      status.textContent = '';
+      status.classList.remove('show');
+    }
+
+    function goToEmailStep(){
+      step = 'email';
+      clearStatus();
+      heading.textContent = 'Login to your account';
+      lede.textContent = 'Enter your email to get started.';
+      passwordField.hidden = true;
+      passwordInput.value = '';
+      backSwitch.hidden = true;
+      submitBtn.textContent = 'Continue';
+      submitBtn.disabled = false;
+      emailInput.removeAttribute('readonly');
+      emailInput.focus();
+    }
+
+    function goToPasswordStep(){
+      step = 'password';
+      clearStatus();
+      heading.textContent = 'Enter your password';
+      lede.textContent = "That email's on our list.";
+      passwordField.hidden = false;
+      backSwitch.hidden = false;
+      submitBtn.textContent = 'Log in';
+      submitBtn.disabled = false;
+      emailInput.setAttribute('readonly', 'readonly');
+      passwordInput.focus();
+    }
+
+    backBtn.addEventListener('click', goToEmailStep);
+
+    async function redirectAfterLogin(){
+      try {
+        var adminRes = await supabase.rpc('am_i_admin');
+        if(!adminRes.error && adminRes.data === true){
+          window.location.href = 'admin.html';
+          return;
+        }
+      } catch (err) {
+        console.error('admin check error', err);
+      }
+      window.location.href = 'dashboard.html';
     }
 
     (async function init(){
       try {
         var res = await supabase.auth.getUser();
         if(res && res.data && res.data.user){
-          window.location.replace('dashboard.html');
+          await redirectAfterLogin();
           return;
         }
       } catch (err) {
@@ -169,22 +238,72 @@
 
     form.addEventListener('submit', async function(e){
       e.preventDefault();
-      var email = document.getElementById('portal-email').value.trim();
-      var password = document.getElementById('portal-password').value;
+
+      if(step === 'email'){
+        var email = emailInput.value.trim();
+        if(!email) return;
+        submitBtn.disabled = true;
+        showStatus('Checking...');
+        try {
+          var checkRes = await supabase.rpc('is_allowed_client', { check_email: email });
+          if(checkRes.error){
+            showStatus('Something went wrong, try again in a moment.');
+            submitBtn.disabled = false;
+            return;
+          }
+          if(!checkRes.data){
+            showStatus("It looks like you're not a current client. Email adam@anchordigitalco.com or jackson@anchordigitalco.com to get set up.");
+            submitBtn.disabled = false;
+            return;
+          }
+          goToPasswordStep();
+        } catch (err) {
+          console.error('allowlist check error', err);
+          showStatus('Something went wrong, try again in a moment.');
+          submitBtn.disabled = false;
+        }
+        return;
+      }
+
+      // step === 'password'
+      var email2 = emailInput.value.trim();
+      var password = passwordInput.value;
       submitBtn.disabled = true;
       showStatus('Logging in...');
       try {
-        var result = await supabase.auth.signInWithPassword({ email: email, password: password });
-        if(result.error){
-          showStatus("That email or password didn't work. Double-check it, or email adam@anchordigitalco.com if you're not sure what's on file.");
+        var signInRes = await supabase.auth.signInWithPassword({ email: email2, password: password });
+        if(!signInRes.error){
+          showStatus('Taking you in...');
+          await redirectAfterLogin();
+          return;
+        }
+
+        // no account yet for this (allowlisted) email, or wrong password.
+        // try creating the account, Supabase sends a verification email and
+        // won't issue a session until it's confirmed.
+        showStatus('Setting up your account...');
+        var signUpRes = await supabase.auth.signUp({ email: email2, password: password });
+        if(!signUpRes.error){
+          if(signUpRes.data && signUpRes.data.session){
+            showStatus('Taking you in...');
+            await redirectAfterLogin();
+            return;
+          }
+          showStatus('Check your email, we sent a verification link. Click it to confirm your account, then come back and log in with the password you just set.');
           submitBtn.disabled = false;
           return;
         }
-        showStatus('Taking you to your dashboard...');
-        window.location.href = 'dashboard.html';
+
+        var msg = signUpRes.error.message || '';
+        if(/registered|exists/i.test(msg)){
+          showStatus("That password doesn't look right, try again, or email adam@anchordigitalco.com if you're stuck.");
+        } else {
+          showStatus("That didn't go through (" + msg + "). Try a different password, or email adam@anchordigitalco.com if it keeps happening.");
+        }
+        submitBtn.disabled = false;
       } catch (err) {
-        console.error('sign in error', err);
-        showStatus("Something went wrong logging in, try again in a moment.");
+        console.error('login/signup error', err);
+        showStatus('Something went wrong, try again in a moment.');
         submitBtn.disabled = false;
       }
     });

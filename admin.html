@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - Anchor Digital</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;600;700&family=Varela+Round&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --dark:#1F1E1C;
+    --panel:#242220;
+    --dark-ink:#F2F0EC;
+    --ink-faint:#A8A49D;
+    --accent:#FFFFFF;
+    --accent-hover:#C9C6C0;
+    --ink:#131313;
+    --hairline:rgba(242,240,236,.12);
+    --font-body:'Karla',Helvetica Neue,Arial,sans-serif;
+    --font-word:'Varela Round',Helvetica Neue,Arial,sans-serif;
+    --font-mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --ease-soft:cubic-bezier(.4,0,.2,1);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:var(--font-body);color:var(--dark-ink);background:var(--dark);
+    min-height:100vh;min-height:100dvh;
+    visibility:hidden;
+  }
+  body.ready{visibility:visible}
+  a{color:inherit}
+  button{font-family:inherit}
+
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;gap:1rem;
+    padding:1rem clamp(1.2rem,3vw,2.4rem);border-bottom:1px solid var(--hairline);
+    background:var(--panel);position:sticky;top:0;z-index:5;
+  }
+  .topbar-brand{display:flex;align-items:center;gap:.6rem;font-family:var(--font-word);font-size:.98rem}
+  .topbar-brand img{height:20px;width:auto}
+  .topbar-nav{display:flex;align-items:center;gap:1.2rem}
+  .topbar-nav button,.topbar-nav a{
+    background:none;border:0;cursor:pointer;color:var(--ink-faint);font-size:.82rem;text-decoration:none;
+    transition:color .2s var(--ease-soft);
+  }
+  .topbar-nav button:hover,.topbar-nav a:hover{color:var(--dark-ink)}
+
+  .main{max-width:72rem;margin:0 auto;padding:clamp(1.5rem,3vw,2.6rem)}
+  .main-head{margin-bottom:1.8rem}
+  .main-head h1{font-size:clamp(1.4rem,3vw,1.9rem);margin:0 0 .3rem;font-weight:600}
+  .main-head p{margin:0;color:var(--ink-faint);font-size:.9rem}
+
+  .panel{background:var(--panel);border:1px solid var(--hairline);border-radius:18px;padding:1.6rem;margin-bottom:1.5rem}
+  .panel h2{font-size:1.02rem;margin:0 0 .3rem;font-weight:600}
+  .panel .panel-sub{font-size:.84rem;color:var(--ink-faint);margin:0 0 1.2rem;line-height:1.5}
+
+  .add-row{display:flex;flex-wrap:wrap;gap:.7rem;align-items:flex-end}
+  .add-field{flex:1;min-width:180px}
+  .add-field label{display:block;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.04em;text-transform:lowercase;color:var(--ink-faint);margin-bottom:.4rem}
+  .add-field input{
+    width:100%;padding:.65rem .8rem;border-radius:10px;background:rgba(0,0,0,.2);
+    border:1px solid var(--hairline);color:var(--dark-ink);font-family:var(--font-body);font-size:.86rem;
+  }
+  .add-field input:focus{outline:none;border-color:rgba(242,240,236,.4)}
+  .btn{
+    padding:.65rem 1.2rem;border-radius:99px;border:0;cursor:pointer;
+    background:var(--accent);color:var(--ink);font-family:var(--font-mono);font-size:.78rem;
+    transition:background .2s var(--ease-soft);white-space:nowrap;
+  }
+  .btn:hover{background:var(--accent-hover)}
+  .btn:disabled{opacity:.5;cursor:default}
+  .btn-quiet{background:none;border:1px solid var(--hairline);color:var(--ink-faint)}
+  .btn-quiet:hover{background:rgba(242,240,236,.06);color:var(--dark-ink)}
+  .form-status{font-size:.78rem;color:var(--ink-faint);margin-top:.7rem}
+
+  .client-table{width:100%;border-collapse:collapse}
+  .client-table th{
+    text-align:left;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.04em;text-transform:lowercase;
+    color:var(--ink-faint);font-weight:500;padding:.5rem .6rem;border-bottom:1px solid var(--hairline);
+  }
+  .client-table td{padding:.75rem .6rem;border-bottom:1px solid var(--hairline);font-size:.85rem;vertical-align:middle}
+  .client-table tr:last-child td{border-bottom:0}
+  .client-table tr.is-clickable{cursor:pointer;transition:background .15s var(--ease-soft)}
+  .client-table tr.is-clickable:hover{background:rgba(242,240,236,.04)}
+  .badge{
+    display:inline-block;padding:.2rem .6rem;border-radius:99px;font-family:var(--font-mono);font-size:.66rem;
+    border:1px solid var(--hairline);color:var(--ink-faint);
+  }
+  .badge.active{color:var(--dark-ink);border-color:rgba(242,240,236,.35)}
+  .row-actions{display:flex;gap:.4rem}
+  .row-actions button{
+    background:none;border:0;color:var(--ink-faint);cursor:pointer;padding:.3rem;display:flex;
+    transition:color .2s var(--ease-soft);
+  }
+  .row-actions button:hover{color:var(--dark-ink)}
+  .row-actions svg{width:15px;height:15px}
+  .empty-state{padding:1.6rem 1rem;text-align:center;color:var(--ink-faint);font-size:.85rem;border:1px dashed var(--hairline);border-radius:14px}
+
+  /* ---- detail drawer ---- */
+  .drawer-backdrop{
+    position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9;
+    opacity:0;pointer-events:none;transition:opacity .2s var(--ease-soft);
+  }
+  .drawer-backdrop.open{opacity:1;pointer-events:auto}
+  .drawer{
+    position:fixed;top:0;right:0;bottom:0;z-index:10;width:min(480px,100vw);
+    background:var(--dark);border-left:1px solid var(--hairline);
+    padding:1.6rem clamp(1.2rem,3vw,2rem);overflow-y:auto;
+    transform:translateX(100%);transition:transform .25s var(--ease-soft);
+  }
+  .drawer.open{transform:translateX(0)}
+  .drawer-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:1.6rem}
+  .drawer-head h2{margin:0 0 .2rem;font-size:1.2rem;font-weight:600}
+  .drawer-head p{margin:0;color:var(--ink-faint);font-size:.82rem}
+  .drawer-close{background:none;border:1px solid var(--hairline);border-radius:50%;width:32px;height:32px;flex-shrink:0;color:var(--ink-faint);cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .drawer-close:hover{color:var(--dark-ink)}
+  .drawer-close svg{width:15px;height:15px}
+  .drawer-section{margin-bottom:1.8rem}
+  .drawer-section h3{font-size:.86rem;margin:0 0 .8rem;font-weight:600}
+  .drawer-field{margin-bottom:.8rem}
+  .drawer-field label{display:block;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.04em;text-transform:lowercase;color:var(--ink-faint);margin-bottom:.35rem}
+  .drawer-field input{
+    width:100%;padding:.6rem .75rem;border-radius:10px;background:rgba(0,0,0,.2);
+    border:1px solid var(--hairline);color:var(--dark-ink);font-family:var(--font-body);font-size:.85rem;
+  }
+  .drawer-field input:focus{outline:none;border-color:rgba(242,240,236,.4)}
+  .activity-item{padding:.65rem 0;border-bottom:1px solid var(--hairline);font-size:.82rem;line-height:1.5}
+  .activity-item time{display:block;margin-top:.25rem;font-family:var(--font-mono);font-size:.66rem;color:var(--ink-faint)}
+  .activity-add{display:flex;gap:.5rem;margin-top:.9rem}
+  .activity-add input{flex:1;padding:.6rem .75rem;border-radius:10px;background:rgba(0,0,0,.2);border:1px solid var(--hairline);color:var(--dark-ink);font-family:var(--font-body);font-size:.84rem}
+  .activity-add input:focus{outline:none;border-color:rgba(242,240,236,.4)}
+  .drive-file{display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.55rem 0;border-bottom:1px solid var(--hairline);font-size:.82rem}
+  .drive-file:last-child{border-bottom:0}
+  .drive-file-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .drive-file button{background:none;border:0;color:var(--ink-faint);cursor:pointer;flex-shrink:0}
+  .drive-file button:hover{color:var(--dark-ink)}
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="topbar-brand"><img src="assets/anchor-icon.png" alt=""> anchor digital · admin</div>
+    <nav class="topbar-nav">
+      <span id="admin-whoami"></span>
+      <button type="button" id="nav-logout">Log out</button>
+      <a href="index.html">Back to site</a>
+    </nav>
+  </div>
+
+  <main class="main">
+    <div class="main-head">
+      <h1>Clients</h1>
+      <p>Everything about every client, in one place.</p>
+    </div>
+
+    <div class="panel">
+      <h2>Add a client</h2>
+      <p class="panel-sub">Adds an email to the client allowlist so they can create a portal account. This doesn't create the account itself, they do that from the login page.</p>
+      <div class="add-row">
+        <div class="add-field">
+          <label for="add-email">Email</label>
+          <input id="add-email" type="email" placeholder="client@company.com">
+        </div>
+        <div class="add-field">
+          <label for="add-company">Company name (optional)</label>
+          <input id="add-company" type="text" placeholder="Company">
+        </div>
+        <button class="btn" id="add-client-btn" type="button">Add client</button>
+      </div>
+      <p class="form-status" id="add-status"></p>
+    </div>
+
+    <div class="panel">
+      <h2>All clients</h2>
+      <p class="panel-sub">Invited clients who haven't signed up yet show as pending.</p>
+      <div id="client-table-wrap"></div>
+    </div>
+  </main>
+
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+  <div class="drawer" id="drawer" role="dialog" aria-label="Client detail" aria-hidden="true">
+    <div class="drawer-head">
+      <div>
+        <h2 id="drawer-name">Client</h2>
+        <p id="drawer-email"></p>
+      </div>
+      <button class="drawer-close" id="drawer-close" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="drawer-section">
+      <h3>Project</h3>
+      <div class="drawer-field"><label for="d-status">Status</label><input id="d-status" type="text" placeholder="e.g. In design"></div>
+      <div class="drawer-field"><label for="d-milestone">Next milestone</label><input id="d-milestone" type="text" placeholder="e.g. Homepage review"></div>
+      <div class="drawer-field"><label for="d-open-items">Open items</label><input id="d-open-items" type="number" min="0" step="1"></div>
+      <div class="drawer-field"><label for="d-last-update">Last update</label><input id="d-last-update" type="date"></div>
+      <button class="btn" id="d-save-project" type="button">Save project</button>
+      <p class="form-status" id="d-project-status"></p>
+    </div>
+
+    <div class="drawer-section">
+      <h3>Activity</h3>
+      <div id="d-activity-list"></div>
+      <div class="activity-add">
+        <input id="d-activity-input" type="text" placeholder="Add an update...">
+        <button class="btn" id="d-activity-add-btn" type="button">Post</button>
+      </div>
+    </div>
+
+    <div class="drawer-section">
+      <h3>Drive files</h3>
+      <div id="d-drive-list"></div>
+    </div>
+
+    <div class="drawer-section">
+      <h3>Access</h3>
+      <button class="btn btn-quiet" id="d-remove-access" type="button">Remove from client list</button>
+      <p class="form-status" id="d-access-status"></p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    var SUPABASE_URL = 'https://sroncqqparjklohbyidt.supabase.co';
+    var SUPABASE_ANON_KEY = 'sb_publishable_5buinIijAx9Y_3ZpJ3d_BA_Jd-5cpyw';
+    var DRIVE_BUCKET = 'client-files';
+    var supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    var allowedRows = [];   // rows from allowed_clients
+    var profileRows = [];   // rows from profiles, each with nested projects[] and activity[]
+    var activeClient = null; // the profile row currently open in the drawer
+
+    document.getElementById('nav-logout').addEventListener('click', async function(){
+      try { await supabase.auth.signOut(); } catch (err) { console.error(err); }
+      window.location.href = 'portal.html';
+    });
+
+    function formatDate(iso){
+      if(!iso) return null;
+      try { return new Date(iso).toLocaleDateString(undefined, { year:'numeric', month:'short', day:'numeric' }); }
+      catch (err) { return null; }
+    }
+
+    // ---- load + render client table ----
+    async function loadClients(){
+      var allowedRes = await supabase.from('allowed_clients').select('email,company_name,added_at').order('added_at', { ascending: false });
+      var profileRes = await supabase.from('profiles').select('id,email,company_name,created_at,projects(id,status,next_milestone,open_items,last_update_at),activity(id,message,created_at)').order('created_at', { ascending: false });
+
+      if(allowedRes.error) console.error('load allowed_clients error', allowedRes.error);
+      if(profileRes.error) console.error('load profiles error', profileRes.error);
+
+      allowedRows = allowedRes.data || [];
+      profileRows = profileRes.data || [];
+      renderClientTable();
+    }
+
+    function findProfileByEmail(email){
+      return profileRows.filter(function(p){ return p.email && p.email.toLowerCase() === email.toLowerCase(); })[0] || null;
+    }
+
+    function renderClientTable(){
+      var wrap = document.getElementById('client-table-wrap');
+      if(allowedRows.length === 0){
+        wrap.innerHTML = '<div class="empty-state">No clients added yet. Use the form above to add your first one.</div>';
+        return;
+      }
+
+      var table = document.createElement('table');
+      table.className = 'client-table';
+      table.innerHTML = '<thead><tr><th>Client</th><th>Email</th><th>Status</th><th>Project status</th><th></th></tr></thead>';
+      var tbody = document.createElement('tbody');
+
+      allowedRows.forEach(function(row){
+        var profile = findProfileByEmail(row.email);
+        var tr = document.createElement('tr');
+
+        var nameCell = document.createElement('td');
+        nameCell.textContent = (profile && profile.company_name) || row.company_name || 'Unnamed';
+        tr.appendChild(nameCell);
+
+        var emailCell = document.createElement('td');
+        emailCell.textContent = row.email;
+        tr.appendChild(emailCell);
+
+        var statusCell = document.createElement('td');
+        var badge = document.createElement('span');
+        badge.className = 'badge' + (profile ? ' active' : '');
+        badge.textContent = profile ? 'Active' : 'Invited';
+        statusCell.appendChild(badge);
+        tr.appendChild(statusCell);
+
+        var projectCell = document.createElement('td');
+        var project = profile && profile.projects && profile.projects[0];
+        projectCell.textContent = (project && project.status) || (profile ? 'Not set up' : 'n/a');
+        tr.appendChild(projectCell);
+
+        var actionsCell = document.createElement('td');
+        var actions = document.createElement('span');
+        actions.className = 'row-actions';
+        var removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.setAttribute('aria-label', 'Remove ' + row.email + ' from client list');
+        removeBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>';
+        removeBtn.addEventListener('click', function(e){
+          e.stopPropagation();
+          removeClient(row.email);
+        });
+        actions.appendChild(removeBtn);
+        actionsCell.appendChild(actions);
+        tr.appendChild(actionsCell);
+
+        if(profile){
+          tr.classList.add('is-clickable');
+          tr.addEventListener('click', function(){ openDrawer(profile); });
+        }
+
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(tbody);
+      wrap.innerHTML = '';
+      wrap.appendChild(table);
+    }
+
+    async function removeClient(email){
+      if(!window.confirm('Remove ' + email + ' from the client list? This does not delete their account if they already signed up.')) return;
+      var res = await supabase.from('allowed_clients').delete().eq('email', email);
+      if(res.error){ console.error('remove client error', res.error); return; }
+      await loadClients();
+    }
+
+    // ---- add client ----
+    document.getElementById('add-client-btn').addEventListener('click', async function(){
+      var emailInput = document.getElementById('add-email');
+      var companyInput = document.getElementById('add-company');
+      var statusEl = document.getElementById('add-status');
+      var email = emailInput.value.trim();
+      if(!email){ statusEl.textContent = 'Enter an email first.'; return; }
+
+      var btn = document.getElementById('add-client-btn');
+      btn.disabled = true;
+      statusEl.textContent = 'Adding...';
+      var res = await supabase.from('allowed_clients').insert({
+        email: email,
+        company_name: companyInput.value.trim() || null
+      });
+      btn.disabled = false;
+      if(res.error){
+        statusEl.textContent = /duplicate|already exists/i.test(res.error.message || '') ? 'That email is already on the list.' : 'Could not add that client.';
+        console.error('add client error', res.error);
+        return;
+      }
+      statusEl.textContent = 'Added. They can now sign up from the portal login page.';
+      emailInput.value = '';
+      companyInput.value = '';
+      await loadClients();
+    });
+
+    // ---- drawer ----
+    var drawer = document.getElementById('drawer');
+    var backdrop = document.getElementById('drawer-backdrop');
+
+    function openDrawer(profile){
+      activeClient = profile;
+      document.getElementById('drawer-name').textContent = profile.company_name || profile.email;
+      document.getElementById('drawer-email').textContent = profile.email;
+
+      var project = (profile.projects && profile.projects[0]) || null;
+      document.getElementById('d-status').value = (project && project.status) || '';
+      document.getElementById('d-milestone').value = (project && project.next_milestone) || '';
+      document.getElementById('d-open-items').value = (project && typeof project.open_items === 'number') ? project.open_items : '';
+      document.getElementById('d-last-update').value = (project && project.last_update_at) ? project.last_update_at.slice(0,10) : '';
+      document.getElementById('d-project-status').textContent = '';
+
+      renderActivityList(profile.activity || []);
+      loadDriveFiles(profile.id);
+
+      drawer.classList.add('open');
+      drawer.setAttribute('aria-hidden', 'false');
+      backdrop.classList.add('open');
+    }
+
+    function closeDrawer(){
+      drawer.classList.remove('open');
+      drawer.setAttribute('aria-hidden', 'true');
+      backdrop.classList.remove('open');
+      activeClient = null;
+    }
+
+    document.getElementById('drawer-close').addEventListener('click', closeDrawer);
+    backdrop.addEventListener('click', closeDrawer);
+
+    function renderActivityList(rows){
+      var el = document.getElementById('d-activity-list');
+      var sorted = rows.slice().sort(function(a,b){ return new Date(b.created_at) - new Date(a.created_at); });
+      if(sorted.length === 0){
+        el.innerHTML = '<div class="empty-state">No activity yet.</div>';
+        return;
+      }
+      el.innerHTML = '';
+      sorted.forEach(function(row){
+        var item = document.createElement('div');
+        item.className = 'activity-item';
+        var p = document.createElement('p');
+        p.style.margin = '0';
+        p.textContent = row.message;
+        var time = document.createElement('time');
+        time.textContent = formatDate(row.created_at) || '';
+        item.appendChild(p);
+        item.appendChild(time);
+        el.appendChild(item);
+      });
+    }
+
+    document.getElementById('d-save-project').addEventListener('click', async function(){
+      if(!activeClient) return;
+      var statusEl = document.getElementById('d-project-status');
+      var btn = document.getElementById('d-save-project');
+      btn.disabled = true;
+      statusEl.textContent = 'Saving...';
+
+      var payload = {
+        client_id: activeClient.id,
+        status: document.getElementById('d-status').value.trim() || null,
+        next_milestone: document.getElementById('d-milestone').value.trim() || null,
+        open_items: document.getElementById('d-open-items').value === '' ? null : parseInt(document.getElementById('d-open-items').value, 10),
+        last_update_at: document.getElementById('d-last-update').value || null
+      };
+
+      var existing = activeClient.projects && activeClient.projects[0];
+      var res;
+      if(existing){
+        res = await supabase.from('projects').update(payload).eq('id', existing.id);
+      } else {
+        res = await supabase.from('projects').insert(payload);
+      }
+
+      btn.disabled = false;
+      if(res.error){
+        statusEl.textContent = 'Could not save.';
+        console.error('save project error', res.error);
+        return;
+      }
+      statusEl.textContent = 'Saved.';
+      await loadClients();
+      var refreshed = profileRows.filter(function(p){ return p.id === activeClient.id; })[0];
+      if(refreshed) activeClient = refreshed;
+    });
+
+    document.getElementById('d-activity-add-btn').addEventListener('click', async function(){
+      if(!activeClient) return;
+      var input = document.getElementById('d-activity-input');
+      var message = input.value.trim();
+      if(!message) return;
+      var res = await supabase.from('activity').insert({ client_id: activeClient.id, message: message });
+      if(res.error){ console.error('add activity error', res.error); return; }
+      input.value = '';
+      await loadClients();
+      var refreshed = profileRows.filter(function(p){ return p.id === activeClient.id; })[0];
+      if(refreshed){
+        activeClient = refreshed;
+        renderActivityList(refreshed.activity || []);
+      }
+    });
+
+    document.getElementById('d-remove-access').addEventListener('click', async function(){
+      if(!activeClient) return;
+      removeClient(activeClient.email);
+      closeDrawer();
+    });
+
+    async function loadDriveFiles(clientId){
+      var el = document.getElementById('d-drive-list');
+      el.textContent = 'Loading...';
+      var res = await supabase.storage.from(DRIVE_BUCKET).list(clientId, { sortBy: { column: 'created_at', order: 'desc' } });
+      if(res.error){
+        el.innerHTML = '<div class="empty-state">Could not load files.</div>';
+        return;
+      }
+      var files = (res.data || []).filter(function(f){ return f.name && f.id; });
+      if(files.length === 0){
+        el.innerHTML = '<div class="empty-state">No files uploaded yet.</div>';
+        return;
+      }
+      el.innerHTML = '';
+      files.forEach(function(file){
+        var path = clientId + '/' + file.name;
+        var row = document.createElement('div');
+        row.className = 'drive-file';
+        var name = document.createElement('span');
+        name.className = 'drive-file-name';
+        name.textContent = file.name;
+        row.appendChild(name);
+        var dl = document.createElement('button');
+        dl.type = 'button';
+        dl.textContent = 'Download';
+        dl.addEventListener('click', async function(){
+          var signed = await supabase.storage.from(DRIVE_BUCKET).createSignedUrl(path, 60);
+          if(signed.data && signed.data.signedUrl) window.open(signed.data.signedUrl, '_blank', 'noopener');
+        });
+        row.appendChild(dl);
+        el.appendChild(row);
+      });
+    }
+
+    // ---- auth + admin gate ----
+    (async function init(){
+      try {
+        var userRes = await supabase.auth.getUser();
+        if(userRes.error || !userRes.data || !userRes.data.user){
+          window.location.replace('portal.html');
+          return;
+        }
+        var adminRes = await supabase.rpc('am_i_admin');
+        if(adminRes.error || adminRes.data !== true){
+          window.location.replace('dashboard.html');
+          return;
+        }
+        document.getElementById('admin-whoami').textContent = userRes.data.user.email;
+        await loadClients();
+      } catch (err) {
+        console.error('admin init error', err);
+      }
+      document.body.classList.add('ready');
+    })();
+  </script>
+</body>
+</html>
