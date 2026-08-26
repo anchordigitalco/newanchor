@@ -179,6 +179,8 @@
   .drive-file-actions svg{width:15px;height:15px}
   .drive-status{font-size:.78rem;color:var(--ink-faint);margin-top:.7rem}
 
+  .main-footer{margin:2rem 0 0;padding-top:1.2rem;border-top:1px solid var(--hairline);font-size:.72rem;color:var(--ink-faint);text-align:center}
+
   /* ---- studio assistant (chat widget) ---- */
   .assistant-launcher{
     position:fixed;right:1.6rem;bottom:1.6rem;z-index:20;
@@ -340,6 +342,7 @@
       <ul class="drive-file-list" id="drive-file-list"></ul>
       <p class="drive-status" id="drive-status"></p>
     </div>
+    <p class="main-footer">&copy; <span id="year"></span> Anchor Digital Studio LLC.</p>
   </main>
 
   <button class="assistant-launcher" id="assistant-launcher" aria-label="Open studio assistant" aria-expanded="false">
@@ -370,6 +373,7 @@
     var DRIVE_BUCKET = 'client-files';
     var supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     var currentUser = null;
+    document.getElementById('year').textContent = new Date().getFullYear();
 
     // ---- daytime/nighttime toggle: applied first, synchronously, so there's
     // no flash of the wrong theme once the body is revealed below ----

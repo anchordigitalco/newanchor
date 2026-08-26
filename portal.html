@@ -52,6 +52,11 @@
   }
   .portal-home:hover{opacity:1}
   .portal-home svg{width:16px;height:16px}
+  .portal-footer{
+    position:fixed;bottom:1.2rem;left:0;right:0;z-index:3;
+    text-align:center;font-size:.72rem;color:var(--dark-ink);opacity:.55;
+    text-shadow:var(--tshadow);pointer-events:none;
+  }
   .portal-card{
     position:relative;z-index:2;
     width:100%;max-width:26rem;
@@ -126,6 +131,8 @@
     anchor digital
   </a>
 
+  <p class="portal-footer">&copy; <span id="year"></span> Anchor Digital Studio LLC.</p>
+
   <div class="portal-card">
     <p class="portal-kicker">client portal</p>
     <h1 id="portal-heading">Login to your account</h1>
@@ -159,6 +166,7 @@
     var SUPABASE_URL = 'https://sroncqqparjklohbyidt.supabase.co';
     var SUPABASE_ANON_KEY = 'sb_publishable_5buinIijAx9Y_3ZpJ3d_BA_Jd-5cpyw';
     var supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    document.getElementById('year').textContent = new Date().getFullYear();
 
     var step = 'email';
     var form = document.getElementById('portal-form');

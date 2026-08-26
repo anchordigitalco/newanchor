@@ -149,6 +149,8 @@
   .row-actions svg{width:15px;height:15px}
   .empty-state{padding:1.6rem 1rem;text-align:center;color:var(--ink-faint);font-size:.85rem;border:1px dashed var(--hairline);border-radius:14px}
 
+  .main-footer{margin:2rem 0 0;padding-top:1.2rem;border-top:1px solid var(--hairline);font-size:.72rem;color:var(--ink-faint);text-align:center}
+
   /* ---- messages inbox: list on the left, selected thread on the right ---- */
   .inbox{
     display:grid;grid-template-columns:300px 1fr;
@@ -344,6 +346,8 @@
       </div>
     </div>
 
+    <p class="main-footer">&copy; <span id="year"></span> Anchor Digital Studio LLC.</p>
+
   </main>
 
   <div class="drawer-backdrop" id="drawer-backdrop"></div>
@@ -405,6 +409,7 @@
     var allowedRows = [];   // rows from allowed_clients
     var profileRows = [];   // rows from profiles, each with nested projects[]/activity[]/messages[]
     var activeClient = null; // the profile row currently open in the drawer
+    document.getElementById('year').textContent = new Date().getFullYear();
 
     // ---- daytime/nighttime toggle: applied first, synchronously, so there's
     // no flash of the wrong theme once the body is revealed below ----
