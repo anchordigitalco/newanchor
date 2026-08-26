@@ -1459,8 +1459,10 @@ body.video-failed .card{max-width:100%}
   var animating = false;
   var transitionId = 0; // bumped whenever a transition is superseded, so an orphaned frame loop can't fight a new one
   var lastStepAt = 0;
-  var MS_PER_VIDEO_SEC = 1000;  // one steady walking pace for every move, entering included
-  var MIN_STEP_MS = 550;
+  var MS_PER_VIDEO_SEC = 600;  // one steady walking pace for every move, entering included - real-time
+                                 // (1000) read as sluggish across repeated feedback, not just the reveal
+                                 // timing within a hop but the hop's own motion taking too long
+  var MIN_STEP_MS = 380;
   var MAX_STEP_MS = 40000;
   var COOLDOWN_MS = 380;
   function stepDuration(fromIdx, toIdx){
