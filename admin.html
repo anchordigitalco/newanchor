@@ -437,6 +437,7 @@
 
     var allowedRows = [];   // rows from allowed_clients
     var profileRows = [];   // rows from profiles, each with nested projects[]/activity[]/messages[]
+    var clientStatusByEmail = {}; // email (lowercase) -> {confirmed, lastSignInAt}, from list-client-status
     var activeClient = null; // the profile row currently open in the drawer
     document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -502,6 +503,27 @@
     }
 
     // ---- load + render client table ----
+    async function loadClientStatuses(){
+      // best-effort: a profiles row now exists the instant someone's invited (handle_new_user
+      // fires on auth.users insert, and inviteUserByEmail creates that row right away), so "does
+      // a profile exist" no longer means "this client actually confirmed and set a password" -
+      // this is the real signal, read from auth.users server-side since the browser can't see it
+      // directly. If it fails for any reason, the table just falls back to the old (imprecise)
+      // behavior rather than breaking the whole client list over a status badge.
+      try {
+        var res = await supabase.functions.invoke('list-client-status', {});
+        var statuses = (res && res.data && res.data.statuses) || [];
+        var byEmail = {};
+        statuses.forEach(function(s){
+          if(s.email) byEmail[s.email.toLowerCase()] = s;
+        });
+        clientStatusByEmail = byEmail;
+      } catch (err) {
+        console.error('load client statuses error', err);
+        clientStatusByEmail = {};
+      }
+    }
+
     async function loadClients(){
       var allowedRes = await supabase.from('allowed_clients').select('email,company_name,added_at').order('added_at', { ascending: false });
       var profileRes = await supabase.from('profiles').select('id,email,company_name,created_at,projects(id,status,next_milestone,open_items,last_update_at),activity(id,message,created_at),messages(id,role,content,created_at)').order('created_at', { ascending: false });
@@ -511,6 +533,7 @@
 
       allowedRows = allowedRes.data || [];
       profileRows = profileRes.data || [];
+      await loadClientStatuses();
       renderClientTable();
     }
 
@@ -544,8 +567,14 @@
 
         var statusCell = document.createElement('td');
         var badge = document.createElement('span');
-        badge.className = 'badge' + (profile ? ' active' : '');
-        badge.textContent = profile ? 'Active' : 'Invited';
+        // "confirmed" (auth.users.email_confirmed_at) is the real signal - a profiles row alone
+        // just means they were added or invited, not that they've actually clicked the link and
+        // set a password yet. Falls back to the old profile-exists check only if the status
+        // lookup itself failed (see loadClientStatuses), so the badge still shows *something*.
+        var statusEntry = clientStatusByEmail[row.email.toLowerCase()];
+        var isActive = statusEntry ? statusEntry.confirmed : !!profile;
+        badge.className = 'badge' + (isActive ? ' active' : '');
+        badge.textContent = isActive ? 'Active' : 'Invited';
         statusCell.appendChild(badge);
         tr.appendChild(statusCell);
 
