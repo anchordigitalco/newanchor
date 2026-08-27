@@ -163,6 +163,37 @@
     </p>
   </div>
 
+  <script>
+    // Plain, synchronous script (not type=module) so this runs and defines
+    // window.onPortalRecaptchaLoad before the next script tag below even starts
+    // fetching - the recaptcha script has async (which wins over defer when both
+    // are present), so it can finish and call its onload callback before a
+    // type=module script gets around to running, if that callback were defined
+    // there instead. Rendering is also deferred until the password step is
+    // actually shown: grecaptcha.render() into a container that's still
+    // display:none (true here on first load, since the password field starts
+    // hidden) produces a broken, zero-width widget, so this waits for both the
+    // API to be ready and the container to be visible before rendering once.
+    window.PORTAL_RECAPTCHA_SITE_KEY = '6LdnG3ktAAAAAJhRqdG25qLHFC0VlQqRHP1lrXnd';
+    window.portalRecaptchaWidgetId = null;
+    var portalRecaptchaApiReady = false;
+    var portalRecaptchaContainerVisible = false;
+    function tryRenderPortalRecaptcha(){
+      if(!portalRecaptchaApiReady || !portalRecaptchaContainerVisible) return;
+      if(window.portalRecaptchaWidgetId !== null) return; // already rendered, never re-render the same container
+      var el = document.getElementById('portal-recaptcha');
+      if(!el || typeof grecaptcha === 'undefined') return;
+      window.portalRecaptchaWidgetId = grecaptcha.render('portal-recaptcha', { sitekey: window.PORTAL_RECAPTCHA_SITE_KEY });
+    }
+    window.onPortalRecaptchaLoad = function(){
+      portalRecaptchaApiReady = true;
+      tryRenderPortalRecaptcha();
+    };
+    window.showPortalRecaptchaContainer = function(){
+      portalRecaptchaContainerVisible = true;
+      tryRenderPortalRecaptcha();
+    };
+  </script>
   <script src="https://www.google.com/recaptcha/api.js?render=explicit&onload=onPortalRecaptchaLoad" async defer></script>
   <script type="module">
     import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
@@ -170,16 +201,8 @@
     var SUPABASE_URL = 'https://sroncqqparjklohbyidt.supabase.co';
     var SUPABASE_ANON_KEY = 'sb_publishable_5buinIijAx9Y_3ZpJ3d_BA_Jd-5cpyw';
     var PORTAL_AUTH_URL = SUPABASE_URL + '/functions/v1/portal-auth';
-    var RECAPTCHA_SITE_KEY = '6LdnG3ktAAAAAJhRqdG25qLHFC0VlQqRHP1lrXnd';
     var supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     document.getElementById('year').textContent = new Date().getFullYear();
-
-    var recaptchaWidgetId = null;
-    window.onPortalRecaptchaLoad = function(){
-      var el = document.getElementById('portal-recaptcha');
-      if(!el || typeof grecaptcha === 'undefined') return;
-      recaptchaWidgetId = grecaptcha.render('portal-recaptcha', { sitekey: RECAPTCHA_SITE_KEY });
-    };
 
     var step = 'email';
     var form = document.getElementById('portal-form');
@@ -209,7 +232,7 @@
       lede.textContent = 'Enter your email to get started.';
       passwordField.hidden = true;
       passwordInput.value = '';
-      if(typeof grecaptcha !== 'undefined' && recaptchaWidgetId !== null) grecaptcha.reset(recaptchaWidgetId);
+      if(typeof grecaptcha !== 'undefined' && window.portalRecaptchaWidgetId !== null) grecaptcha.reset(window.portalRecaptchaWidgetId);
       backSwitch.hidden = true;
       submitBtn.textContent = 'Continue';
       submitBtn.disabled = false;
@@ -228,6 +251,7 @@
       submitBtn.disabled = false;
       emailInput.setAttribute('readonly', 'readonly');
       passwordInput.focus();
+      window.showPortalRecaptchaContainer(); // container is visible now, safe to render into it for the first time
     }
 
     backBtn.addEventListener('click', goToEmailStep);
@@ -291,8 +315,8 @@
       var email2 = emailInput.value.trim();
       var password = passwordInput.value;
 
-      var recaptchaToken = (typeof grecaptcha !== 'undefined' && recaptchaWidgetId !== null)
-        ? grecaptcha.getResponse(recaptchaWidgetId) : '';
+      var recaptchaToken = (typeof grecaptcha !== 'undefined' && window.portalRecaptchaWidgetId !== null)
+        ? grecaptcha.getResponse(window.portalRecaptchaWidgetId) : '';
       if(!recaptchaToken){
         showStatus('Please check the "I\'m not a robot" box before continuing.');
         return;
@@ -313,7 +337,7 @@
         });
         var result = await res.json();
 
-        if(typeof grecaptcha !== 'undefined' && recaptchaWidgetId !== null) grecaptcha.reset(recaptchaWidgetId);
+        if(typeof grecaptcha !== 'undefined' && window.portalRecaptchaWidgetId !== null) grecaptcha.reset(window.portalRecaptchaWidgetId);
 
         if(result.status === 'signed_in' && result.session){
           showStatus('Taking you in...');
@@ -337,7 +361,7 @@
         submitBtn.disabled = false;
       } catch (err) {
         console.error('login/signup error', err);
-        if(typeof grecaptcha !== 'undefined' && recaptchaWidgetId !== null) grecaptcha.reset(recaptchaWidgetId);
+        if(typeof grecaptcha !== 'undefined' && window.portalRecaptchaWidgetId !== null) grecaptcha.reset(window.portalRecaptchaWidgetId);
         showStatus('Something went wrong, try again in a moment.');
         submitBtn.disabled = false;
       }
