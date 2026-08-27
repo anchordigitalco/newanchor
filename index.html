@@ -240,11 +240,6 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
 .btn-outline:hover{background:rgba(242,240,236,.12);border-color:rgba(242,240,236,.8)}
 
 /* internal entrances, replayed each time a band becomes active: quick, barely-staggered, never a wait */
-.team-band .founder{opacity:0;filter:blur(4px);transition:opacity .16s var(--ease-soft),filter .16s var(--ease-soft)}
-.team-band.active .founder{opacity:1;filter:blur(0)}
-.team-band .founder:nth-child(1){transition-delay:0s}
-.team-band .founder:nth-child(2){transition-delay:.06s}
-
 .work-band .thumb{opacity:0;transform:scale(.96) translateY(8px);transition:opacity .18s var(--ease-soft),transform .18s var(--ease-soft)}
 .work-band.active .thumb{opacity:1;transform:scale(1) translateY(0)}
 .work-band .thumb:nth-child(1){transition-delay:0s}
@@ -321,84 +316,6 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
   z-index:2;pointer-events:auto;
 }
 #band-services .services-col .popup-card .clip-text{flex:1;min-height:0;overflow-y:auto}
-
-/* team sits narrow and to the left, so the framed articles on the wall stay clickable. the
-   founders card and the single article panel are the two columns of one flex row (that row
-   already lives inside the band's own gutter padding, so the panel's right edge lands on the same
-   page margin as everything else); the wall hotspots are pulled out of that flow entirely below,
-   so they never add an extra flex gap or consume a column of their own. */
-.team-band{justify-content:flex-start;align-items:center;gap:2.4rem}
-.team-band::before{--scrim-x:16%}
-.team-card-compact{max-width:min(560px,80vw) !important;position:relative;z-index:3;flex-shrink:0}
-.team-card-compact .founder img{width:6.5rem}
-.team-card-compact .founder-body{padding:.85rem 1.1rem}
-.team-card-compact .founder-body h3{font-size:1rem}
-.team-card-compact .founder-role{font-size:.64rem;margin-bottom:.4rem}
-.team-card-compact .founder-bio{font-size:.75rem;max-height:4.2em;line-height:1.5}
-.team-card-compact .founder-links{margin-top:.5rem}
-.team-card-compact .founder-links a{width:26px;height:26px}
-.team-card-compact .founder-links svg{width:12px;height:12px}
-.team-card-compact .chips{margin-top:1rem;gap:.5rem}
-.team-card-compact .chip{font-size:.66rem;padding:.45rem .8rem}
-.team-card-compact h2{font-size:1.6rem}
-/* the wall hotspots (dots on the framed articles behind the founders) stay absolutely positioned
-   over the whole band exactly as before - taken out of the flex row so they never add a column or
-   a gap of their own next to the founders card / article panel. */
-#wall-hotspots{position:absolute;inset:0;pointer-events:none;z-index:1}
-#wall-hotspots .hotspot{pointer-events:auto}
-/* the ONE shared article panel: the second (and only other) column in the same flex row as the
-   founders card - normal layout, not hand-tuned absolute coordinates. fixed width and height no
-   matter which article is open; the body scrolls internally instead of the panel resizing. */
-.article-panel{
-  flex:1;min-width:0;max-width:760px;
-  height:min(660px,82vh);
-  z-index:2;
-}
-#article-panel-body{height:100%;overflow-y:auto}
-#article-panel-body .kicker{font-size:1.3rem;margin-top:.3rem}
-#article-panel-body p{white-space:pre-line}
-/* the photo sits in its own smaller card, floated to the right, so the article text starts
-   beside it on the left and keeps flowing at full width once it clears the photo - instead of a
-   full-width block sitting on top of the copy, eating the space you'd read in. */
-.article-photo{
-  float:right;width:42%;max-width:280px;margin:0 0 1rem 1.4rem;
-  border-radius:16px;overflow:hidden;border:1px solid rgba(242,240,236,.18);
-  box-shadow:0 14px 34px rgba(0,0,0,.4);
-}
-/* contains the float, so the text block's own height isn't collapsed around it */
-#article-panel-body .clip-text{display:flow-root}
-@media (max-width:640px){
-  .article-photo{float:none;width:100%;max-width:none;margin:0 0 1rem}
-}
-/* a real footer row for the article card - status on the left, the visit-site action on the
-   right, separated from the body copy by a hairline, instead of two loose stacked spans. clear:
-   both so it always sits below the floated photo even on a short article. */
-.article-foot{
-  clear:both;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;
-  margin-top:1.4rem;padding-top:1rem;border-top:1px solid rgba(242,240,236,.14);
-}
-.article-foot .clip-status{margin:0}
-.article-foot .btn-outline{margin:0 !important}
-/* the before/after slider uses the exact same box every plain article photo uses (width:100%,
-   the shared .clip-img aspect-ratio) - only its contents differ, never the frame itself. */
-/* matches the real screenshots' own aspect ratio (1400x879) - shown in full, not cropped to fit
-   the 4:3 box the plain article photos use */
-.ba-slider{position:relative;width:100%;aspect-ratio:1400/879;overflow:hidden;cursor:ew-resize;touch-action:pan-y;-webkit-user-select:none;user-select:none;display:block}
-.ba-slider .ba-img{position:absolute;inset:0;width:100%;height:100%;aspect-ratio:auto;object-fit:cover;display:block;pointer-events:none}
-.ba-slider .ba-after{clip-path:inset(0 50% 0 0)}
-.ba-line{position:absolute;top:0;bottom:0;left:50%;width:2px;background:rgba(242,240,236,.9);transform:translateX(-50%);pointer-events:none;box-shadow:0 0 10px rgba(0,0,0,.55)}
-.ba-handle{
-  position:absolute;top:50%;left:50%;width:36px;height:36px;border-radius:50%;
-  background:rgba(20,18,16,.85);border:1.5px solid rgba(242,240,236,.85);color:var(--dark-ink);
-  display:flex;align-items:center;justify-content:center;transform:translate(-50%,-50%);pointer-events:none;
-}
-.ba-label{
-  position:absolute;top:.6rem;z-index:1;pointer-events:none;
-  font-family:var(--font-mono);font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;
-  color:#fff;background:rgba(0,0,0,.55);padding:.3rem .6rem;border-radius:99px;
-}
-.ba-label-before{left:.6rem}
-.ba-label-after{right:.6rem}
 
 /* ---- hotspots on the monitors, and the popup cards they open ---- */
 .hotspot{
@@ -618,74 +535,6 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
 .thumb .t-name{font-size:.92rem}
 .thumb .t-visit{margin-left:auto;font-family:var(--font-mono);font-size:.66rem;color:var(--accent);white-space:nowrap}
 .work-note{font-size:.82rem;color:var(--dark-ink);opacity:.7;margin-top:.9rem;max-width:44ch}
-.press-divider{display:flex;align-items:center;gap:.8rem;margin:1.3rem 0 1rem;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.08em;text-transform:lowercase;color:var(--dark-ink);opacity:.6}
-.press-divider::before,.press-divider::after{content:"";flex:1;height:1px;background:rgba(242,240,236,.2)}
-
-/* ============ PRESS CLIPS (merged into the work band) ============ */
-.clips{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem}
-/* compact: a thumb-style row per clip, not a card with a full image, so the merged Work
-   card stays short enough to never need its own scroll */
-.clips-compact{display:flex;flex-direction:column;gap:.5rem}
-.clips-compact .clip{flex-direction:row;align-items:center;gap:.7rem;padding:.5rem .7rem;border-radius:12px}
-.clips-compact .clip-img{display:none}
-.clips-compact .clip-body{padding:0;flex:1;min-width:0}
-.clips-compact .clip-title{font-size:.8rem;line-height:1.3;margin-top:.15rem;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical}
-.clips-compact .clip-status{display:none}
-.clip{
-  background:rgba(24,22,19,.5);border:1px solid rgba(242,240,236,.16);border-radius:14px;
-  overflow:hidden;text-decoration:none;color:var(--dark-ink);display:flex;flex-direction:column;
-}
-.clip .clip-img{width:100%;aspect-ratio:16/10;object-fit:cover;background:#2a2823}
-.clip .clip-img.ph{display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:.62rem;opacity:.55;padding:.5rem;text-align:center}
-.clip-body{padding:.9rem 1rem 1.1rem}
-.clip-cat{font-family:var(--font-mono);font-size:.62rem;color:var(--accent);letter-spacing:.06em;text-transform:lowercase}
-.clip-date{font-family:var(--font-mono);font-size:.62rem;color:var(--dark-ink);opacity:.55;margin-left:.5rem}
-.clip-title{font-size:.9rem;line-height:1.3;margin-top:.5rem}
-.clip-status{font-family:var(--font-mono);font-size:.6rem;opacity:.6;margin-top:.6rem;display:block}
-
-/* ============ TEAM band specifics: horizontal cards, stacked, Adam then Jackson ============ */
-.founders{display:flex;flex-direction:column;gap:1.1rem}
-.founder{background:rgba(24,22,19,.5);border:1px solid rgba(242,240,236,.16);border-radius:16px;overflow:hidden;display:flex;flex-direction:row;align-items:stretch}
-.founder img{width:9rem;flex-shrink:0;aspect-ratio:1/1;object-fit:cover}
-.founder-body{padding:1rem 1.3rem;flex:1;min-width:0}
-.founder-body h3{font-size:1.05rem;margin-bottom:.15rem}
-.founder-role{font-family:var(--font-mono);font-size:.66rem;color:var(--accent);letter-spacing:.05em;text-transform:lowercase;margin-bottom:.5rem;display:block}
-.founder-bio{font-size:.78rem;line-height:1.5;opacity:.88;max-height:4.6em;overflow:hidden;-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
-.founder-links{display:flex;gap:.55rem;margin-top:.6rem}
-.founder-links a{width:28px;height:28px;border-radius:50%;border:1px solid rgba(242,240,236,.3);display:flex;align-items:center;justify-content:center;transition:border-color .25s var(--ease-soft),background .25s var(--ease-soft)}
-.founder-links a:hover{background:rgba(242,240,236,.12);border-color:rgba(242,240,236,.7)}
-.founder-links svg{width:13px;height:13px}
-.chips{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.1rem}
-.chip{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.02em;padding:.5rem .9rem;border-radius:99px;border:1px solid rgba(242,240,236,.25);opacity:.9}
-.founder[data-founder-idx]{cursor:pointer;transition:border-color .25s var(--ease-soft),background .25s var(--ease-soft)}
-.founder[data-founder-idx]:hover,.founder[data-founder-idx]:focus-visible{border-color:rgba(242,240,236,.5);background:rgba(24,22,19,.68)}
-.founder-more{display:inline-block;margin-top:.5rem;font-family:var(--font-mono);font-size:.66rem;color:var(--accent);letter-spacing:.02em}
-
-/* ---- the big bio card a founder click opens ---- */
-.bio-modal{position:absolute;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:2rem}
-.bio-modal[hidden]{display:none}
-.bio-modal-backdrop{position:absolute;inset:0;background:rgba(8,7,6,.6);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;transition:opacity .3s var(--ease-soft)}
-.bio-modal-card{
-  position:relative;width:min(1160px,90vw);max-height:90vh;overflow-y:auto;
-  background:rgba(22,20,18,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-  border:1px solid rgba(242,240,236,.2);border-radius:26px;
-  padding:clamp(2.6rem,4.5vw,4.2rem);color:var(--dark-ink);text-shadow:var(--tshadow);
-  opacity:0;transform:scale(.94) translateY(10px);transition:opacity .3s var(--ease-soft),transform .3s var(--ease-soft);
-}
-.bio-modal.in .bio-modal-backdrop{opacity:1}
-.bio-modal.in .bio-modal-card{opacity:1;transform:scale(1) translateY(0)}
-.bio-modal-card .founder{background:none;border:none;padding:0}
-/* the full photo, never cropped: a defined square frame with the image fit (not filled) inside
-   it, so the whole face and frame always show regardless of the source photo's own aspect ratio */
-.bio-modal-card .founder img{width:13rem;aspect-ratio:1/1;object-fit:contain;background:rgba(0,0,0,.2);border-radius:16px}
-.bio-modal-card .founder-body{padding:0 0 0 1.8rem}
-.bio-modal-card .founder-body h3{font-size:1.8rem}
-.bio-modal-card .founder-role{font-size:.85rem}
-.bio-modal-card .founder-bio{font-size:1.15rem;line-height:1.7;max-height:none;-webkit-mask-image:none;mask-image:none;opacity:.92}
-@media (max-width:640px){
-  .bio-modal-card .founder{flex-direction:column}
-  .bio-modal-card .founder-body{padding:1rem 0 0}
-}
 
 /* ============ CONTACT band specifics ============ */
 .contact-card{
@@ -804,9 +653,6 @@ body.video-failed .card{max-width:100%}
 
 @media (max-width:860px){
   .work-grid{grid-template-columns:1fr}
-  .clips{grid-template-columns:1fr}
-  .founder{flex-direction:column}
-  .founder img{width:100%;aspect-ratio:16/9}
   .card{max-width:92vw !important}
 }
 </style>
@@ -820,6 +666,7 @@ body.video-failed .card{max-width:100%}
     <span>anchor digital</span>
   </a>
   <div class="chrome-right">
+    <a class="btn-ghost" href="/team">Team</a>
     <a class="btn-ghost instant-jump" href="#contact" data-jump="contact">Start a project</a>
     <a class="btn-ghost" href="/portal" id="client-portal-link">Anchor Client Portal</a>
     <div class="menu-wrap">
@@ -830,9 +677,8 @@ body.video-failed .card{max-width:100%}
       <nav class="menu-dropdown" id="menu-dropdown" aria-label="Jump to a section">
         <a href="#services" data-jump="services"><span class="idx">01</span> Services</a>
         <a href="#work" data-jump="work"><span class="idx">02</span> Work</a>
-        <a href="#team" data-jump="team"><span class="idx">03</span> Team</a>
-        <a href="#testimonials" data-jump="testimonials"><span class="idx">04</span> Testimonials</a>
-        <a href="#contact" data-jump="contact"><span class="idx">05</span> Contact</a>
+        <a href="#testimonials" data-jump="testimonials"><span class="idx">03</span> Testimonials</a>
+        <a href="#contact" data-jump="contact"><span class="idx">04</span> Contact</a>
       </nav>
     </div>
   </div>
@@ -842,7 +688,6 @@ body.video-failed .card{max-width:100%}
   <button data-jump="threshold" aria-label="Entrance"></button>
   <button data-jump="services" aria-label="Services"></button>
   <button data-jump="work" aria-label="Work"></button>
-  <button data-jump="team" aria-label="Team"></button>
   <button data-jump="testimonials" aria-label="Testimonials"></button>
   <button data-jump="contact" aria-label="Contact"></button>
 </nav>
@@ -941,30 +786,11 @@ body.video-failed .card{max-width:100%}
         </div>
       </div>
 
-      <!-- TEAM (narrow, so the framed articles on the wall behind it stay clickable) -->
-      <div class="band team-band" id="band-team" data-stop="team">
-        <div class="card team-card-compact">
-          <p class="kicker">03 &middot; team</p>
-          <h2>Meet our founders.</h2>
-          <div class="founders" id="founders"></div>
-          <div class="chips">
-            <span class="chip">Client-first, always</span>
-            <span class="chip">Speed without sacrifice</span>
-          </div>
-          <p class="hotspot-hint">Click the buttons to read about our nonprofit initiative work. &rarr;</p>
-        </div>
-        <div class="popup-card article-panel" id="article-panel" hidden>
-          <button class="popup-close" data-close aria-label="Close">&times;</button>
-          <div class="article-panel-body" id="article-panel-body"></div>
-        </div>
-        <div id="wall-hotspots"></div>
-      </div>
-
       <!-- TESTIMONIALS -->
       <div class="band testimonials-band" id="band-testimonials" data-stop="testimonials">
         <div class="card card-wide testimonials-box">
           <div class="testimonials-scroll">
-            <p class="kicker">04 &middot; testimonials</p>
+            <p class="kicker">03 &middot; testimonials</p>
             <h2 style="font-size:clamp(1.4rem,2.6vw,2rem)">What clients say.</h2>
             <p class="lede">We're collecting these from recent clients now, real quotes will land in this grid, not placeholders. Ask us directly during a call if you'd like to hear from one sooner.</p>
             <div class="testimonial-grid">
@@ -996,7 +822,7 @@ body.video-failed .card{max-width:100%}
           <span class="plus-mark bl" aria-hidden="true"></span>
           <span class="plus-mark br" aria-hidden="true"></span>
           <div class="contact-info-side">
-            <p class="kicker settle-1">05 &middot; contact</p>
+            <p class="kicker settle-1">04 &middot; contact</p>
             <h2 class="settle-1">Start a project</h2>
             <p class="lede settle-2">Tell us what you need. We reply to everything, usually the same day.</p>
             <div class="info-tiles settle-2">
@@ -1062,14 +888,6 @@ body.video-failed .card{max-width:100%}
         </div>
       </div>
 
-      <div class="bio-modal" id="bio-modal" hidden>
-        <div class="bio-modal-backdrop" data-close-bio></div>
-        <div class="bio-modal-card">
-          <button class="popup-close" id="bio-modal-close" aria-label="Close" data-close-bio>&times;</button>
-          <div id="bio-modal-body"></div>
-        </div>
-      </div>
-
       <div class="step-nav" id="step-nav">
         <button class="step-btn" id="step-prev" aria-label="Go back a step" hidden>
           <svg viewBox="0 0 16 16" fill="none"><path d="M10 3 5 8l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1116,23 +934,9 @@ body.video-failed .card{max-width:100%}
         <p class="work-note">Out of respect for client privacy, we don't showcase the majority of our work here. Ask us during a call and we're happy to share more.</p>
       </div>
     </div>
-    <div class="static-stop" id="s-team" style="background-image:url('assets/frame-articles.jpg')">
-      <div class="card card-wide">
-        <p class="kicker">03 &middot; team</p>
-        <h2 style="font-size:clamp(1.3rem,5vw,1.8rem)">Meet our founders.</h2>
-        <div class="founders" id="founders-static"></div>
-        <div class="chips">
-          <span class="chip">Client-first, always</span>
-          <span class="chip">Speed without sacrifice</span>
-          <span class="chip">Built to last</span>
-        </div>
-        <div class="press-divider"><span>What's new at Anchor</span></div>
-        <div class="clips clips-compact" id="clips-static" style="grid-template-columns:1fr"></div>
-      </div>
-    </div>
     <div class="static-stop" id="s-testimonials" style="background-image:url('assets/frame-chairs.jpg')">
       <div class="card card-wide">
-        <p class="kicker">04 &middot; testimonials</p>
+        <p class="kicker">03 &middot; testimonials</p>
         <h2 style="font-size:clamp(1.3rem,5vw,1.8rem)">What clients say.</h2>
         <p class="lede">We're collecting these from recent clients now, real quotes will land in this grid, not placeholders. Ask us directly during a call if you'd like to hear from one sooner.</p>
         <div class="testimonial-grid">
@@ -1144,7 +948,7 @@ body.video-failed .card{max-width:100%}
     </div>
     <div class="static-stop" id="s-contact" style="background-image:url('assets/frame-logowall.jpg')">
       <div class="card card-wide">
-        <p class="kicker">05 &middot; contact</p>
+        <p class="kicker">04 &middot; contact</p>
         <h2>Start a project</h2>
         <p class="lede">Tell us what you need. We reply to everything, usually the same day.</p>
         <form class="contact-form" id="contact-form-static">
@@ -1194,7 +998,7 @@ body.video-failed .card{max-width:100%}
       <nav class="footer-nav" aria-label="Footer">
         <a href="#services" data-jump="services">Services</a>
         <a href="#work" data-jump="work">Work</a>
-        <a href="#team" data-jump="team">Team</a>
+        <a href="/team">Team</a>
         <a href="#testimonials" data-jump="testimonials">Testimonials</a>
         <a href="#contact" data-jump="contact">Contact</a>
       </nav>
@@ -1227,47 +1031,9 @@ body.video-failed .card{max-width:100%}
       {name:"Marcus Bleecker", tag:"Personal Brands", url:"https://marcusbleecker.com",
        img:"assets/work/marcus-bleecker.jpg",
        desc:"A personal brand site for Marcus Bleecker, built to establish a strong digital presence and showcase his work and story."}
-    ],
-    clips: [
-      {id:"score-signal", cat:"AI-Powered Tool", date:"7/31/2026", title:"Score Signal, an AI-powered SAT and ACT tool, launches in partnership with Anchor Digital.", status:"Live now.", img:"assets/press/score-signal-launch.jpg", url:"https://getscoresignal.com",
-       body:[
-         "Score Signal was our most ambitious project to date. This was an idea-to-implementation build that took a conversation with a test prep company founder and turned it into a beautifully designed, scalable digital solution. Leveraging our frustrations with the college search process and knowledge of public databases, we conceived and created a unique data integration and recommendation engine.",
-         "Score Signal takes a user's SAT or ACT score and other relevant data, processes it against a sophisticated custom-designed algo to report the strength of the \"signal\" that the score provides about the user's admissibility, turning a confusing admissions question into a clear, specific answer in seconds.",
-         "We led the full front-end (design, layout, and nearly every interactive feature), scoped the backend specifications, and defined the reporting parameters, delivering to the client a refined product ready for final commercialization and integration.",
-         "The AI helper woven through the experience wasn't handed to us as a spec. We originated the idea ourselves, designed the concept, and built the interface, then implemented it end to end.",
-         "Score Signal is live now, and we're still involved as it grows."
-       ]},
-      {id:"fairtest", cat:"Non-Profit", date:"7/19/2026", title:"Anchor Digital partners with FairTest to redesign its test-optional research page.", status:"Currently in development.", imgBefore:"assets/press/fairtest-before.jpg", imgAfter:"assets/press/fairtest-after.jpg", url:null,
-       body:[
-         "FairTest, the National Center for Fair & Open Testing, has spent decades pushing back on the idea that a single test score should decide who gets in. Their test-optional college list, which tracks admissions policy at over 2,000 four-year schools, sees half a million visitors per year and is the go-to reference for students and counselors navigating test-optional admissions nationwide.",
-         "Our analysis of the previous page found that while it provided a searchable resource for students and their supporters, it missed the opportunity to drive its mission by providing insight into policies across colleges. We rebuilt the page to serve this dual policy and practical function by making more clear the trends and patterns across institutions.",
-         "The dynamic filterable database itself (state, region, school type, system) is still front and center, now paired with a chart that makes the overall split (test-optional, test-free, still requiring scores) legible at a glance instead of a wall of numbers.",
-         "This isn't a full site rebuild. It's a single page reimagined to more effectively use data to deliver its message. Done quickly and built to hold up as the underlying research keeps growing.",
-         "Currently in development. We'll share it here the day it ships."
-       ]},
-      {id:"a-better-chance", cat:"Non-Profit", date:"8/4/2026", title:"Anchor Digital partners with A Better Chance on a new site for its college-access mission.", status:"Currently in development.", img:"assets/press/a-better-chance.jpg", url:null,
-       body:[
-         "A Better Chance, a national non-profit organization, has spent more than sixty years placing talented young people of color at leading independent and boarding schools across the country.",
-         "ABC typically secures opportunities for their members and shares them via PDFs or spreadsheets of programs and partner opportunities.",
-         "Opportunity only counts if the right student can find it. So we are designing the experience around the people using it, not the org chart behind it. A student should be able to arrive, understand what is possible, and see their next step without having to hunt for it. Clear paths for students. Clear paths for families. Clear paths for the partner schools that make the network run.",
-         "We identified the inefficiency and proposed an advanced scalable digital solution that would not only serve their primary needs but would also expand their capabilities.",
-         "Help the organization stand apart and make it easier for students and families to find the programs and opportunities waiting for them.",
-         "We are building it to meet students where they are. Fast. Accessible. Designed for whatever device a student already has, not the one we wish they had. The kind of experience that feels effortless to use and hard to walk away from.",
-         "This is where strategy and build come together. We are not handing over a shell and calling it done. We shape the message, the structure, and the experience as one, so the presence feels as serious, and as warm, as the organization behind it, and so every page moves a student one step closer.",
-         "We took this on because it is work worth doing. A Better Chance is already changing lives. We are just making it easier for the next student to find their way in. That is the kind of project we want our name on.",
-         "It is currently in development. We will post the finished product here once it is live."
-       ]}
-    ],
-    founders: [
-      {name:"Adam Bello", role:"Co-Founder", img:"assets/team/adam-bello.jpg", linkedin:"https://www.linkedin.com/in/adam-bello-57067231a", email:"adam@anchordigitalco.com",
-       bio:"Adam Evans Bello is the Co-Founder of Anchor Digital. A native New Yorker, his diverse background across corporate, athletic, and international environments shapes his approach to brand differentiation and business growth. Adam is an undergraduate student-athlete at Bowdoin College, pursuing a B.A. in Government and Legal Studies with a minor in Economics while playing point guard on the Men's Basketball team. He and Jackson founded Anchor Digital to eliminate the gap between a business's actual value and its digital presence."},
-      {name:"Jackson Bleecker", role:"Co-Founder", img:"assets/team/jackson-bleecker.jpg", linkedin:"https://www.linkedin.com/in/jackson-bleecker/", email:"jackson@anchordigitalco.com",
-       bio:"Jackson Bleecker is the Co-Founder of Anchor Digital. A native of West Orange, New Jersey, his background spans startup strategy, global consulting, and competitive athletics. Jackson is an undergraduate student-athlete at Bowdoin College, pursuing a B.A. in Government and Legal Studies with a minor in Economics while competing as a shooting guard on the Men's Basketball team. He co-founded Anchor Digital on a simple conviction: small businesses deserve a digital presence that actually reflects their value."}
     ]
   };
 
-  var linkedinSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>';
-  var mailSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>';
 
   function buildWork(container, isStatic){
     var html = "";
@@ -1304,71 +1070,8 @@ body.video-failed .card{max-width:100%}
     });
   }
 
-  function buildClips(container){
-    var html = "";
-    DATA.clips.forEach(function(c, i){
-      var tilt = (i % 2 === 0) ? '-1.4deg' : '1.1deg';
-      // fairtest has no single c.img (it's a before/after pair for the interactive slider) - the
-      // static list has no dragging, so it just shows the "after" shot as a plain thumbnail here
-      var thumb = c.img || c.imgAfter;
-      var inner = (thumb ? '<img class="clip-img" src="'+thumb+'" alt="">' : '<span class="clip-img ph">no image on file yet</span>')+
-        '<div class="clip-body"><span class="clip-cat">'+c.cat+'</span><span class="clip-date">'+c.date+'</span>'+
-        '<p class="clip-title">'+c.title+'</p><span class="clip-status">'+c.status+'</span></div>';
-      if(c.url){
-        html += '<a class="clip" style="--tilt:'+tilt+'" href="'+c.url+'" target="_blank" rel="noopener">'+inner+'</a>';
-      } else {
-        html += '<div class="clip" style="--tilt:'+tilt+'">'+inner+'</div>';
-      }
-    });
-    container.innerHTML = html;
-  }
-
-  function buildFounders(container, expandable){
-    var html = "";
-    DATA.founders.forEach(function(f, i){
-      html += '<div class="founder"'+(expandable ? ' data-founder-idx="'+i+'" tabindex="0" role="button" aria-label="Read '+f.name+'\'s full bio"' : '')+'>'+
-        '<img src="'+f.img+'" alt="'+f.name+'">'+
-        '<div class="founder-body"><h3>'+f.name+'</h3><span class="founder-role">'+f.role+'</span>'+
-        '<p class="founder-bio">'+f.bio+'</p>'+
-        (expandable ? '<span class="founder-more">Read full bio &rarr;</span>' : '')+
-        '<div class="founder-links">'+
-        '<a href="'+f.linkedin+'" target="_blank" rel="noopener" aria-label="'+f.name+' on LinkedIn">'+linkedinSvg+'</a>'+
-        '<a href="mailto:'+f.email+'" aria-label="Email '+f.name+'">'+mailSvg+'</a>'+
-        '</div></div></div>';
-    });
-    container.innerHTML = html;
-  }
-
-  // the same three real articles, shown as clickable frames on the "press" wall - each dot sits in
-  // the middle of one of the ten framed clippings there.
-  // Repositioned for the new video's team shot: three framed photos in a single even row
-  // (the old video's wall had two rows). First one nudged toward the photo's right edge rather
-  // than dead-center, clear of the text card sitting at the left of this band.
-  // index 0 is score-signal, 1 is fairtest, 2 is a-better-chance (DATA.clips order) - score-signal
-  // moved to the middle photo's position, fairtest takes the left one it vacated.
-  var ARTICLE_POSITIONS = [
-    {left:'56%', top:'41%'},
-    {left:'40%', top:'41%'},
-    {left:'78%', top:'41%'}
-  ];
-  // only the wall's trigger buttons are built here now - their content lives in the ONE shared
-  // article panel below, rendered on demand, not one pre-built card per article.
-  function buildArticleWall(hotspotHost){
-    if(!hotspotHost) return;
-    var hotspotHtml = "";
-    DATA.clips.forEach(function(c, i){
-      var pos = ARTICLE_POSITIONS[i] || ARTICLE_POSITIONS[ARTICLE_POSITIONS.length - 1];
-      hotspotHtml += '<button class="hotspot" style="left:'+pos.left+';top:'+pos.top+'" data-info="'+c.id+'" aria-label="'+c.title+', more info"><span></span></button>';
-    });
-    hotspotHost.innerHTML = hotspotHtml;
-  }
-
   buildWork(document.getElementById('work-thumbs'), false);
   buildWork(document.getElementById('work-thumbs-static'), true);
-  buildClips(document.getElementById('clips-static'));
-  buildArticleWall(document.getElementById('wall-hotspots'));
-  buildFounders(document.getElementById('founders'), true);
-  buildFounders(document.getElementById('founders-static'), false);
   document.getElementById('year').textContent = new Date().getFullYear();
 
   // ============ CONTACT FORM: real delivery via Supabase Edge Function ============
@@ -1484,7 +1187,6 @@ body.video-failed .card{max-width:100%}
     {id:'threshold',    t:8.0},
     {id:'services',     t:13.7},
     {id:'work',         t:17.4},
-    {id:'team',         t:21.7},
     {id:'testimonials', t:25.2},
     {id:'contact',      t:29.3}
   ];
@@ -1539,7 +1241,6 @@ body.video-failed .card{max-width:100%}
     stageEl.classList.toggle('show-start', id === 'start');
     if(id === 'threshold') resetEnterButton(); // re-enable the button whenever we land back here
     closeAllHotspotCards(); // any stop change closes whatever hotspot cards were left open
-    closeFounderBio();
   }
   function hideAllCards(){ showCard(null); } // used mid-transition: no card showing at all
   function resetEnterButton(){
@@ -1688,7 +1389,7 @@ body.video-failed .card{max-width:100%}
   // the section, no matter how far you scroll or where the content's own edge is. only once that
   // card is closed does scrolling go back to driving the tour.
   function insideOpenCard(target){
-    return !!target.closest('.popup-card:not([hidden]), .bio-modal-card');
+    return !!target.closest('.popup-card:not([hidden])');
   }
   function onWheel(e){
     if(!scrubActive || tourEl.classList.contains('settled')) return;
@@ -1966,8 +1667,7 @@ body.video-failed .card{max-width:100%}
   function closeAllHotspotCards(){
     // queried fresh (not the cached popupCards list): this can run before that list, and before
     // build*() has even inserted the wall's cards, during the very first applyHeroMode() at load.
-    // :not(.article-panel) - that one card is closed through hideArticlePanel() below instead.
-    document.querySelectorAll('.popup-card:not(.article-panel)').forEach(function(card){
+    document.querySelectorAll('.popup-card').forEach(function(card){
       if(!card.hidden) closeHotspotCard(card.getAttribute('data-info'));
     });
     // the services dot's own data-info ('services-all') doesn't match any card, so the loop
@@ -1975,111 +1675,6 @@ body.video-failed .card{max-width:100%}
     // otherwise it can be left looking active after navigating away with the cards still open.
     var servicesDot = document.querySelector('.hotspot[data-info="services-all"]');
     if(servicesDot) servicesDot.classList.remove('open');
-    hideArticlePanel();
-  }
-
-  // ============ ARTICLE PANEL (team wall): ONE shared panel, not one per article. A single piece
-  // of state - which article is active, or none - drives it; there is no per-card open/closed
-  // boolean to fall out of sync, so nothing can ever be open at the same time as anything else.
-  // Opening a different article swaps this panel's content in place; it never creates a second
-  // panel, which is what made cards pile up and overlap before. ============
-  var activeArticle = null;
-  var articlePanelEl = document.getElementById('article-panel');
-  var articlePanelBody = document.getElementById('article-panel-body');
-  // every card uses the exact same photo box (.clip-img's width:100%;aspect-ratio:4/3, set once in
-  // the shared CSS) whether it holds one plain image or this before/after pair - only what's inside
-  // the box differs, never the box itself.
-  function renderArticleMedia(c){
-    if(c.imgBefore && c.imgAfter){
-      return '<div class="ba-slider" data-ba tabindex="0" role="slider" aria-label="Before and after redesign" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">'+
-        '<img class="clip-img ba-img ba-before" src="'+c.imgBefore+'" alt="Before">'+
-        '<img class="clip-img ba-img ba-after" src="'+c.imgAfter+'" alt="After">'+
-        '<div class="ba-line" aria-hidden="true"></div>'+
-        '<div class="ba-handle" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 7-5 5 5 5M15 7l5 5-5 5"/></svg></div>'+
-        '<span class="ba-label ba-label-before" aria-hidden="true">Before</span>'+
-        '<span class="ba-label ba-label-after" aria-hidden="true">After</span>'+
-        '</div>';
-    }
-    return c.img ? '<img class="clip-img" src="'+c.img+'" alt="">' : '';
-  }
-  // drag (mouse or touch, one pointer-event API for both) or arrow-key the handle to reveal more
-  // of the after shot - a plain CSS clip-path on the after image, so no canvas/library involved
-  function initBeforeAfterSlider(el){
-    var after = el.querySelector('.ba-after');
-    var line = el.querySelector('.ba-line');
-    var handle = el.querySelector('.ba-handle');
-    if(!after || !line || !handle) return;
-    function setPos(pct){
-      pct = Math.max(0, Math.min(100, pct));
-      after.style.clipPath = 'inset(0 ' + (100 - pct) + '% 0 0)';
-      line.style.left = pct + '%';
-      handle.style.left = pct + '%';
-      el.setAttribute('aria-valuenow', String(Math.round(pct)));
-    }
-    function pctFromEvent(e){
-      var rect = el.getBoundingClientRect();
-      var x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-      return (x / rect.width) * 100;
-    }
-    var dragging = false;
-    el.addEventListener('pointerdown', function(e){
-      dragging = true;
-      if(el.setPointerCapture) el.setPointerCapture(e.pointerId);
-      setPos(pctFromEvent(e));
-    });
-    el.addEventListener('pointermove', function(e){ if(dragging) setPos(pctFromEvent(e)); });
-    el.addEventListener('pointerup', function(){ dragging = false; });
-    el.addEventListener('pointercancel', function(){ dragging = false; });
-    el.addEventListener('keydown', function(e){
-      var cur = parseFloat(el.getAttribute('aria-valuenow')) || 50;
-      if(e.key === 'ArrowLeft'){ setPos(cur - 5); e.preventDefault(); }
-      else if(e.key === 'ArrowRight'){ setPos(cur + 5); e.preventDefault(); }
-    });
-    setPos(50);
-  }
-  function renderArticleBody(c){
-    // the photo is a small floated card INSIDE the text block (not a full-width block above it),
-    // so the copy starts beside it on the left and wraps to full width once past the photo.
-    var media = '<div class="article-photo">'+renderArticleMedia(c)+'</div>';
-    var link = c.url ? '<a class="btn-outline" href="'+c.url+'" target="_blank" rel="noopener">Visit site</a>' : '';
-    var paras = (c.body || []).map(function(p){ return '<p>'+p+'</p>'; }).join('');
-    return '<div class="clip-text">'+
-      media+
-      '<span class="clip-cat" style="display:block;margin-top:.6rem">'+c.cat+' &middot; '+c.date+'</span>'+
-      '<p class="kicker" style="margin-top:.3rem">'+c.title+'</p>'+
-      paras+
-      '<div class="article-foot"><span class="clip-status">'+c.status+'</span>'+link+'</div>'+
-      '</div>';
-  }
-  function showArticlePanel(id){
-    if(!articlePanelEl || !articlePanelBody) return;
-    var c = DATA.clips.filter(function(x){ return x.id === id; })[0];
-    if(!c) return;
-    activeArticle = id;
-    articlePanelBody.innerHTML = renderArticleBody(c);
-    articlePanelBody.scrollTop = 0;
-    var slider = articlePanelBody.querySelector('.ba-slider');
-    if(slider) initBeforeAfterSlider(slider);
-    articlePanelEl.hidden = false;
-    requestAnimationFrame(function(){ articlePanelEl.classList.add('in'); });
-    document.querySelectorAll('#wall-hotspots .hotspot').forEach(function(b){
-      b.classList.toggle('open', b.getAttribute('data-info') === id);
-    });
-  }
-  function hideArticlePanel(){
-    if(!activeArticle || !articlePanelEl) return;
-    var closingId = activeArticle;
-    activeArticle = null;
-    articlePanelEl.classList.remove('in');
-    document.querySelectorAll('#wall-hotspots .hotspot').forEach(function(b){ b.classList.remove('open'); });
-    setTimeout(function(){
-      // only actually hide it if nothing reopened the panel in the meantime
-      if(activeArticle === null) articlePanelEl.hidden = true;
-    }, 150);
-  }
-  function toggleArticlePanel(id){
-    if(activeArticle === id) hideArticlePanel();
-    else showArticlePanel(id);
   }
 
   // the services scene now has just the one dot (on the foreground monitor) rather than one
@@ -2088,7 +1683,6 @@ body.video-failed .card{max-width:100%}
   document.querySelectorAll('.hotspot').forEach(function(btn){
     btn.addEventListener('click', function(){
       var info = btn.getAttribute('data-info');
-      if(btn.closest('#wall-hotspots')){ toggleArticlePanel(info); return; }
       if(info === 'services-all'){
         var anyOpen = SERVICE_IDS.some(function(id){
           var card = document.querySelector('.popup-card[data-info="' + id + '"]');
@@ -2106,52 +1700,9 @@ body.video-failed .card{max-width:100%}
     btn.addEventListener('click', function(){
       var card = btn.closest('.popup-card');
       if(!card) return;
-      if(card.id === 'article-panel'){ hideArticlePanel(); return; }
       closeHotspotCard(card.getAttribute('data-info'));
     });
   });
 
-  // ============ FOUNDER BIO MODAL: click a founder, the full bio opens big and centered ============
-  var bioModal = document.getElementById('bio-modal');
-  var bioModalBody = document.getElementById('bio-modal-body');
-  function openFounderBio(i){
-    var f = DATA.founders[i];
-    if(!f || !bioModal) return;
-    bioModalBody.innerHTML = '<div class="founder">'+
-      '<img src="'+f.img+'" alt="'+f.name+'">'+
-      '<div class="founder-body"><h3>'+f.name+'</h3><span class="founder-role">'+f.role+'</span>'+
-      '<p class="founder-bio">'+f.bio+'</p>'+
-      '<div class="founder-links">'+
-      '<a href="'+f.linkedin+'" target="_blank" rel="noopener" aria-label="'+f.name+' on LinkedIn">'+linkedinSvg+'</a>'+
-      '<a href="mailto:'+f.email+'" aria-label="Email '+f.name+'">'+mailSvg+'</a>'+
-      '</div></div></div>';
-    bioModal.hidden = false;
-    requestAnimationFrame(function(){ bioModal.classList.add('in'); });
-  }
-  function closeFounderBio(){
-    if(!bioModal || bioModal.hidden) return;
-    bioModal.classList.remove('in');
-    setTimeout(function(){ bioModal.hidden = true; }, 300);
-  }
-  document.querySelectorAll('.founder[data-founder-idx]').forEach(function(el){
-    el.addEventListener('click', function(e){
-      if(e.target.closest('a')) return; // let the LinkedIn/email links behave normally
-      openFounderBio(+el.getAttribute('data-founder-idx'));
-    });
-    el.addEventListener('keydown', function(e){
-      if(e.key === 'Enter' || e.key === ' '){
-        e.preventDefault();
-        openFounderBio(+el.getAttribute('data-founder-idx'));
-      }
-    });
-  });
-  if(bioModal){
-    bioModal.querySelectorAll('[data-close-bio]').forEach(function(el){
-      el.addEventListener('click', closeFounderBio);
-    });
-    document.addEventListener('keydown', function(e){
-      if(e.key === 'Escape') closeFounderBio();
-    });
-  }
 })();
 </script>
