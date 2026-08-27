@@ -1503,9 +1503,10 @@ body.video-failed .card{max-width:100%}
                                  // timing within a hop but the hop's own motion taking too long. nudged
                                  // up again (750 -> 900) per later feedback that the walkthrough still
                                  // wanted to be slower.
-  var MS_PER_VIDEO_SEC_INTRO = 800; // the opening zoom-out (start -> threshold) reads better a bit
-                                      // more deliberate than the rest, kept slower on its own rather
-                                      // than reverting the general pace everything else was sped up to
+  var MS_PER_VIDEO_SEC_INTRO = 500; // the opening zoom-out (start -> threshold) - was 800 (a 1.25x
+                                      // playback rate, 8s of content in 6.4s real time), sped up
+                                      // further per feedback to a 2x rate (8s content in 4s real
+                                      // time) rather than reverting to real-time pace entirely
   var MS_PER_VIDEO_SEC_WORK_TO_COMMUNITY = 1450; // whiteboard -> hallway -> the wall of framed
                                       // photos (stop 02 -> 03) - flagged specifically as feeling
                                       // rushed, so it gets its own slower pace rather than just
