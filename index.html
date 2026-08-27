@@ -1514,14 +1514,18 @@ body.video-failed .card{max-width:100%}
   var MIN_STEP_MS = 380;
   var MAX_STEP_MS = 40000;
   var COOLDOWN_MS = 380;
-  function stepDuration(fromIdx, toIdx){
-    var dt = Math.abs(WAYPOINTS[toIdx].t - WAYPOINTS[fromIdx].t);
+  // ms of real time per second of video content - shared by both the backward seek-animation
+  // (stepDuration, below) and forward real playback (playForwardTo's playbackRate).
+  function stepPace(fromIdx, toIdx){
     var isIntro = WAYPOINTS[fromIdx].id === 'start' && WAYPOINTS[toIdx].id === 'threshold';
     var isWorkToCommunity = WAYPOINTS[fromIdx].id === 'work' && WAYPOINTS[toIdx].id === 'community';
-    var pace = isIntro ? MS_PER_VIDEO_SEC_INTRO
+    return isIntro ? MS_PER_VIDEO_SEC_INTRO
       : isWorkToCommunity ? MS_PER_VIDEO_SEC_WORK_TO_COMMUNITY
       : MS_PER_VIDEO_SEC;
-    return Math.max(MIN_STEP_MS, Math.min(MAX_STEP_MS, dt * pace));
+  }
+  function stepDuration(fromIdx, toIdx){
+    var dt = Math.abs(WAYPOINTS[toIdx].t - WAYPOINTS[fromIdx].t);
+    return Math.max(MIN_STEP_MS, Math.min(MAX_STEP_MS, dt * stepPace(fromIdx, toIdx)));
   }
   var scrubActive = false; // true once this device is running the fixed-viewport stepper
 
@@ -1595,17 +1599,75 @@ body.video-failed .card{max-width:100%}
   var easeOutPow = function(p, k){ return 1 - Math.pow(1 - p, k); };
   var easeOut = function(p){ return easeOutPow(p, 3); };
 
-  // ---- the core: animate the video from the current waypoint's time to a target waypoint's time ----
+  // ---- public entry point: dispatches to real playback going forward (browsers can't play video
+  // backward, so that's only an option one direction) or the seek-animation going backward ----
   function goTo(target){
     if(!scrubActive) return;
     if(animating) return;
     if(target < 0 || target >= WAYPOINTS.length) return;
     if(target === idx) return;
-    // a click/keyboard/dot-rail jump always wins over anything scroll-momentum was mid-way
-    // through - stop that loop outright rather than letting the two fight over the same video.
-    scrubVelocity = 0;
-    scrubTime = null;
-    stopScrubLoop();
+    if(target > idx) playForwardTo(target);
+    else seekHopTo(target);
+  }
+
+  // ---- moving forward: literal video playback (unpause, let it run, pause on arrival) instead
+  // of an artificial seek-driven animation - "one scroll unpauses it and it plays to the next
+  // stop." Also just genuinely smoother than rapid seeking ever was: a real decoder playing
+  // forward is exactly what it's built to do well, where the old approach's whole
+  // REVEAL_LEAD_MS/fast-finish apparatus (still below, now backward-only) existed specifically to
+  // paper over how seeking doesn't handle a decelerating approach to a stop cleanly. playbackRate
+  // carries over the same per-segment pacing that used to divide up a fixed animation duration.
+  function playForwardTo(target){
+    animating = true;
+    var myId = ++transitionId;
+    hideAllCards();
+    document.body.classList.add('in-motion');
+    var targetT = WAYPOINTS[target].t;
+    var rate = Math.max(0.0625, Math.min(16, 1000 / stepPace(idx, target)));
+
+    function finish(){
+      if(myId !== transitionId) return;
+      try { video.pause(); } catch(err){}
+      video.playbackRate = 1;
+      requestSeek(targetT, true); // land exactly on the frame - real playback can overshoot by a hair
+      idx = target;
+      animating = false;
+      lastStepAt = performance.now();
+      document.body.classList.remove('in-motion');
+      showCard(WAYPOINTS[idx].id);
+      updateChrome();
+      if(idx === LAST){ tourEl.classList.add('settled'); unlockScroll(); }
+    }
+
+    function watch(){
+      if(myId !== transitionId) return; // superseded; stop watching, whatever superseded us owns cleanup
+      // video.paused as a bailout too: if playback silently stalls or gets paused by the browser
+      // mid-flight for some reason, don't keep waiting on a target that'll never arrive on its own.
+      if(video.currentTime >= targetT - 0.01 || video.ended || video.paused){ finish(); return; }
+      requestAnimationFrame(watch);
+    }
+
+    video.playbackRate = rate;
+    var playPromise = video.play();
+    if(playPromise && typeof playPromise.then === 'function'){
+      playPromise.then(function(){
+        if(myId !== transitionId) return;
+        requestAnimationFrame(watch);
+      }).catch(function(err){
+        console.error('video.play() failed, falling back to the seek animation for this hop', err);
+        if(myId !== transitionId) return;
+        video.playbackRate = 1;
+        animating = false;
+        seekHopTo(target);
+      });
+    } else {
+      requestAnimationFrame(watch);
+    }
+  }
+
+  // ---- moving backward: the original seek-driven eased animation (real reverse playback isn't a
+  // thing browsers support) ----
+  function seekHopTo(target){
     animating = true;
     var myId = ++transitionId;
     hideAllCards(); // hide every card while the video is in motion
@@ -1710,8 +1772,22 @@ body.video-failed .card{max-width:100%}
 
   function next(){ goTo(idx + 1); }
   function prev(){ if(idx <= FLOOR) return; goTo(idx - 1); }
+  // services is the first stop with anything to actually open (the three service cards, behind
+  // one shared hotspot) - a visitor who scrolls straight past without ever clicking it would
+  // otherwise never see them at all. First scroll while they're still unopened shows them instead
+  // of advancing; a second scroll from there goes to work as normal. Doesn't re-trigger once
+  // they've been shown, even if the visitor then closes them again - this is about first exposure,
+  // not a standing gate every time services comes up.
+  var servicesCardsRevealed = false;
   // scrolling/arrow-keys never advance past the threshold: that step takes a deliberate click
-  function scrollNext(){ if(idx === FLOOR) return; next(); }
+  function scrollNext(){
+    if(idx === FLOOR) return;
+    if(!servicesCardsRevealed && WAYPOINTS[idx].id === 'services'){
+      revealServiceCards();
+      return;
+    }
+    next();
+  }
 
   function canStep(){
     // stageEl only gets 'video-ready' once the full video blob has actually loaded (see
@@ -1729,9 +1805,8 @@ body.video-failed .card{max-width:100%}
     if(!scrubActive) return;
     transitionId++; // invalidate any in-flight goTo() so it can't seek against us
     animating = false;
-    scrubVelocity = 0;
-    scrubTime = null;
-    stopScrubLoop();
+    try { video.pause(); } catch(err){} // a forward hop could be mid-playback right now
+    video.playbackRate = 1;
     document.body.classList.remove('in-motion');
     tourEl.classList.remove('settled');
     lockScroll();
@@ -1741,159 +1816,6 @@ body.video-failed .card{max-width:100%}
     requestSeek(0, true);
     showCard('start');
     updateChrome();
-  }
-
-  // ============ MOMENTUM SCROLL-SCRUB (wheel + touch-drag) ============
-  // goTo() above is a canned, fixed-duration eased hop - right for a discrete action (a click, a
-  // keypress, a dot-rail jump), but scrolling/dragging now moves the video continuously with the
-  // input instead of one wheel tick firing a whole pre-timed animation on its own, and coasts to
-  // a stop on release instead of just quitting wherever the last input event happened to land.
-  // still holds at each waypoint rather than running straight through the whole video: position
-  // is clamped to the segment on either side of the current one, so reaching either edge always
-  // means arriving cleanly at that section - scrolling further is what carries it into the next.
-  var scrubVelocity = 0;          // signed video-seconds/sec of current momentum
-  var scrubTime = null;           // in-progress position while off a settled waypoint; null at rest
-  var scrubRafId = null;
-  var scrubLastFrame = 0;
-  // friction is a multiplicative per-second decay factor (applied as friction^dt each frame, so
-  // 1 = no decay at all, 0 = stops instantly) - a single wheel notch's total travel before
-  // coasting to rest works out to roughly (velocity added) / -ln(friction), so this and the gain
-  // below were picked together against that, not tuned independently. First-pass numbers, easy to
-  // retune from feedback once it's actually live - "too slow/heavy" -> raise the gains, "too
-  // floaty" -> lower SCRUB_FRICTION (further from 1 = less coast) or raise SCRUB_SETTLE_VELOCITY
-  // (stops the coast sooner).
-  var SCRUB_FRICTION = 1 / 6.2;   // ~0.16 - one notch's momentum falls off over roughly a third of a second
-  var SCRUB_WHEEL_GAIN = 0.006;   // wheel deltaY (px) -> video-seconds of velocity added per event
-  var SCRUB_TOUCH_GAIN = 0.006;   // touch drag px -> video-seconds, close to a 1:1 drag feel
-  var SCRUB_MAX_VELOCITY = 3.4;
-  var SCRUB_SETTLE_VELOCITY = 0.015;
-
-  function stopScrubLoop(){
-    if(scrubRafId){ cancelAnimationFrame(scrubRafId); scrubRafId = null; }
-  }
-
-  // the two waypoint times the current position can move between without crossing a section
-  // boundary on its own - reaching either end holds there until fresh input pushes past it.
-  function scrubBounds(){
-    return { lo: WAYPOINTS[Math.max(idx - 1, FLOOR)].t, hi: WAYPOINTS[Math.min(idx + 1, LAST)].t };
-  }
-
-  // first bit of real movement away from a settled waypoint: fade its card out the same way a
-  // goTo() hop does (hide everything, chrome dims), rather than leaving it sitting there while
-  // the video visibly moves underneath it.
-  function scrubDeparted(){
-    if(document.body.classList.contains('in-motion')) return;
-    document.body.classList.add('in-motion');
-    hideAllCards();
-  }
-
-  function scrubArrive(targetIdx){
-    idx = targetIdx;
-    scrubVelocity = 0;
-    scrubTime = null;
-    lastStepAt = performance.now();
-    requestSeek(WAYPOINTS[idx].t, true);
-    document.body.classList.remove('in-motion');
-    showCard(WAYPOINTS[idx].id);
-    updateChrome();
-    if(idx === LAST){ tourEl.classList.add('settled'); unlockScroll(); }
-  }
-
-  // scrolled/dragged partway but let go before reaching the next section - ease back to where it
-  // actually started instead of stranding the video mid-clip with no card showing. quick and
-  // plain (not the walking-pace easeOut every real hop uses) since this reads as "never mind,"
-  // not a deliberate move to somewhere new.
-  function scrubSnapBack(){
-    var fromT = scrubTime;
-    var toT = WAYPOINTS[idx].t;
-    var startTime = performance.now();
-    var dur = 260;
-    var myId = ++transitionId;
-    function frame(now){
-      if(myId !== transitionId) return;
-      var p = Math.min(1, (now - startTime) / dur);
-      requestSeek(fromT + (toT - fromT) * easeOut(p));
-      if(p < 1){ requestAnimationFrame(frame); }
-      else {
-        requestSeek(toT, true);
-        scrubTime = null;
-        document.body.classList.remove('in-motion');
-        showCard(WAYPOINTS[idx].id);
-        updateChrome();
-      }
-    }
-    requestAnimationFrame(frame);
-  }
-
-  function scrubFrame(now){
-    scrubRafId = null;
-    if(!scrubActive || tourEl.classList.contains('settled')){ scrubVelocity = 0; scrubTime = null; return; }
-    var dt = Math.min(0.05, (now - scrubLastFrame) / 1000); // clamp so a dropped/backgrounded frame can't lurch
-    scrubLastFrame = now;
-    if(scrubTime === null) scrubTime = WAYPOINTS[idx].t;
-
-    var bounds = scrubBounds();
-    var next = scrubTime + scrubVelocity * dt;
-    var hitLo = next <= bounds.lo, hitHi = next >= bounds.hi;
-    next = Math.max(bounds.lo, Math.min(bounds.hi, next));
-    if(next !== WAYPOINTS[idx].t) scrubDeparted();
-    requestSeek(next);
-    scrubTime = next;
-
-    if(hitLo && scrubVelocity < 0){
-      var backIdx = Math.max(idx - 1, FLOOR);
-      if(backIdx !== idx) scrubArrive(backIdx);
-      else { scrubVelocity = 0; scrubTime = null; requestSeek(WAYPOINTS[idx].t, true); }
-      return;
-    }
-    if(hitHi && scrubVelocity > 0){
-      var fwdIdx = Math.min(idx + 1, LAST);
-      if(fwdIdx !== idx) scrubArrive(fwdIdx);
-      else { scrubVelocity = 0; scrubTime = null; requestSeek(WAYPOINTS[idx].t, true); }
-      return;
-    }
-
-    scrubVelocity *= Math.pow(SCRUB_FRICTION, dt); // frame-rate-independent exponential decay
-    if(Math.abs(scrubVelocity) < SCRUB_SETTLE_VELOCITY){
-      scrubVelocity = 0;
-      if(Math.abs(scrubTime - WAYPOINTS[idx].t) < MIN_SEEK_DELTA){ scrubTime = null; return; } // never really left
-      scrubSnapBack();
-      return;
-    }
-    scrubRafId = requestAnimationFrame(scrubFrame);
-  }
-
-  function addScrubVelocity(delta){
-    // same reasoning as canStep(): scrolling during the video-blob load window must not advance
-    // idx/reveal a card ahead of there actually being a video to show for it.
-    if(!scrubActive || tourEl.classList.contains('settled') || animating) return;
-    if(!stageEl.classList.contains('video-ready')) return;
-    scrubVelocity = Math.max(-SCRUB_MAX_VELOCITY, Math.min(SCRUB_MAX_VELOCITY, scrubVelocity + delta));
-    if(!scrubRafId){
-      scrubLastFrame = performance.now();
-      scrubRafId = requestAnimationFrame(scrubFrame);
-    }
-  }
-
-  // direct 1:1 drag while a finger is actually down (touch's own equivalent of the wheel path
-  // above, which is velocity-based since a wheel event isn't a continuous position to track).
-  function scrubDragTo(deltaPx){
-    if(!scrubActive || tourEl.classList.contains('settled') || animating) return;
-    if(!stageEl.classList.contains('video-ready')) return;
-    if(scrubTime === null) scrubTime = WAYPOINTS[idx].t;
-    var bounds = scrubBounds();
-    var next = Math.max(bounds.lo, Math.min(bounds.hi, scrubTime + deltaPx * SCRUB_TOUCH_GAIN));
-    if(next !== WAYPOINTS[idx].t) scrubDeparted();
-    requestSeek(next);
-    var hitLo = next <= bounds.lo, hitHi = next >= bounds.hi;
-    scrubTime = next;
-    if(hitLo && deltaPx < 0){
-      var backIdx = Math.max(idx - 1, FLOOR);
-      if(backIdx !== idx) scrubArrive(backIdx);
-    } else if(hitHi && deltaPx > 0){
-      var fwdIdx = Math.min(idx + 1, LAST);
-      if(fwdIdx !== idx) scrubArrive(fwdIdx);
-    }
   }
 
   // ---- input: wheel / touch / keyboard, all funnel into next()/prev() ----
@@ -1910,68 +1832,37 @@ body.video-failed .card{max-width:100%}
   function insideOpenCard(target){
     return !!target.closest('.popup-card:not([hidden]), .card');
   }
-  // idx 0 (start -> threshold) and idx FLOOR (threshold -> services, the Enter button's own hop)
-  // both stay on the original canned goTo(), same as before this change - the intro has its own
-  // special pacing/reveal-lead that only makes real sense for a fixed-duration hop, it only ever
-  // plays once, and "click or scroll to step inside" specifically means scrolling still triggers
-  // that one canned hop rather than scrubbing it; threshold -> services is Enter-button-only and
-  // was never scrollable at all. Momentum scrubbing only applies from services onward.
+  // one scroll/swipe = one step: unpauses the video (playForwardTo, via goTo) and lets it play to
+  // the next stop, where it pauses again on its own. same trigger for every section, including
+  // the intro - "scroll or click to step inside" already meant scroll triggers that hop too.
   function onWheel(e){
     if(!scrubActive || tourEl.classList.contains('settled')) return;
     if(insideOpenCard(e.target)) return; // scrolling a card's own overflow, not the tour
     e.preventDefault();
-    if(animating) return; // a click/keyboard hop is already mid-flight, don't fight it
-    if(idx === 0){
-      if(!canStep()) return;
-      if(e.deltaY > 4) scrollNext();
-      else if(e.deltaY < -4) prev();
-      return;
-    }
-    if(idx === FLOOR) return;
-    addScrubVelocity(e.deltaY * SCRUB_WHEEL_GAIN);
+    if(!canStep()) return;
+    if(e.deltaY > 4) scrollNext();
+    else if(e.deltaY < -4) prev();
   }
   var touchStartY = null;
-  var touchLastY = null;
   var touchInCard = false;
-  var touchRecentDy = 0;   // delta accumulated over a short recent window, for a release velocity
-  var touchRecentAt = 0;
   function onTouchStart(e){
     if(!scrubActive) return;
-    touchStartY = touchLastY = e.touches[0].clientY;
+    touchStartY = e.touches[0].clientY;
     touchInCard = insideOpenCard(e.target);
-    touchRecentDy = 0;
-    touchRecentAt = performance.now();
-    scrubVelocity = 0; // grabbing the video kills any leftover coast from a prior fling
-    stopScrubLoop();
   }
   function onTouchMove(e){
     if(!scrubActive || tourEl.classList.contains('settled') || touchInCard) return;
     e.preventDefault();
-    if(animating || idx === 0 || idx === FLOOR) return; // both resolve at touchend below, same as before
-    var y = e.touches[0].clientY;
-    var dy = touchLastY - y; // positive = finger moved up = scroll forward, matches wheel's deltaY sign
-    touchLastY = y;
-    scrubDragTo(dy);
-    var now = performance.now();
-    if(now - touchRecentAt > 80){ touchRecentDy = dy; touchRecentAt = now; }
-    else touchRecentDy += dy;
   }
   function onTouchEnd(e){
-    var wasInCard = touchInCard;
-    var startY = touchStartY;
-    var endY = e.changedTouches[0] ? e.changedTouches[0].clientY : startY;
-    touchStartY = null; touchInCard = false;
-    if(!scrubActive || tourEl.classList.contains('settled') || wasInCard || startY === null) return;
-    if(animating) return;
-    if(idx === 0 || idx === FLOOR){
-      if(!canStep()) return;
-      var totalDy = startY - endY;
-      if(totalDy > 30) scrollNext();
-      else if(totalDy < -30) prev();
-      return;
+    if(!scrubActive || touchStartY === null || tourEl.classList.contains('settled') || touchInCard){
+      touchStartY = null; touchInCard = false; return;
     }
-    var elapsedSec = Math.max(0.016, (performance.now() - touchRecentAt) / 1000);
-    addScrubVelocity((touchRecentDy / elapsedSec) * SCRUB_TOUCH_GAIN);
+    var dy = touchStartY - (e.changedTouches[0] ? e.changedTouches[0].clientY : touchStartY);
+    touchStartY = null;
+    if(!canStep()) return;
+    if(dy > 30) scrollNext();
+    else if(dy < -30) prev();
   }
   function onKeydown(e){
     if(!scrubActive || tourEl.classList.contains('settled')) return;
@@ -2153,9 +2044,8 @@ body.video-failed .card{max-width:100%}
     if(target2 === undefined) return;
     transitionId++; // cancel anything still mid-flight so it can't fight this cut
     animating = false;
-    scrubVelocity = 0;
-    scrubTime = null;
-    stopScrubLoop();
+    try { video.pause(); } catch(err){} // a forward hop could be mid-playback right now
+    video.playbackRate = 1;
     document.body.classList.remove('in-motion');
     if(tourEl.classList.contains('settled')){
       tourEl.classList.remove('settled');
@@ -2348,11 +2238,18 @@ body.video-failed .card{max-width:100%}
   // the services scene now has just the one dot (on the foreground monitor) rather than one
   // per screen - it opens all three cards together instead of each needing its own click.
   var SERVICE_IDS = ['design', 'innovation', 'growth'];
+  function revealServiceCards(){
+    servicesCardsRevealed = true;
+    SERVICE_IDS.forEach(function(id){ openHotspotCard(id); });
+    var servicesDot = document.querySelector('.hotspot[data-info="services-all"]');
+    if(servicesDot) servicesDot.classList.add('open');
+  }
   document.querySelectorAll('.hotspot').forEach(function(btn){
     btn.addEventListener('click', function(){
       var info = btn.getAttribute('data-info');
       if(btn.closest('#wall-hotspots')){ toggleArticlePanel(info); return; }
       if(info === 'services-all'){
+        servicesCardsRevealed = true;
         var anyOpen = SERVICE_IDS.some(function(id){
           var card = document.querySelector('.popup-card[data-info="' + id + '"]');
           return card && !card.hidden;
