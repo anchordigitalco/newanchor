@@ -1526,9 +1526,17 @@ body.video-failed .card{max-width:100%}
       // silently drops them, which without this left the video stuck on a stale, not-quite-final
       // frame for the rest of the hop (sometimes seconds) instead of ever reaching the crisp
       // final one. Harmless to force early: this is the same target the hop already ends on.
-      if(Math.abs(toT - interp) < MIN_SEEK_DELTA) requestSeek(toT, true);
+      var closeEnough = Math.abs(toT - interp) < MIN_SEEK_DELTA;
+      if(closeEnough) requestSeek(toT, true);
       else requestSeek(interp);
-      if(!revealed && elapsed >= revealAt){
+      // wait for that seek to actually land (seekBusy false) before revealing when we're already
+      // close enough - video.currentTime is asynchronous, so the frame on screen can lag a beat
+      // behind what we just asked for. Revealing purely on the elapsed-time schedule could show
+      // the card before the video visually caught up, reading as the stop landing early/settling
+      // a moment after the card already implied it was done. Capped at 200ms past schedule so a
+      // seek that's slow for some other reason can never hold the reveal hostage indefinitely.
+      var seekConfirmed = !closeEnough || !seekBusy || elapsed >= revealAt + 200;
+      if(!revealed && elapsed >= revealAt && seekConfirmed){
         reveal();
         // on a long, flat-tailed curve (the intro especially) very little video-time is actually
         // left at this point, but the ORIGINAL curve can still take seconds of real time to work
@@ -1540,7 +1548,7 @@ body.video-failed .card{max-width:100%}
         // has usually already forced the exact target well before revealAt fires) - otherwise
         // this was running a whole extra 350ms of pointless no-op rAF frames and seek calls right
         // at the moment the card's own DOM updates are happening, competing for the same frames.
-        if(Math.abs(toT - interp) >= MIN_SEEK_DELTA){
+        if(!closeEnough){
           fromT = interp;
           start = now;
           dur = FINISH_MS;
