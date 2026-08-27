@@ -350,6 +350,9 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
   font-size:1.25rem;font-weight:600;color:var(--dark-ink);opacity:1;margin-bottom:0;
 }
 .popup-card .kicker::before{content:none}
+/* EDIT 1: fixes "Development" orphaning onto its own line in the Website Design & Development
+   card only - scoped to that one card so the other two kickers are untouched. */
+.popup-card[data-info="design"] .kicker{text-wrap:balance}
 .popup-card p{font-size:.9rem;line-height:1.6;opacity:.85;margin-top:.5rem}
 .popup-card p:first-of-type{margin-top:.5rem}
 .popup-card.in{opacity:1;transform:scale(1) translateY(0)}
@@ -819,7 +822,7 @@ body.video-failed .card{max-width:100%}
               <button class="popup-close" data-close aria-label="Close">&times;</button>
               <img class="clip-img" src="assets/pillars/innovation.jpg" alt="">
               <div class="clip-text">
-                <p class="kicker">Brand Digital Systems</p>
+                <p class="kicker">Own Your Audience</p>
                 <p>We build what your brand needs to capture leads and grow an audience you actually own, with modern features that feel current, not off-the-shelf.</p>
               </div>
             </div>
@@ -829,7 +832,7 @@ body.video-failed .card{max-width:100%}
               <button class="popup-close" data-close aria-label="Close">&times;</button>
               <img class="clip-img" src="assets/pillars/growth.jpg" alt="">
               <div class="clip-text">
-                <p class="kicker">Ongoing Maintenance &amp; Consulting</p>
+                <p class="kicker">We Stay With You</p>
                 <p>We stay in your corner after launch. Monthly care plans keep your site fast, secure, and evolving, with SEO monitoring and consulting built in.</p>
               </div>
             </div>
@@ -1118,7 +1121,7 @@ body.video-failed .card{max-width:100%}
        desc:"A training site for Ray Cuevo, built to turn visitors into client inquiries in a competitive local fitness market."},
       {name:"Marcus Bleecker", tag:"Personal Brands", url:"https://marcusbleecker.com",
        img:"assets/work/marcus-bleecker.jpg",
-       desc:"A personal brand site for Marcus Bleecker, built to establish a strong digital presence and showcase his work and story."}
+       desc:"A personal brand site for Marcus Bleecker, an award-winning screenwriter, musician, and author, built to establish a strong digital presence and showcase his work and story."}
     ],
     clips: [
       {id:"score-signal", cat:"AI-Powered Tool", date:"7/31/2026", title:"Score Signal, an AI-powered SAT and ACT tool, launches in partnership with Anchor Digital.", status:"Live now.", img:"assets/press/score-signal-launch.jpg", url:"https://getscoresignal.com",
