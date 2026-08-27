@@ -541,27 +541,28 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
    positioned on the video itself, same as before - only the founders card that used to share
    this band is gone (it lives on its own /team page now). the shared article panel opens
    centered, full width, in the flex flow right under the banner, not off to a side column. ============ */
+/* narrow and tall, pinned to the left - clear of the wall hotspots, the leftmost of which sits
+   at 40% - so the frames stay clickable instead of getting covered the way the old founders
+   card used to. the article panel is the second column in the same row, opening beside it
+   rather than needing its own hand-positioned spot. */
 .community-band{
-  justify-content:flex-end;align-items:center;flex-direction:column;
-  padding-bottom:6vh;gap:1.4rem;
+  justify-content:flex-start;align-items:center;gap:2rem;
 }
-.community-band::before{--scrim-x:50%}
+.community-band::before{--scrim-x:16%}
 .community-band .card.community-banner{
-  max-width:min(1100px,94vw);width:100%;position:relative;z-index:3;
-  padding:clamp(1.2rem,2.2vw,1.8rem) clamp(1.4rem,3vw,2.2rem);
+  max-width:min(400px,32vw) !important;width:100%;position:relative;z-index:3;flex-shrink:0;
+  padding:clamp(1.6rem,2.6vw,2.2rem) clamp(1.4rem,2.6vw,1.8rem);
 }
-.community-banner h2{font-size:clamp(1.25rem,2vw,1.7rem);margin:0 0 .7rem}
-.community-banner p{font-size:.88rem;line-height:1.65;margin:0 0 .7rem;opacity:.92}
+.community-banner h2{font-size:clamp(1.2rem,1.9vw,1.5rem);margin:0 0 .8rem}
+.community-banner p{font-size:.88rem;line-height:1.7;margin:0 0 .9rem;opacity:.92}
 .community-banner p:last-child{margin-bottom:0}
 /* the wall hotspots (dots on the framed photos) stay absolutely positioned over the whole band,
-   same technique the services screens use - not part of the column flow above. */
+   same technique the services screens use - not part of the flex row above. */
 #wall-hotspots{position:absolute;inset:0;pointer-events:none;z-index:1}
 #wall-hotspots .hotspot{pointer-events:auto}
-/* the one shared article panel: a flex child in the same column as the banner, so it opens
-   centered and full width right underneath it instead of a hand-positioned side column. */
 .community-band .article-panel{
-  width:min(1100px,94vw);max-width:1100px;
-  max-height:min(560px,58vh);
+  flex:1;min-width:0;max-width:760px;
+  height:min(660px,82vh);
   position:relative;z-index:3;
 }
 #article-panel-body{height:100%;overflow-y:auto}
@@ -856,15 +857,15 @@ body.video-failed .card{max-width:100%}
       <!-- COMMUNITY: the Anchor Education Initiative banner over the wall of framed nonprofit-work
            photos. The founders card that used to share this stop lives on its own /team page now. -->
       <div class="band community-band" id="band-community" data-stop="community">
-        <div class="popup-card article-panel" id="article-panel" hidden>
-          <button class="popup-close" data-close aria-label="Close">&times;</button>
-          <div class="article-panel-body" id="article-panel-body"></div>
-        </div>
         <div class="card community-banner">
           <p class="kicker">03 &middot; the anchor education initiative</p>
           <h2>The Anchor Education Initiative</h2>
           <p>We prioritize nonprofits that expand access to education for underprivileged students. Adam and Jackson are both students of color who attended selective high schools and colleges, and know firsthand how much of getting there comes down to access. It's why organizations like FairTest and A Better Chance are partners we go looking for, not just work we happen to take on.</p>
           <p class="hotspot-hint">Click the frames on the wall for more on each partnership.</p>
+        </div>
+        <div class="popup-card article-panel" id="article-panel" hidden>
+          <button class="popup-close" data-close aria-label="Close">&times;</button>
+          <div class="article-panel-body" id="article-panel-body"></div>
         </div>
         <div id="wall-hotspots"></div>
       </div>
