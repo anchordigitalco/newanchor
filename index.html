@@ -503,13 +503,22 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
   position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   display:flex;flex-direction:column;align-items:center;pointer-events:auto;
 }
-/* the mark, held whole over the video right alongside the enter button (same band, same
-   show/hide as the button) - no backdrop of its own, it just sits on the shot. clicking enter
-   splits it in two and sends both halves clear off the sides of the screen (stage has
-   overflow:hidden, so they're clipped away rather than lingering) while the video step
-   underneath fires at the same time, not after. */
+/* "anchor digital" over the mark, both held whole over the video right alongside the enter
+   button (same band, same show/hide as the button) - no backdrop of its own, they just sit on
+   the shot. clicking enter splits each in two - the wordmark's two words, and the icon's two
+   halves - and sends every piece clear off the sides of the screen (stage has overflow:hidden,
+   so they're clipped away rather than lingering) while the video step underneath fires at the
+   same time, not after. */
+.threshold-word{
+  display:flex;gap:.5em;margin-bottom:.9rem;
+  font-family:var(--font-word);font-size:clamp(1.5rem,3.6vw,2.3rem);color:#fff;
+  filter:drop-shadow(0 3px 14px rgba(10,9,7,.6)) drop-shadow(0 14px 42px rgba(10,9,7,.5));
+}
+.word-half{display:inline-block;transition:transform .6s cubic-bezier(.65,0,.35,1),opacity .5s ease .1s}
+.threshold-word.split .word-left{transform:translateX(-120vw);opacity:0}
+.threshold-word.split .word-right{transform:translateX(120vw);opacity:0}
 .threshold-logo{
-  position:relative;width:min(46vw,340px);aspect-ratio:827/438;margin-bottom:1.6rem;
+  position:relative;width:min(28vw,200px);aspect-ratio:827/438;margin-bottom:1.6rem;
 }
 .logo-half{
   position:absolute;top:0;width:50%;height:100%;
@@ -862,6 +871,10 @@ body.video-failed .card{max-width:100%}
            there in the shot - no need to redraw it, just a way in underneath it. -->
       <div class="band threshold-band" id="band-threshold" data-stop="threshold">
         <div class="threshold-content">
+          <div class="threshold-word" id="threshold-word" aria-hidden="true">
+            <span class="word-half word-left">anchor</span>
+            <span class="word-half word-right">digital</span>
+          </div>
           <div class="threshold-logo" id="threshold-logo" aria-hidden="true">
             <span class="logo-half logo-half-left"></span>
             <span class="logo-half logo-half-right"></span>
@@ -1913,12 +1926,14 @@ body.video-failed .card{max-width:100%}
   // ============ ENTER (threshold -> services) ============
   var enterBtn = document.getElementById('enter-btn');
   var thresholdLogo = document.getElementById('threshold-logo');
+  var thresholdWord = document.getElementById('threshold-word');
   if(enterBtn){
     enterBtn.addEventListener('click', function(){
       if(idx !== FLOOR) return;
       if(!canStep()) return;
       enterBtn.disabled = true;
       if(thresholdLogo) thresholdLogo.classList.add('split');
+      if(thresholdWord) thresholdWord.classList.add('split');
       next();
     });
   }
