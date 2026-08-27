@@ -413,6 +413,7 @@
         <input id="d-activity-input" type="text" placeholder="Add an update...">
         <button class="btn" id="d-activity-add-btn" type="button">Post</button>
       </div>
+      <p class="form-status" id="d-activity-status"></p>
     </div>
 
     <div class="drawer-section">
@@ -1045,8 +1046,15 @@
       var input = document.getElementById('d-activity-input');
       var message = input.value.trim();
       if(!message) return;
+      var btn = document.getElementById('d-activity-add-btn');
+      var statusEl = document.getElementById('d-activity-status');
+      btn.disabled = true;
       var res = await supabase.from('activity').insert({ client_id: activeClient.id, message: message });
-      if(res.error){ console.error('add activity error', res.error); return; }
+      if(res.error){
+        console.error('add activity error', res.error);
+        btn.disabled = false;
+        return;
+      }
       input.value = '';
       await loadClients();
       var refreshed = profileRows.filter(function(p){ return p.id === activeClient.id; })[0];
@@ -1054,6 +1062,26 @@
         activeClient = refreshed;
         renderActivityList(refreshed.activity || []);
       }
+
+      // best-effort: the update is posted either way, the email is a courtesy notification on
+      // top of it, so a failure here is reported honestly rather than blocking or hiding the fact
+      // that the update itself still went through.
+      if(statusEl) statusEl.textContent = 'Posted. Sending notification email...';
+      try {
+        var emailRes = await supabase.functions.invoke('notify-client-update', {
+          body: { email: activeClient.email, message: message, companyName: activeClient.company_name || '' }
+        });
+        var emailData = (emailRes && emailRes.data) || {};
+        if(statusEl){
+          statusEl.textContent = (emailRes.error || emailData.error)
+            ? 'Posted, but the notification email could not be sent (' + (emailData.error || 'server error') + ').'
+            : 'Posted and emailed.';
+        }
+      } catch (err) {
+        console.error('notify-client-update call failed', err);
+        if(statusEl) statusEl.textContent = 'Posted, but the notification email could not be sent.';
+      }
+      btn.disabled = false;
     });
 
     document.getElementById('d-remove-access').addEventListener('click', async function(){
