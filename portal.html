@@ -96,20 +96,21 @@
   .portal-hint{font-size:.76rem;opacity:.7;margin:.5rem 0 0;line-height:1.5}
   .portal-recaptcha{margin:.7rem 0 0}
   .portal-submit{
-    width:100%;margin-top:.4rem;padding:.9rem 1rem;border-radius:99px;border:0;cursor:pointer;
+    display:block;width:100%;margin-top:.4rem;padding:.9rem 1rem;border-radius:99px;border:0;cursor:pointer;
     background:var(--accent);color:var(--ink);font-family:var(--font-mono);font-size:.82rem;letter-spacing:.02em;
+    text-decoration:none;text-align:center;box-sizing:border-box;
     transition:background .25s var(--ease-soft),transform .25s var(--ease-soft),opacity .2s var(--ease-soft);
   }
   .portal-submit:hover{background:var(--accent-hover);transform:translateY(-1px)}
   .portal-submit:disabled{opacity:.55;cursor:default;transform:none}
   .portal-switch{margin-top:1rem;text-align:center}
   .portal-switch[hidden]{display:none}
-  .portal-switch button{
+  .portal-switch button,.portal-switch a{
     background:none;border:0;padding:0;cursor:pointer;
     font-family:var(--font-body);font-size:.82rem;color:var(--dark-ink);
     text-decoration:underline;text-underline-offset:2px;opacity:.85;
   }
-  .portal-switch button:hover{opacity:1}
+  .portal-switch button:hover,.portal-switch a:hover{opacity:1}
   .portal-note{
     margin-top:1.5rem;padding-top:1.3rem;border-top:1px solid rgba(255,255,255,.18);
     font-size:.82rem;line-height:1.6;opacity:.85;
@@ -156,64 +157,13 @@
     <p class="portal-switch" id="portal-switch" hidden>
       <button type="button" id="portal-back">Use a different email</button>
       <span aria-hidden="true"> &middot; </span>
-      <button type="button" id="portal-forgot">Forgot password?</button>
+      <a href="/forgot-password">Forgot password?</a>
     </p>
     <p class="portal-note">
       Portal accounts can only be created for an email already on our client list. If yours
       isn't set up yet, email <a href="mailto:adam@anchordigitalco.com">adam@anchordigitalco.com</a>
       or <a href="mailto:jackson@anchordigitalco.com">jackson@anchordigitalco.com</a> to get added.
     </p>
-  </div>
-
-  <!-- Shown instead of the login card when this page was reached via an invite or password-reset
-       link. Those links log the visitor in automatically (that's how Supabase's own invite/recovery
-       flow works) - without this, init() below would see an already-authenticated user and send
-       them straight into the dashboard, having never actually set a password. -->
-  <div class="portal-card" id="portal-card-setpw" hidden>
-    <p class="portal-kicker">client portal</p>
-    <h1>Set your password</h1>
-    <p class="portal-lede">You're verified. Set a password to finish creating your account.</p>
-    <form id="setpw-form">
-      <div class="portal-field">
-        <label for="setpw-password">New password</label>
-        <input id="setpw-password" type="password" placeholder="••••••••" autocomplete="new-password" minlength="8" required>
-      </div>
-      <div class="portal-field">
-        <label for="setpw-confirm">Confirm password</label>
-        <input id="setpw-confirm" type="password" placeholder="••••••••" autocomplete="new-password" minlength="8" required>
-      </div>
-      <button class="portal-submit" type="submit" id="setpw-submit">Set password &amp; continue</button>
-      <div class="portal-status" id="setpw-status" role="status" aria-live="polite"></div>
-    </form>
-  </div>
-
-  <!-- "Forgot password?" from the login card. Sends Supabase's password-reset email, which lands
-       back here with type=recovery and is handled by the set-password card above, same as an
-       invite link. -->
-  <div class="portal-card" id="portal-card-forgot" hidden>
-    <p class="portal-kicker">client portal</p>
-    <h1>Reset your password</h1>
-    <p class="portal-lede">Enter your email and we'll send you a link to set a new password.</p>
-    <form id="forgot-form">
-      <div class="portal-field">
-        <label for="forgot-email">Email</label>
-        <input id="forgot-email" type="email" placeholder="you@company.com" autocomplete="email" required>
-      </div>
-      <button class="portal-submit" type="submit" id="forgot-submit">Send reset email</button>
-      <div class="portal-status" id="forgot-status" role="status" aria-live="polite"></div>
-    </form>
-    <p class="portal-switch">
-      <button type="button" id="forgot-back">Back to login</button>
-    </p>
-  </div>
-
-  <!-- Landing spot for the confirmation link Supabase sends when a client changes their email
-       from the dashboard (type=email_change). Nothing to fill in here, just confirm and move on. -->
-  <div class="portal-card" id="portal-card-emailchanged" hidden>
-    <p class="portal-kicker">client portal</p>
-    <h1>Email updated</h1>
-    <p class="portal-lede">Your account email has been confirmed. Taking you in...</p>
-    <button class="portal-submit" type="button" id="emailchanged-continue">Continue</button>
   </div>
 
   <script>
@@ -251,15 +201,10 @@
   <script type="module">
     import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-    // captured before createClient() runs: Supabase's client auto-detects and strips its auth
-    // params out of the URL as soon as it's constructed (detectSessionInUrl defaults to true),
-    // so this is the only reliable moment to see whether we got here via an invite or
-    // password-reset link rather than a normal visit. Checked in both places since which one
-    // Supabase uses depends on the client's flow type (hash fragment for the older implicit
-    // flow, ?code= query string for PKCE) - not pinned to a specific supabase-js version here,
-    // so covering both is safer than assuming one.
-    var cameFromInviteOrRecovery = /type=invite|type=recovery/.test(window.location.hash + window.location.search);
-    var cameFromEmailChange = /type=email_change/.test(window.location.hash + window.location.search);
+    // This page is login-only now - invite links, password-reset links, and email-change
+    // confirmation links each land on their own dedicated page instead (/create-password,
+    // /reset-password, /email-changed), not here. See those files for the
+    // detectSessionInUrl-driven type= detection that used to live in this one.
 
     var SUPABASE_URL = 'https://sroncqqparjklohbyidt.supabase.co';
     var SUPABASE_ANON_KEY = 'sb_publishable_5buinIijAx9Y_3ZpJ3d_BA_Jd-5cpyw';
@@ -332,29 +277,10 @@
       window.location.href = '/dashboard';
     }
 
-    // All the cards this page can show - kept in one place so switching between them (login,
-    // set-password, forgot-password, email-changed) can never leave two visible at once.
-    var ALL_PORTAL_CARDS = ['portal-card-login', 'portal-card-setpw', 'portal-card-forgot', 'portal-card-emailchanged'];
-    function showCard(id){
-      ALL_PORTAL_CARDS.forEach(function(cardId){
-        document.getElementById(cardId).hidden = (cardId !== id);
-      });
-      document.body.classList.add('ready');
-    }
-
     (async function init(){
       try {
         var res = await supabase.auth.getUser();
         if(res && res.data && res.data.user){
-          if(cameFromInviteOrRecovery){
-            showCard('portal-card-setpw');
-            return;
-          }
-          if(cameFromEmailChange){
-            showCard('portal-card-emailchanged');
-            setTimeout(redirectAfterLogin, 1600);
-            return;
-          }
           await redirectAfterLogin();
           return;
         }
@@ -448,93 +374,6 @@
         submitBtn.disabled = false;
       }
     });
-
-    // ============ SET PASSWORD (invite / recovery links land here already signed in) ============
-    var setpwForm = document.getElementById('setpw-form');
-    var setpwStatus = document.getElementById('setpw-status');
-    var setpwSubmit = document.getElementById('setpw-submit');
-    function showSetpwStatus(text){
-      setpwStatus.textContent = text;
-      setpwStatus.classList.add('show');
-    }
-    setpwForm.addEventListener('submit', async function(e){
-      e.preventDefault();
-      var pw = document.getElementById('setpw-password').value;
-      var confirmPw = document.getElementById('setpw-confirm').value;
-      if(pw.length < 8){
-        showSetpwStatus('Password must be at least 8 characters.');
-        return;
-      }
-      if(pw !== confirmPw){
-        showSetpwStatus("Those passwords don't match.");
-        return;
-      }
-      setpwSubmit.disabled = true;
-      showSetpwStatus('Setting your password...');
-      try {
-        // the session already exists (that's what got us here instead of the login card) - this
-        // just attaches a real password to it, same auth.updateUser call for either an invite or
-        // a password-reset link.
-        var res = await supabase.auth.updateUser({ password: pw });
-        if(res.error){
-          showSetpwStatus("That didn't go through (" + res.error.message + "). Try again, or email adam@anchordigitalco.com if it keeps happening.");
-          setpwSubmit.disabled = false;
-          return;
-        }
-        showSetpwStatus('Password set. Taking you in...');
-        await redirectAfterLogin();
-      } catch (err) {
-        console.error('set password error', err);
-        showSetpwStatus('Something went wrong, try again in a moment.');
-        setpwSubmit.disabled = false;
-      }
-    });
-
-    // ============ FORGOT PASSWORD ============
-    var forgotBtn = document.getElementById('portal-forgot');
-    var forgotBackBtn = document.getElementById('forgot-back');
-    var forgotForm = document.getElementById('forgot-form');
-    var forgotEmailInput = document.getElementById('forgot-email');
-    var forgotStatus = document.getElementById('forgot-status');
-    var forgotSubmit = document.getElementById('forgot-submit');
-
-    forgotBtn.addEventListener('click', function(){
-      forgotStatus.textContent = '';
-      forgotStatus.classList.remove('show');
-      forgotSubmit.disabled = false;
-      forgotEmailInput.value = emailInput.value.trim();
-      showCard('portal-card-forgot');
-      forgotEmailInput.focus();
-    });
-    forgotBackBtn.addEventListener('click', function(){
-      showCard('portal-card-login');
-    });
-    forgotForm.addEventListener('submit', async function(e){
-      e.preventDefault();
-      var email = forgotEmailInput.value.trim();
-      if(!email) return;
-      forgotSubmit.disabled = true;
-      forgotStatus.textContent = 'Sending...';
-      forgotStatus.classList.add('show');
-      try {
-        // Supabase doesn't reveal whether the address actually has an account here, so the
-        // message below stays deliberately non-committal either way.
-        var res = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/portal' });
-        if(res.error){
-          forgotStatus.textContent = "That didn't go through (" + res.error.message + "). Try again, or email adam@anchordigitalco.com if it keeps happening.";
-          forgotSubmit.disabled = false;
-          return;
-        }
-        forgotStatus.textContent = "If that email's on our client list, we've sent a link to reset your password. Check your inbox.";
-      } catch (err) {
-        console.error('reset password error', err);
-        forgotStatus.textContent = 'Something went wrong, try again in a moment.';
-        forgotSubmit.disabled = false;
-      }
-    });
-
-    // ============ EMAIL CHANGED (landing spot for the confirmation link) ============
-    document.getElementById('emailchanged-continue').addEventListener('click', redirectAfterLogin);
   </script>
 </body>
 </html>

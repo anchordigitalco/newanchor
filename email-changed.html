@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Email Updated - Anchor Digital</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Varela+Round&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --dark:#1F1E1C;
+    --dark-ink:#F2F0EC;
+    --accent:#FFFFFF;
+    --accent-hover:#C9C6C0;
+    --ink:#131313;
+    --font-body:'Inter',Helvetica Neue,Arial,sans-serif;
+    --font-word:'Varela Round',Helvetica Neue,Arial,sans-serif;
+    --font-mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --ease-soft:cubic-bezier(.4,0,.2,1);
+    --tshadow:0 1px 2px rgba(10,9,7,.9),0 3px 14px rgba(10,9,7,.6),0 12px 46px rgba(10,9,7,.55);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:var(--font-body);color:var(--dark-ink);
+    min-height:100vh;min-height:100dvh;
+    background:#0c0b0a;
+    display:flex;align-items:center;justify-content:center;
+    padding:2rem 1.25rem;
+    position:relative;
+    visibility:hidden;
+  }
+  body.ready{visibility:visible}
+  a{color:inherit}
+  .portal-bg{
+    position:fixed;inset:0;z-index:0;
+    background-image:url('assets/pillars/innovation.jpg');
+    background-size:cover;background-position:center;
+  }
+  .portal-scrim{
+    position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(ellipse 90% 80% at 50% 40%,rgba(10,9,7,.35) 0%,rgba(10,9,7,.72) 100%);
+  }
+  .portal-home{
+    position:fixed;top:1.6rem;left:1.6rem;z-index:3;
+    display:flex;align-items:center;gap:.5rem;
+    font-family:var(--font-word);font-size:.98rem;color:var(--dark-ink);
+    text-decoration:none;text-shadow:var(--tshadow);
+    opacity:.9;transition:opacity .25s var(--ease-soft);
+  }
+  .portal-home:hover{opacity:1}
+  .portal-home img{height:20px;width:auto;filter:invert(1)}
+  .portal-footer{
+    position:fixed;bottom:1.2rem;left:0;right:0;z-index:3;
+    text-align:center;font-size:.72rem;color:var(--dark-ink);opacity:.55;
+    text-shadow:var(--tshadow);pointer-events:none;
+  }
+  .portal-card{
+    position:relative;z-index:2;
+    width:100%;max-width:26rem;
+    padding:clamp(1.8rem,4vw,2.6rem);
+    border-radius:24px;
+    background:rgba(255,255,255,.1);
+    border:1px solid rgba(255,255,255,.28);
+    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    box-shadow:0 20px 60px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.2);
+  }
+  .portal-card[hidden]{display:none}
+  .portal-kicker{
+    font-family:var(--font-mono);font-size:.7rem;letter-spacing:.12em;text-transform:lowercase;
+    color:var(--accent);display:flex;align-items:center;gap:.55rem;margin-bottom:1.1rem;
+  }
+  .portal-kicker::before{content:"";width:20px;height:1px;background:var(--accent)}
+  .portal-card h1{
+    font-size:clamp(1.4rem,3vw,1.7rem);line-height:1.2;margin:0 0 .5rem;font-weight:600;
+    text-shadow:var(--tshadow);
+  }
+  .portal-lede{font-size:.9rem;opacity:.85;margin:0 0 1.7rem;line-height:1.55}
+  .portal-submit{
+    display:block;width:100%;margin-top:.4rem;padding:.9rem 1rem;border-radius:99px;border:0;cursor:pointer;
+    background:var(--accent);color:var(--ink);font-family:var(--font-mono);font-size:.82rem;letter-spacing:.02em;
+    text-decoration:none;text-align:center;box-sizing:border-box;
+    transition:background .25s var(--ease-soft),transform .25s var(--ease-soft),opacity .2s var(--ease-soft);
+  }
+  .portal-submit:hover{background:var(--accent-hover);transform:translateY(-1px)}
+  .portal-switch{margin-top:1rem;text-align:center}
+  .portal-switch button,.portal-switch a{
+    background:none;border:0;padding:0;cursor:pointer;
+    font-family:var(--font-body);font-size:.82rem;color:var(--dark-ink);
+    text-decoration:underline;text-underline-offset:2px;opacity:.85;
+  }
+  .portal-switch button:hover,.portal-switch a:hover{opacity:1}
+</style>
+</head>
+<body>
+  <div class="portal-bg" aria-hidden="true"></div>
+  <div class="portal-scrim" aria-hidden="true"></div>
+
+  <a class="portal-home" href="/" aria-label="Back to Anchor Digital">
+    <img src="assets/anchor-icon.png" alt="">
+    anchor digital
+  </a>
+
+  <p class="portal-footer">&copy; <span id="year"></span> Anchor Digital Studio LLC.</p>
+
+  <div class="portal-card" id="card-confirmed" hidden>
+    <p class="portal-kicker">client portal</p>
+    <h1>Email updated</h1>
+    <p class="portal-lede">Your account email has been confirmed. Taking you in...</p>
+    <button class="portal-submit" type="button" id="continue-btn">Continue</button>
+  </div>
+
+  <!-- shown instead if this page was opened without a valid, freshly-arrived confirmation link -->
+  <div class="portal-card" id="card-invalid" hidden>
+    <p class="portal-kicker">client portal</p>
+    <h1>Link expired</h1>
+    <p class="portal-lede">This confirmation link is no longer valid, links like this only work once. Log in below, or email us if your email change didn't go through.</p>
+    <a class="portal-submit" href="/portal">Back to login</a>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    // captured before createClient() runs, same reasoning as create-password.html / reset-password.html
+    var cameFromEmailChange = /type=email_change/.test(window.location.hash + window.location.search);
+
+    var SUPABASE_URL = 'https://sroncqqparjklohbyidt.supabase.co';
+    var SUPABASE_ANON_KEY = 'sb_publishable_5buinIijAx9Y_3ZpJ3d_BA_Jd-5cpyw';
+    var supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    async function redirectAfterLogin(){
+      try {
+        var adminRes = await supabase.rpc('am_i_admin');
+        if(!adminRes.error && adminRes.data === true){
+          window.location.href = '/admin';
+          return;
+        }
+      } catch (err) {
+        console.error('admin check error', err);
+      }
+      window.location.href = '/dashboard';
+    }
+
+    (async function init(){
+      var showInvalid = true;
+      try {
+        var res = await supabase.auth.getUser();
+        if(cameFromEmailChange && res && res.data && res.data.user){
+          showInvalid = false;
+          document.getElementById('card-confirmed').hidden = false;
+          setTimeout(redirectAfterLogin, 1600);
+        }
+      } catch (err) {
+        console.error('email-changed auth check error', err);
+      }
+      if(showInvalid) document.getElementById('card-invalid').hidden = false;
+      document.body.classList.add('ready');
+    })();
+
+    document.getElementById('continue-btn').addEventListener('click', redirectAfterLogin);
+  </script>
+</body>
+</html>

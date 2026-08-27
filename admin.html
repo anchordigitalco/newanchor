@@ -868,7 +868,7 @@
       statusEl.textContent = 'Added. Sending invite...';
       try {
         var inviteRes = await supabase.functions.invoke('invite-client', {
-          body: { email: email, companyName: companyName, redirectTo: window.location.origin + '/portal' }
+          body: { email: email, companyName: companyName, redirectTo: window.location.origin + '/create-password' }
         });
         var inviteData = (inviteRes && inviteRes.data) || {};
         if(inviteRes.error || inviteData.error){

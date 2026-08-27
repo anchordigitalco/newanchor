@@ -648,11 +648,11 @@
       emailStatus.textContent = 'Sending confirmation...';
       try {
         // Supabase emails a confirmation link (to the new address, and to the old one too if
-        // "Secure email change" is on) before this actually takes effect - lands back on
-        // /portal, which confirms it and sends them back in.
+        // "Secure email change" is on) before this actually takes effect - lands on its own
+        // dedicated page (/email-changed), which confirms it and sends them back in.
         var res = await supabase.auth.updateUser(
           { email: newEmail },
-          { emailRedirectTo: window.location.origin + '/portal' }
+          { emailRedirectTo: window.location.origin + '/email-changed' }
         );
         if(res.error){
           emailStatus.textContent = "That didn't go through (" + res.error.message + "). Try again, or email adam@anchordigitalco.com if it keeps happening.";
