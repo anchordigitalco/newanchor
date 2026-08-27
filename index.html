@@ -889,11 +889,9 @@ body.video-failed .card{max-width:100%}
             <a class="btn-outline instant-jump" href="#contact" data-jump="contact">Book a consultation</a>
           </div>
           <p class="lede">A digital development and strategy company helping small businesses and organizations modernize their digital presence.</p>
-          <p class="hotspot-hint">Click the computers for more information.</p>
+          <p class="hotspot-hint">Click the computer for more information.</p>
         </div>
-        <button class="hotspot" style="left:22.7%;top:34.3%" data-info="design" aria-label="Website Design & Development, more info"><span></span></button>
-        <button class="hotspot" style="left:38.5%;top:36.6%" data-info="innovation" aria-label="Brand Digital Systems, more info"><span></span></button>
-        <button class="hotspot" style="left:64.1%;top:38.9%" data-info="growth" aria-label="Ongoing Maintenance & Consulting, more info"><span></span></button>
+        <button class="hotspot" style="left:25%;top:43%" data-info="services-all" aria-label="Our services, more info"><span></span></button>
         <div class="services-grid">
           <div class="services-col">
             <div class="popup-card has-img" data-info="design" hidden>
@@ -1341,10 +1339,13 @@ body.video-failed .card{max-width:100%}
 
   // the same three real articles, shown as clickable frames on the "press" wall - each dot sits in
   // the middle of one of the ten framed clippings there.
+  // Repositioned for the new video's team shot: three framed photos in a single even row
+  // (the old video's wall had two rows). First one nudged toward the photo's right edge rather
+  // than dead-center, clear of the text card sitting at the left of this band.
   var ARTICLE_POSITIONS = [
-    {left:'60.2%', top:'42.5%'},
-    {left:'75.5%', top:'42.5%'},
-    {left:'60.2%', top:'76.9%'}
+    {left:'40%', top:'41%'},
+    {left:'56%', top:'41%'},
+    {left:'78%', top:'41%'}
   ];
   // only the wall's trigger buttons are built here now - their content lives in the ONE shared
   // article panel below, rendered on demand, not one pre-built card per article.
@@ -1468,14 +1469,20 @@ body.video-failed .card{max-width:100%}
   // this footage opens on its own zoomout: tight on the sign, out to an aerial view of the whole
   // building (roof sign and all), then it would keep descending toward the door - but threshold
   // stops it right at that aerial view, on a click or scroll, not before and not further down.
+  // Timestamps match the new hero-scrub.mp4 (a single continuous walkthrough take, replacing
+  // the old cut-together vignettes-per-section video), re-picked by scanning the whole clip for
+  // where the camera actually settles: an aerial hold, then it walks through the space with a
+  // few genuine pauses along the way (a whiteboard, a photo wall, a meeting table) before
+  // closing back on the logo. Not a straight port of the old numbers - this footage doesn't
+  // hold still at the same moments the old one did.
   var WAYPOINTS = [
     {id:'start',        t:0},
-    {id:'threshold',    t:7.7},
-    {id:'services',     t:14.2},
-    {id:'work',         t:18.1},
-    {id:'team',         t:22.2},
-    {id:'testimonials', t:26.7},
-    {id:'contact',      t:29.9}
+    {id:'threshold',    t:8.0},
+    {id:'services',     t:13.7},
+    {id:'work',         t:16.5},
+    {id:'team',         t:21.7},
+    {id:'testimonials', t:25.2},
+    {id:'contact',      t:29.3}
   ];
   var FLOOR = 1; // threshold: the landing, and the floor for scroll/arrow-back navigation
   var LAST = WAYPOINTS.length - 1;
@@ -1732,7 +1739,7 @@ body.video-failed .card{max-width:100%}
 
   // ============ streamed blob loader (unchanged mechanics, gated by device capability) ============
   var VIDEO_URL = 'assets/hero-scrub.mp4';
-  var VIDEO_BYTES = 17517578;
+  var VIDEO_BYTES = 18950437;
   var started = false;
   function startBlobFetch(){
     if(started) return;
@@ -1966,6 +1973,11 @@ body.video-failed .card{max-width:100%}
     document.querySelectorAll('.popup-card:not(.article-panel)').forEach(function(card){
       if(!card.hidden) closeHotspotCard(card.getAttribute('data-info'));
     });
+    // the services dot's own data-info ('services-all') doesn't match any card, so the loop
+    // above never clears its .open class through the normal dot lookup - do it directly here,
+    // otherwise it can be left looking active after navigating away with the cards still open.
+    var servicesDot = document.querySelector('.hotspot[data-info="services-all"]');
+    if(servicesDot) servicesDot.classList.remove('open');
     hideArticlePanel();
   }
 
@@ -2073,10 +2085,22 @@ body.video-failed .card{max-width:100%}
     else showArticlePanel(id);
   }
 
+  // the services scene now has just the one dot (on the foreground monitor) rather than one
+  // per screen - it opens all three cards together instead of each needing its own click.
+  var SERVICE_IDS = ['design', 'innovation', 'growth'];
   document.querySelectorAll('.hotspot').forEach(function(btn){
     btn.addEventListener('click', function(){
       var info = btn.getAttribute('data-info');
       if(btn.closest('#wall-hotspots')){ toggleArticlePanel(info); return; }
+      if(info === 'services-all'){
+        var anyOpen = SERVICE_IDS.some(function(id){
+          var card = document.querySelector('.popup-card[data-info="' + id + '"]');
+          return card && !card.hidden;
+        });
+        SERVICE_IDS.forEach(function(id){ anyOpen ? closeHotspotCard(id) : openHotspotCard(id); });
+        btn.classList.toggle('open', !anyOpen);
+        return;
+      }
       if(btn.classList.contains('open')) closeHotspotCard(info);
       else openHotspotCard(info);
     });
