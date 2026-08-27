@@ -422,7 +422,7 @@
 
     <div class="drawer-section">
       <h3>Access</h3>
-      <button class="btn btn-quiet" id="d-remove-access" type="button">Remove from client list</button>
+      <button class="btn btn-quiet" id="d-remove-access" type="button">Delete client account</button>
       <p class="form-status" id="d-access-status"></p>
     </div>
   </div>
@@ -588,7 +588,7 @@
         actions.className = 'row-actions';
         var removeBtn = document.createElement('button');
         removeBtn.type = 'button';
-        removeBtn.setAttribute('aria-label', 'Remove ' + row.email + ' from client list');
+        removeBtn.setAttribute('aria-label', 'Delete ' + row.email + "'s account");
         removeBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>';
         removeBtn.addEventListener('click', function(e){
           e.stopPropagation();
@@ -863,7 +863,20 @@
     document.getElementById('meetings-refresh').addEventListener('click', loadMeetings);
 
     async function removeClient(email){
-      if(!window.confirm('Remove ' + email + ' from the client list? This does not delete their account if they already signed up.')) return;
+      if(!window.confirm('Permanently delete ' + email + '? This deletes their account, project data, and uploaded files, and removes them from the client list. If you invite them again, they\'ll need to create a new password. This cannot be undone.')) return;
+
+      try {
+        var deleteRes = await supabase.functions.invoke('delete-client', { body: { email: email } });
+        var deleteData = (deleteRes && deleteRes.data) || {};
+        if(deleteRes.error || deleteData.error){
+          console.error('delete-client error', deleteRes.error || deleteData.error);
+          if(!window.confirm('Could not fully delete their account (' + (deleteData.error || 'server error') + '). Remove them from the client list anyway? Their account would still exist.')) return;
+        }
+      } catch (err) {
+        console.error('delete-client call failed', err);
+        if(!window.confirm('Could not reach the server to delete their account. Remove them from the client list anyway? Their account would still exist.')) return;
+      }
+
       var res = await supabase.from('allowed_clients').delete().eq('email', email);
       if(res.error){ console.error('remove client error', res.error); return; }
       await loadClients();
