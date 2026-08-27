@@ -1454,13 +1454,14 @@ body.video-failed .card{max-width:100%}
     var fromT = WAYPOINTS[idx].t, toT = WAYPOINTS[target].t;
     var dur = stepDuration(idx, target);
     var isIntro = WAYPOINTS[idx].id === 'start' && WAYPOINTS[target].id === 'threshold';
-    // the intro is both the longest hop AND (per the slower MS_PER_VIDEO_SEC_INTRO pace above)
-    // now the slowest-paced one, so a shared cubic curve leaves its content-time threshold
-    // firing very late in wall-clock terms - the button reads as waiting even once the video
-    // has visually stopped moving. a steeper curve gets close to the target sooner without
-    // skipping any more real footage at reveal time, so it doesn't reintroduce the earlier
-    // harsh-jump bug; it's scoped to just this hop so the other, already-tuned hops don't change.
-    var ease = isIntro ? function(p){ return easeOutPow(p, 5); } : easeOut;
+    // used to give the intro its own steeper (exponent-5) curve so its reveal could fire sooner,
+    // but that traded away smoothness for it: a quintic's peak seek velocity right at the start
+    // is ~6.25x real-time, well above every other hop's ~3.75x cubic peak, and demanding that
+    // many content-seconds of seeking per real second is a plausible source of the stutter right
+    // as this hop gets moving. the fixed REVEAL_LEAD_MS + fast-finish below now handle reveal
+    // timing independently of curve shape, so the steep curve isn't earning its keep anymore -
+    // back to the same cubic every other hop uses.
+    var ease = easeOut;
     var start = performance.now();
     // the card/chrome reveals a fixed beat before the motion actually finishes, not once it's
     // already stopped: waiting for the exact final frame made the reveal read as a separate
@@ -1471,9 +1472,9 @@ body.video-failed .card{max-width:100%}
     // just reveals close to instantly rather than going negative.
     // the intro is a much longer hop than any other (6.4s at its own slower pace), so the same
     // 333ms lead still leaves the button waiting for the video to be almost entirely done - a
-    // bigger lead here brings that up front. safe to go this early specifically on the intro's
-    // steep exponent-5 curve: by dur-3000ms it's already ~98% of the way to the target, so what's
-    // left playing underneath the button is a small, fast-decaying tail, not a visible jump.
+    // bigger lead here brings that up front. safe to go this early even with the standard cubic
+    // curve because of the fast-finish mechanism below: whatever's still left to close at
+    // revealAt gets covered in a short fixed sprint right after, not the original curve's tail.
     var REVEAL_LEAD_MS = isIntro ? 3000 : 333;
     var revealAt = Math.max(0, dur - REVEAL_LEAD_MS);
     var revealed = false;
