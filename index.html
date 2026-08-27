@@ -704,12 +704,12 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
   *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;scroll-behavior:auto !important}
 }
 
-/* ============ STATIC-HERO GATES ============ */
-@media (max-width:720px),
-       (orientation:portrait) and (max-width:1024px),
-       (orientation:portrait) and (pointer:coarse),
-       (orientation:landscape) and (pointer:coarse) and (max-height:560px),
-       (prefers-reduced-motion:reduce){
+/* ============ STATIC-HERO GATE ============
+   Used to also hide .tour on every phone/tablet screen-size and touch query, in step with the
+   JS gatesMatch() that gated interaction the same way - phones and tablets now get the real
+   scrub experience too (their own portrait video, see IS_MOBILE in the script below), so this
+   only needs to cover the one case that's still a deliberate fallback: reduced motion. */
+@media (prefers-reduced-motion:reduce){
   .tour{display:none}
   .dot-rail{display:none}
   .tour-static{display:block}
@@ -823,7 +823,7 @@ body.video-failed .card{max-width:100%}
           <p class="lede">A digital development and strategy company helping small businesses and organizations modernize their digital presence.</p>
           <p class="hotspot-hint">Click the computer for more information.</p>
         </div>
-        <button class="hotspot" style="left:25%;top:43%" data-info="services-all" aria-label="Our services, more info"><span></span></button>
+        <button class="hotspot" id="services-hotspot" style="left:25%;top:43%" data-info="services-all" aria-label="Our services, more info"><span></span></button>
         <div class="services-grid">
           <div class="services-col">
             <div class="popup-card has-img" data-info="design" hidden>
@@ -1131,6 +1131,38 @@ body.video-failed .card{max-width:100%}
 (function(){
   "use strict";
 
+  // ============ REDUCED-MOTION GATE: the one case that still falls back to the plain static
+  // tour, regardless of device - an accessibility preference, not a screen-size guess. ============
+  var REDUCED_MOTION_MQL = matchMedia('(prefers-reduced-motion: reduce)');
+  function gatesMatch(){ return REDUCED_MOTION_MQL.matches; }
+
+  // ============ MOBILE DEVICE DETECTION: phones/tablets get the real interactive scrub too now,
+  // just with their own portrait-shot video and waypoints instead of the desktop one stretched
+  // or cropped to fit - decided once at load (not reactively like the reduced-motion gate above),
+  // since a live device-class change mid-session would mean tearing down and reloading a whole
+  // different video file, not just toggling a CSS state. Computed up here, before anything else
+  // in this script (ARTICLE_POSITIONS below included) that needs to branch on it.
+  var MOBILE_GATES = [
+    '(max-width: 720px)',
+    '(orientation: portrait) and (max-width: 1024px)',
+    '(orientation: portrait) and (pointer: coarse)',
+    '(orientation: landscape) and (pointer: coarse) and (max-height: 560px)'
+  ];
+  var IS_MOBILE = MOBILE_GATES.some(function(q){ return matchMedia(q).matches; });
+  // the poster-layer's background is set inline in the HTML to the desktop frame - background-size
+  // is cover, so left alone on a mobile viewport it would show a heavily cropped sliver of the
+  // wide desktop shot instead of the portrait one properly composed for it.
+  if(IS_MOBILE){
+    var posterLayerEl = document.getElementById('poster-layer');
+    if(posterLayerEl) posterLayerEl.style.backgroundImage = "url('assets/frame-start-mobile.jpg')";
+    // the services dot's left/top are hand-mapped to a fixed point in the video's own composition
+    // (see the desktop comment on this same button) - the mobile edit's portrait crop puts the
+    // clearest monitor screen somewhere completely different in frame, so this needs its own
+    // measured position, not the desktop one scaled down.
+    var servicesHotspotEl = document.getElementById('services-hotspot');
+    if(servicesHotspotEl){ servicesHotspotEl.style.left = '40%'; servicesHotspotEl.style.top = '48%'; }
+  }
+
   var DATA = {
     work: [
       {name:"Score Signal", tag:"AI-Powered Web Tools", url:"https://getscoresignal.com",
@@ -1212,20 +1244,32 @@ body.video-failed .card{max-width:100%}
   }
 
   // the same three real articles, shown as clickable frames on the "press" wall behind the
-  // Education Initiative banner - three framed photos in a single even row. First one nudged
-  // toward its photo's right edge rather than dead-center, clear of the banner card above it.
-  var ARTICLE_POSITIONS = [
+  // Education Initiative banner - three framed photos in a single even row on desktop. First
+  // one nudged toward its photo's right edge rather than dead-center, clear of the banner card.
+  var ARTICLE_POSITIONS_DESKTOP = [
     {left:'56%', top:'41%'},
     {left:'40%', top:'41%'},
     {left:'78%', top:'41%'}
   ];
+  // the mobile edit's portrait crop of this same wall only ever has two of the three photos in
+  // frame at once (score-signal's and fairtest's decorative photos - a-better-chance's is out of
+  // shot at every point in this hold), so its third entry is null rather than a guessed position:
+  // buildArticleWall skips building a dot for any clip without one instead of stacking it on top
+  // of another, which is what falling back to the last position would have done.
+  var ARTICLE_POSITIONS_MOBILE = [
+    {left:'62%', top:'42%'},
+    {left:'10%', top:'42%'},
+    null
+  ];
+  var ARTICLE_POSITIONS = IS_MOBILE ? ARTICLE_POSITIONS_MOBILE : ARTICLE_POSITIONS_DESKTOP;
   // only the wall's trigger buttons are built here now - their content lives in the ONE shared
   // article panel below, rendered on demand, not one pre-built card per article.
   function buildArticleWall(hotspotHost){
     if(!hotspotHost) return;
     var hotspotHtml = "";
     DATA.clips.forEach(function(c, i){
-      var pos = ARTICLE_POSITIONS[i] || ARTICLE_POSITIONS[ARTICLE_POSITIONS.length - 1];
+      var pos = ARTICLE_POSITIONS[i];
+      if(!pos) return; // no measured position for this one on this device - skip rather than guess
       hotspotHtml += '<button class="hotspot" style="left:'+pos.left+';top:'+pos.top+'" data-info="'+c.id+'" aria-label="'+c.title+', more info"><span></span></button>';
     });
     hotspotHost.innerHTML = hotspotHtml;
@@ -1323,28 +1367,15 @@ body.video-failed .card{max-width:100%}
   });
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeMenu(); });
 
-  // ============ STATIC-HERO GATES ============
-  var GATES = [
-    '(max-width: 720px)',
-    '(orientation: portrait) and (max-width: 1024px)',
-    '(orientation: portrait) and (pointer: coarse)',
-    '(orientation: landscape) and (pointer: coarse) and (max-height: 560px)',
-    '(prefers-reduced-motion: reduce)'
-  ];
-  var MQLS = GATES.map(function(q){ return matchMedia(q); });
-  function gatesMatch(){ return MQLS.some(function(m){ return m.matches; }); }
-
   // ============ WAYPOINTS (discrete stepper, not scroll-scrubbed) ============
   // this footage opens on its own zoomout: tight on the sign, out to an aerial view of the whole
   // building (roof sign and all), then it would keep descending toward the door - but threshold
   // stops it right at that aerial view, on a click or scroll, not before and not further down.
-  // Timestamps match the new hero-scrub.mp4 (a single continuous walkthrough take, replacing
-  // the old cut-together vignettes-per-section video), re-picked by scanning the whole clip for
-  // where the camera actually settles: an aerial hold, then it walks through the space with a
-  // few genuine pauses along the way (a whiteboard, a photo wall, a meeting table) before
-  // closing back on the logo. Not a straight port of the old numbers - this footage doesn't
-  // hold still at the same moments the old one did.
-  var WAYPOINTS = [
+  // Timestamps match hero-scrub.mp4 (a single continuous walkthrough take), re-picked by
+  // scanning the whole clip for where the camera actually settles: an aerial hold, then it walks
+  // through the space with a few genuine pauses along the way (a whiteboard, a photo wall, a
+  // meeting table) before closing back on the logo.
+  var WAYPOINTS_DESKTOP = [
     {id:'start',        t:0},
     {id:'threshold',    t:8.0},
     {id:'services',     t:13.7},
@@ -1353,6 +1384,19 @@ body.video-failed .card{max-width:100%}
     {id:'testimonials', t:25.2},
     {id:'contact',      t:29.3}
   ];
+  // hero-scrub-mobile.mp4 is a separate, purpose-shot portrait edit (608x1080, 27.9s), not a
+  // crop of the desktop footage - same beats in the same order, but its own pacing throughout,
+  // so its own waypoints found the same way (frame-diffed the whole clip for genuine holds).
+  var WAYPOINTS_MOBILE = [
+    {id:'start',        t:0},
+    {id:'threshold',    t:6.0},
+    {id:'services',     t:12.3},
+    {id:'work',         t:15.4},
+    {id:'community',    t:19.6},
+    {id:'testimonials', t:23.1},
+    {id:'contact',      t:27.2}
+  ];
+  var WAYPOINTS = IS_MOBILE ? WAYPOINTS_MOBILE : WAYPOINTS_DESKTOP;
   var FLOOR = 1; // threshold: the landing, and the floor for scroll/arrow-back navigation
   var LAST = WAYPOINTS.length - 1;
   var idxOf = {};
@@ -1670,8 +1714,8 @@ body.video-failed .card{max-width:100%}
   });
 
   // ============ streamed blob loader (unchanged mechanics, gated by device capability) ============
-  var VIDEO_URL = 'assets/hero-scrub.mp4';
-  var VIDEO_BYTES = 18950437;
+  var VIDEO_URL = IS_MOBILE ? 'assets/hero-scrub-mobile.mp4' : 'assets/hero-scrub.mp4';
+  var VIDEO_BYTES = IS_MOBILE ? 7208774 : 18950437;
   var started = false;
   function startBlobFetch(){
     if(started) return;
@@ -1682,7 +1726,7 @@ body.video-failed .card{max-width:100%}
   var posterImg = new Image();
   posterImg.onload = startBlobFetch;
   posterImg.onerror = startBlobFetch;
-  posterImg.src = 'assets/frame-start.jpg';
+  posterImg.src = IS_MOBILE ? 'assets/frame-start-mobile.jpg' : 'assets/frame-start.jpg';
   setTimeout(startBlobFetch, 4000);
 
   function loadHeroBlob(){
@@ -1769,7 +1813,7 @@ body.video-failed .card{max-width:100%}
   function applyHeroMode(){
     if(gatesMatch()) disableScrubMode(); else enableScrubMode();
   }
-  MQLS.forEach(function(m){ m.addEventListener('change', applyHeroMode); });
+  REDUCED_MOTION_MQL.addEventListener('change', applyHeroMode);
   applyHeroMode();
 
   // ============ SERVICES HEADER CLEARANCE: measured, not guessed. The header card's height moves
