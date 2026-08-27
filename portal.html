@@ -135,7 +135,7 @@
 
   <p class="portal-footer">&copy; <span id="year"></span> Anchor Digital Studio LLC.</p>
 
-  <div class="portal-card">
+  <div class="portal-card" id="portal-card-login">
     <p class="portal-kicker">client portal</p>
     <h1 id="portal-heading">Login to your account</h1>
     <p class="portal-lede" id="portal-lede">Enter your email to get started.</p>
@@ -161,6 +161,28 @@
       isn't set up yet, email <a href="mailto:adam@anchordigitalco.com">adam@anchordigitalco.com</a>
       or <a href="mailto:jackson@anchordigitalco.com">jackson@anchordigitalco.com</a> to get added.
     </p>
+  </div>
+
+  <!-- Shown instead of the login card when this page was reached via an invite or password-reset
+       link. Those links log the visitor in automatically (that's how Supabase's own invite/recovery
+       flow works) - without this, init() below would see an already-authenticated user and send
+       them straight into the dashboard, having never actually set a password. -->
+  <div class="portal-card" id="portal-card-setpw" hidden>
+    <p class="portal-kicker">client portal</p>
+    <h1>Set your password</h1>
+    <p class="portal-lede">You're verified. Set a password to finish creating your account.</p>
+    <form id="setpw-form">
+      <div class="portal-field">
+        <label for="setpw-password">New password</label>
+        <input id="setpw-password" type="password" placeholder="••••••••" autocomplete="new-password" minlength="8" required>
+      </div>
+      <div class="portal-field">
+        <label for="setpw-confirm">Confirm password</label>
+        <input id="setpw-confirm" type="password" placeholder="••••••••" autocomplete="new-password" minlength="8" required>
+      </div>
+      <button class="portal-submit" type="submit" id="setpw-submit">Set password &amp; continue</button>
+      <div class="portal-status" id="setpw-status" role="status" aria-live="polite"></div>
+    </form>
   </div>
 
   <script>
@@ -197,6 +219,15 @@
   <script src="https://www.google.com/recaptcha/api.js?render=explicit&onload=onPortalRecaptchaLoad" async defer></script>
   <script type="module">
     import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    // captured before createClient() runs: Supabase's client auto-detects and strips its auth
+    // params out of the URL as soon as it's constructed (detectSessionInUrl defaults to true),
+    // so this is the only reliable moment to see whether we got here via an invite or
+    // password-reset link rather than a normal visit. Checked in both places since which one
+    // Supabase uses depends on the client's flow type (hash fragment for the older implicit
+    // flow, ?code= query string for PKCE) - not pinned to a specific supabase-js version here,
+    // so covering both is safer than assuming one.
+    var cameFromInviteOrRecovery = /type=invite|type=recovery/.test(window.location.hash + window.location.search);
 
     var SUPABASE_URL = 'https://sroncqqparjklohbyidt.supabase.co';
     var SUPABASE_ANON_KEY = 'sb_publishable_5buinIijAx9Y_3ZpJ3d_BA_Jd-5cpyw';
@@ -269,10 +300,20 @@
       window.location.href = '/dashboard';
     }
 
+    function showSetPasswordCard(){
+      document.getElementById('portal-card-login').hidden = true;
+      document.getElementById('portal-card-setpw').hidden = false;
+      document.body.classList.add('ready');
+    }
+
     (async function init(){
       try {
         var res = await supabase.auth.getUser();
         if(res && res.data && res.data.user){
+          if(cameFromInviteOrRecovery){
+            showSetPasswordCard();
+            return;
+          }
           await redirectAfterLogin();
           return;
         }
@@ -364,6 +405,47 @@
         if(typeof grecaptcha !== 'undefined' && window.portalRecaptchaWidgetId !== null) grecaptcha.reset(window.portalRecaptchaWidgetId);
         showStatus('Something went wrong, try again in a moment.');
         submitBtn.disabled = false;
+      }
+    });
+
+    // ============ SET PASSWORD (invite / recovery links land here already signed in) ============
+    var setpwForm = document.getElementById('setpw-form');
+    var setpwStatus = document.getElementById('setpw-status');
+    var setpwSubmit = document.getElementById('setpw-submit');
+    function showSetpwStatus(text){
+      setpwStatus.textContent = text;
+      setpwStatus.classList.add('show');
+    }
+    setpwForm.addEventListener('submit', async function(e){
+      e.preventDefault();
+      var pw = document.getElementById('setpw-password').value;
+      var confirmPw = document.getElementById('setpw-confirm').value;
+      if(pw.length < 8){
+        showSetpwStatus('Password must be at least 8 characters.');
+        return;
+      }
+      if(pw !== confirmPw){
+        showSetpwStatus("Those passwords don't match.");
+        return;
+      }
+      setpwSubmit.disabled = true;
+      showSetpwStatus('Setting your password...');
+      try {
+        // the session already exists (that's what got us here instead of the login card) - this
+        // just attaches a real password to it, same auth.updateUser call for either an invite or
+        // a password-reset link.
+        var res = await supabase.auth.updateUser({ password: pw });
+        if(res.error){
+          showSetpwStatus("That didn't go through (" + res.error.message + "). Try again, or email adam@anchordigitalco.com if it keeps happening.");
+          setpwSubmit.disabled = false;
+          return;
+        }
+        showSetpwStatus('Password set. Taking you in...');
+        await redirectAfterLogin();
+      } catch (err) {
+        console.error('set password error', err);
+        showSetpwStatus('Something went wrong, try again in a moment.');
+        setpwSubmit.disabled = false;
       }
     });
   </script>
