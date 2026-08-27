@@ -316,7 +316,7 @@
 
       <div class="panel">
         <h2>Add a client</h2>
-        <p class="panel-sub">Adds an email to the client allowlist so they can create a portal account. This doesn't create the account itself, they do that from the login page.</p>
+        <p class="panel-sub">Adds an email to the client allowlist and sends them a real invite email with a link to set their password. They can also just go to the portal login page directly if the email doesn't reach them.</p>
         <div class="add-row">
           <div class="add-field">
             <label for="add-email">Email</label>
@@ -846,6 +846,7 @@
       var companyInput = document.getElementById('add-company');
       var statusEl = document.getElementById('add-status');
       var email = emailInput.value.trim();
+      var companyName = companyInput.value.trim();
       if(!email){ statusEl.textContent = 'Enter an email first.'; return; }
 
       var btn = document.getElementById('add-client-btn');
@@ -853,15 +854,34 @@
       statusEl.textContent = 'Adding...';
       var res = await supabase.from('allowed_clients').insert({
         email: email,
-        company_name: companyInput.value.trim() || null
+        company_name: companyName || null
       });
-      btn.disabled = false;
       if(res.error){
+        btn.disabled = false;
         statusEl.textContent = /duplicate|already exists/i.test(res.error.message || '') ? 'That email is already on the list.' : 'Could not add that client.';
         console.error('add client error', res.error);
         return;
       }
-      statusEl.textContent = 'Added. They can now sign up from the portal login page.';
+
+      // on the allowlist now - send the real Supabase invite email so they get a link right
+      // away instead of needing to find the portal and self-signup on their own.
+      statusEl.textContent = 'Added. Sending invite...';
+      try {
+        var inviteRes = await supabase.functions.invoke('invite-client', {
+          body: { email: email, companyName: companyName, redirectTo: window.location.origin + '/portal' }
+        });
+        var inviteData = (inviteRes && inviteRes.data) || {};
+        if(inviteRes.error || inviteData.error){
+          statusEl.textContent = 'Added, but the invite email could not be sent (' + (inviteData.error || 'server error') + '). They can still sign up from the portal login page.';
+          console.error('invite-client error', inviteRes.error || inviteData.error);
+        } else {
+          statusEl.textContent = 'Added and invited. They should have an email shortly.';
+        }
+      } catch (err) {
+        statusEl.textContent = 'Added, but the invite email could not be sent. They can still sign up from the portal login page.';
+        console.error('invite-client threw', err);
+      }
+      btn.disabled = false;
       emailInput.value = '';
       companyInput.value = '';
       await loadClients();
