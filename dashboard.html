@@ -180,6 +180,25 @@
   .drive-file-actions svg{width:15px;height:15px}
   .drive-status{font-size:.78rem;color:var(--ink-faint);margin-top:.7rem}
 
+  /* ---- messages (direct client <-> studio, separate from the AI assistant) ---- */
+  .messages-panel{display:flex;flex-direction:column;height:min(70vh,640px);padding:0;overflow:hidden}
+  .messages-thread{flex:1;overflow-y:auto;padding:1.4rem;display:flex;flex-direction:column;gap:.6rem}
+  .msg-bubble{max-width:75%;padding:.65rem .9rem;border-radius:14px;font-size:.86rem;line-height:1.5;white-space:pre-wrap}
+  .msg-bubble.admin{align-self:flex-start;background:rgba(var(--ink-rgb),.07);color:var(--dark-ink);border-bottom-left-radius:4px}
+  .msg-bubble.client{align-self:flex-end;background:var(--accent);color:var(--ink);border-bottom-right-radius:4px}
+  .msg-bubble time{display:block;margin-top:.3rem;font-family:var(--font-mono);font-size:.62rem;opacity:.6}
+  .messages-compose{
+    flex-shrink:0;display:flex;gap:.6rem;align-items:flex-end;
+    padding:1rem 1.4rem;border-top:1px solid var(--hairline);
+  }
+  .messages-compose textarea{
+    flex:1;resize:none;border:1px solid var(--hairline);border-radius:12px;
+    background:rgba(var(--ink-rgb),.05);color:var(--dark-ink);
+    font-family:var(--font-body);font-size:.88rem;line-height:1.4;padding:.6rem .8rem;min-height:42px;max-height:140px;
+  }
+  .messages-compose textarea:focus{outline:none;border-color:rgba(var(--ink-rgb),.4)}
+  .messages-compose .account-submit{width:auto;margin-top:0;flex-shrink:0;padding:.7rem 1.3rem}
+
   /* ---- account (change email) ---- */
   .account-field{margin-bottom:1rem}
   .account-field label{display:block;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.04em;text-transform:lowercase;color:var(--ink-faint);margin-bottom:.4rem}
@@ -278,6 +297,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
         <span>Virtual Assistant</span>
       </button>
+      <button class="sidebar-link" id="nav-messages" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>Messages</span>
+      </button>
       <button class="sidebar-link" id="nav-schedule" type="button">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>
         <span>Schedule a Meeting</span>
@@ -334,6 +357,22 @@
         <div class="stat-card"><p class="stat-label">next milestone</p><p class="stat-value" id="stat-milestone">TBD</p></div>
         <div class="stat-card"><p class="stat-label">open items</p><p class="stat-value" id="stat-open-items">TBD</p></div>
         <div class="stat-card"><p class="stat-label">last update</p><p class="stat-value" id="stat-last-update">TBD</p></div>
+      </div>
+    </div>
+
+    <div class="view" id="view-messages" hidden>
+      <div class="main-head">
+        <h1>Messages</h1>
+        <p>Send a message directly to Adam or Jackson.</p>
+      </div>
+      <div class="panel messages-panel">
+        <div class="messages-thread" id="messages-thread">
+          <div class="empty-state">No messages yet. Send one below to get started.</div>
+        </div>
+        <form class="messages-compose" id="messages-form">
+          <textarea id="messages-input" placeholder="Type a message..." rows="1" required></textarea>
+          <button class="account-submit" type="submit" id="messages-send">Send</button>
+        </form>
       </div>
     </div>
 
@@ -444,6 +483,7 @@
     // instead of Schedule/Drive/Activity/Account all being one long scrolling page) ----
     var views = {
       dashboard: document.getElementById('view-dashboard'),
+      messages: document.getElementById('view-messages'),
       schedule: document.getElementById('view-schedule'),
       drive: document.getElementById('view-drive'),
       activity: document.getElementById('view-activity'),
@@ -451,6 +491,7 @@
     };
     var navButtons = {
       dashboard: document.getElementById('nav-dashboard'),
+      messages: document.getElementById('nav-messages'),
       schedule: document.getElementById('nav-schedule'),
       drive: document.getElementById('nav-drive'),
       activity: document.getElementById('nav-activity'),
@@ -461,6 +502,7 @@
         views[key].hidden = key !== name;
         navButtons[key].classList.toggle('active', key === name);
       });
+      if(name === 'messages') loadMessages();
     }
     Object.keys(navButtons).forEach(function(key){
       navButtons[key].addEventListener('click', function(){ setView(key); });
@@ -662,6 +704,64 @@
       if(e.dataTransfer && e.dataTransfer.files){
         uploadDriveFiles(e.dataTransfer.files);
       }
+    });
+
+    // ---- messages: direct client <-> studio, separate from the AI assistant ----
+    var messagesThread = document.getElementById('messages-thread');
+    var messagesForm = document.getElementById('messages-form');
+    var messagesInput = document.getElementById('messages-input');
+    var messagesSend = document.getElementById('messages-send');
+
+    function formatMessageTime(iso){
+      try { return new Date(iso).toLocaleString(undefined, { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' }); }
+      catch (err) { return ''; }
+    }
+
+    function renderMessages(rows){
+      messagesThread.innerHTML = '';
+      if(!rows || rows.length === 0){
+        messagesThread.innerHTML = '<div class="empty-state">No messages yet. Send one below to get started.</div>';
+        return;
+      }
+      rows.forEach(function(m){
+        var bubble = document.createElement('div');
+        bubble.className = 'msg-bubble ' + (m.sender === 'admin' ? 'admin' : 'client');
+        var text = document.createElement('div');
+        text.textContent = m.body;
+        var time = document.createElement('time');
+        time.textContent = formatMessageTime(m.created_at);
+        bubble.appendChild(text);
+        bubble.appendChild(time);
+        messagesThread.appendChild(bubble);
+      });
+      messagesThread.scrollTop = messagesThread.scrollHeight;
+    }
+
+    async function loadMessages(){
+      if(!currentUser) return;
+      var res = await supabase.from('client_messages').select('id,sender,body,created_at').eq('client_id', currentUser.id).order('created_at', { ascending: true });
+      if(res.error){
+        console.error('load messages error', res.error);
+        messagesThread.innerHTML = '<div class="empty-state">Could not load your messages right now.</div>';
+        return;
+      }
+      renderMessages(res.data);
+    }
+
+    messagesForm.addEventListener('submit', async function(e){
+      e.preventDefault();
+      var text = messagesInput.value.trim();
+      if(!text || !currentUser) return;
+      messagesSend.disabled = true;
+      var res = await supabase.from('client_messages').insert({ client_id: currentUser.id, sender: 'client', body: text });
+      if(res.error){
+        console.error('send message error', res.error);
+        messagesSend.disabled = false;
+        return;
+      }
+      messagesInput.value = '';
+      await loadMessages();
+      messagesSend.disabled = false;
     });
 
     // ---- account: change email ----

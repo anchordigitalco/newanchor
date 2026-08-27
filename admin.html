@@ -254,8 +254,19 @@
 
   .msg-list{display:flex;flex-direction:column;gap:.6rem;max-height:340px;overflow-y:auto;padding-right:.3rem}
   .msg-bubble{max-width:85%;padding:.55rem .75rem;border-radius:12px;font-size:.82rem;line-height:1.5;white-space:pre-wrap}
-  .msg-bubble.assistant{align-self:flex-start;background:rgba(var(--ink-rgb),.07)}
-  .msg-bubble.user{align-self:flex-end;background:var(--accent);color:var(--ink)}
+  .msg-bubble.client{align-self:flex-start;background:rgba(var(--ink-rgb),.07)}
+  .msg-bubble.admin{align-self:flex-end;background:var(--accent);color:var(--ink)}
+  .msg-bubble time{display:block;margin-top:.3rem;font-family:var(--font-mono);font-size:.62rem;opacity:.6}
+  .inbox-thread-compose{
+    flex-shrink:0;display:flex;gap:.6rem;align-items:flex-end;
+    padding:1rem 1.3rem;border-top:1px solid var(--hairline);
+  }
+  .inbox-thread-compose textarea{
+    flex:1;resize:none;border:1px solid var(--hairline);border-radius:12px;
+    background:rgba(var(--ink-rgb),.05);color:var(--dark-ink);
+    font-family:var(--font-body);font-size:.86rem;line-height:1.4;padding:.6rem .8rem;min-height:40px;max-height:130px;
+  }
+  .inbox-thread-compose textarea:focus{outline:none;border-color:rgba(var(--ink-rgb),.4)}
 </style>
 </head>
 <body>
@@ -341,7 +352,7 @@
     <div class="view" id="view-messages" hidden>
       <div class="main-head">
         <h1>Messages</h1>
-        <p>Transcripts of what clients have asked the studio assistant.</p>
+        <p>Direct messages between you and each client.</p>
       </div>
       <div class="inbox">
         <div class="inbox-list" id="inbox-list"></div>
@@ -404,6 +415,10 @@
     <div class="drawer-section" id="d-messages-section">
       <h3>Messages</h3>
       <div id="d-messages-list"></div>
+      <div class="activity-add">
+        <input id="d-messages-input" type="text" placeholder="Reply...">
+        <button class="btn" id="d-messages-send-btn" type="button">Send</button>
+      </div>
     </div>
 
     <div class="drawer-section">
@@ -527,7 +542,7 @@
 
     async function loadClients(){
       var allowedRes = await supabase.from('allowed_clients').select('email,company_name,added_at').order('added_at', { ascending: false });
-      var profileRes = await supabase.from('profiles').select('id,email,company_name,created_at,projects(id,status,next_milestone,open_items,last_update_at),activity(id,message,created_at),messages(id,role,content,created_at)').order('created_at', { ascending: false });
+      var profileRes = await supabase.from('profiles').select('id,email,company_name,created_at,projects(id,status,next_milestone,open_items,last_update_at),activity(id,message,created_at),client_messages(id,sender,body,created_at)').order('created_at', { ascending: false });
 
       if(allowedRes.error) console.error('load allowed_clients error', allowedRes.error);
       if(profileRes.error) console.error('load profiles error', profileRes.error);
@@ -621,11 +636,16 @@
     }
 
     function messagesWithData(){
-      return profileRows.filter(function(p){ return p.messages && p.messages.length > 0; });
+      return profileRows.filter(function(p){ return p.client_messages && p.client_messages.length > 0; });
     }
 
     function lastMessageOf(profile){
-      return profile.messages.slice().sort(function(a,b){ return new Date(b.created_at) - new Date(a.created_at); })[0];
+      return profile.client_messages.slice().sort(function(a,b){ return new Date(b.created_at) - new Date(a.created_at); })[0];
+    }
+
+    function formatMessageTime(iso){
+      try { return new Date(iso).toLocaleString(undefined, { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' }); }
+      catch (err) { return ''; }
     }
 
     function renderMessagesInbox(){
@@ -637,7 +657,7 @@
         var empty = document.createElement('div');
         empty.className = 'empty-state';
         empty.style.margin = '1rem';
-        empty.textContent = "No conversations yet. They'll show up here once a client uses the assistant.";
+        empty.textContent = "No conversations yet. They'll show up here once a client sends a message.";
         listEl.appendChild(empty);
         renderInboxThread(null);
         return;
@@ -663,7 +683,7 @@
         name.textContent = profile.company_name || profile.email;
         var preview = document.createElement('span');
         preview.className = 'inbox-row-preview';
-        preview.textContent = (last.role === 'assistant' ? 'Assistant: ' : '') + last.content;
+        preview.textContent = (last.sender === 'admin' ? 'You: ' : '') + last.body;
         body.appendChild(name);
         body.appendChild(preview);
 
@@ -714,16 +734,49 @@
 
       var body = document.createElement('div');
       body.className = 'inbox-thread-body';
-      var sorted = profile.messages.slice().sort(function(a,b){ return new Date(a.created_at) - new Date(b.created_at); });
+      var sorted = profile.client_messages.slice().sort(function(a,b){ return new Date(a.created_at) - new Date(b.created_at); });
       sorted.forEach(function(m){
         var bubble = document.createElement('div');
-        bubble.className = 'msg-bubble ' + (m.role === 'user' ? 'user' : 'assistant');
-        bubble.textContent = m.content;
+        bubble.className = 'msg-bubble ' + (m.sender === 'admin' ? 'admin' : 'client');
+        var text = document.createElement('div');
+        text.textContent = m.body;
+        var time = document.createElement('time');
+        time.textContent = formatMessageTime(m.created_at);
+        bubble.appendChild(text);
+        bubble.appendChild(time);
         body.appendChild(bubble);
+      });
+
+      var compose = document.createElement('form');
+      compose.className = 'inbox-thread-compose';
+      var textarea = document.createElement('textarea');
+      textarea.placeholder = 'Reply...';
+      textarea.rows = 1;
+      textarea.required = true;
+      var sendBtn = document.createElement('button');
+      sendBtn.className = 'btn';
+      sendBtn.type = 'submit';
+      sendBtn.textContent = 'Send';
+      compose.appendChild(textarea);
+      compose.appendChild(sendBtn);
+      compose.addEventListener('submit', async function(e){
+        e.preventDefault();
+        var text = textarea.value.trim();
+        if(!text) return;
+        sendBtn.disabled = true;
+        var res = await supabase.from('client_messages').insert({ client_id: profile.id, sender: 'admin', body: text });
+        if(res.error){
+          console.error('reply send error', res.error);
+          sendBtn.disabled = false;
+          return;
+        }
+        await loadClients();
+        renderMessagesInbox(); // re-renders both the list (new preview/order) and this thread
       });
 
       el.appendChild(head);
       el.appendChild(body);
+      el.appendChild(compose);
       body.scrollTop = body.scrollHeight;
     }
 
@@ -936,21 +989,29 @@
 
     function renderMessagesList(messages){
       var el = document.getElementById('d-messages-list');
-      if(!messages || messages.length === 0){
-        el.innerHTML = '<div class="empty-state">No conversation yet.</div>';
-        return;
-      }
-      var sorted = messages.slice().sort(function(a,b){ return new Date(a.created_at) - new Date(b.created_at); });
-      var list = document.createElement('div');
-      list.className = 'msg-list';
-      sorted.forEach(function(m){
-        var bubble = document.createElement('div');
-        bubble.className = 'msg-bubble ' + (m.role === 'user' ? 'user' : 'assistant');
-        bubble.textContent = m.content;
-        list.appendChild(bubble);
-      });
       el.innerHTML = '';
-      el.appendChild(list);
+      if(!messages || messages.length === 0){
+        var empty = document.createElement('div');
+        empty.className = 'empty-state';
+        empty.textContent = 'No conversation yet.';
+        el.appendChild(empty);
+      } else {
+        var sorted = messages.slice().sort(function(a,b){ return new Date(a.created_at) - new Date(b.created_at); });
+        var list = document.createElement('div');
+        list.className = 'msg-list';
+        sorted.forEach(function(m){
+          var bubble = document.createElement('div');
+          bubble.className = 'msg-bubble ' + (m.sender === 'admin' ? 'admin' : 'client');
+          var text = document.createElement('div');
+          text.textContent = m.body;
+          var time = document.createElement('time');
+          time.textContent = formatMessageTime(m.created_at);
+          bubble.appendChild(text);
+          bubble.appendChild(time);
+          list.appendChild(bubble);
+        });
+        el.appendChild(list);
+      }
     }
 
     function openDrawer(profile){
@@ -966,7 +1027,7 @@
       document.getElementById('d-project-status').textContent = '';
 
       renderActivityList(profile.activity || []);
-      renderMessagesList(profile.messages || []);
+      renderMessagesList(profile.client_messages || []);
       loadDriveFiles(profile.id);
 
       drawer.classList.add('open');
@@ -1080,6 +1141,29 @@
       } catch (err) {
         console.error('notify-client-update call failed', err);
         if(statusEl) statusEl.textContent = 'Posted, but the notification email could not be sent.';
+      }
+      btn.disabled = false;
+    });
+
+    document.getElementById('d-messages-send-btn').addEventListener('click', async function(){
+      if(!activeClient) return;
+      var input = document.getElementById('d-messages-input');
+      var text = input.value.trim();
+      if(!text) return;
+      var btn = document.getElementById('d-messages-send-btn');
+      btn.disabled = true;
+      var res = await supabase.from('client_messages').insert({ client_id: activeClient.id, sender: 'admin', body: text });
+      if(res.error){
+        console.error('drawer reply send error', res.error);
+        btn.disabled = false;
+        return;
+      }
+      input.value = '';
+      await loadClients();
+      var refreshed = profileRows.filter(function(p){ return p.id === activeClient.id; })[0];
+      if(refreshed){
+        activeClient = refreshed;
+        renderMessagesList(refreshed.client_messages || []);
       }
       btn.disabled = false;
     });
