@@ -1504,9 +1504,11 @@ body.video-failed .card{max-width:100%}
   var animating = false;
   var transitionId = 0; // bumped whenever a transition is superseded, so an orphaned frame loop can't fight a new one
   var lastStepAt = 0;
-  var MS_PER_VIDEO_SEC = 600;  // one steady walking pace for every move after entering - real-time
+  var MS_PER_VIDEO_SEC = 750;  // one steady walking pace for every move after entering - real-time
                                  // (1000) read as sluggish across repeated feedback, not just the reveal
-                                 // timing within a hop but the hop's own motion taking too long
+                                 // timing within a hop but the hop's own motion taking too long. nudged
+                                 // back up from 600 (still well under 1000) per later feedback that the
+                                 // walkthrough itself wanted to be a bit slower again.
   var MS_PER_VIDEO_SEC_INTRO = 800; // the opening zoom-out (start -> threshold) reads better a bit
                                       // more deliberate than the rest, kept slower on its own rather
                                       // than reverting the general pace everything else was sped up to
@@ -1555,17 +1557,25 @@ body.video-failed .card{max-width:100%}
   }
 
   // ---- gated seeks (never overlap seeks on the video element) ----
-  var seekBusy = false, pendingTime = null;
-  function requestSeek(t){
+  var seekBusy = false, pendingTime = null, lastRequestedTime = null;
+  // one source video frame (24fps): a position change smaller than this can't land on a visually
+  // different frame anyway, so it's not worth the cost of a real seek. without this, the eased
+  // curve's decelerating tail asks for dozens of near-identical positions per second as a hop
+  // approaches its stop - each one still a full seek/decode/repaint cycle - which is what showed
+  // up as a stutter specifically right as the video arrives, not during the faster part of a hop.
+  var MIN_SEEK_DELTA = 1 / 24;
+  function requestSeek(t, force){
     if(!video.duration || isNaN(video.duration)) return;
     t = Math.min(video.duration - 0.02, Math.max(0, t));
+    if(!force && lastRequestedTime !== null && Math.abs(t - lastRequestedTime) < MIN_SEEK_DELTA) return;
+    lastRequestedTime = t;
     if(seekBusy){ pendingTime = t; return; }
     seekBusy = true;
     try{ video.currentTime = t; } catch(e){ seekBusy = false; }
   }
   video.addEventListener('seeked', function(){
     seekBusy = false;
-    if(pendingTime !== null){ var t = pendingTime; pendingTime = null; requestSeek(t); }
+    if(pendingTime !== null){ var t = pendingTime; pendingTime = null; requestSeek(t, true); }
   });
   video.addEventListener('error', function(){ seekBusy = false; pendingTime = null; });
 
@@ -1633,7 +1643,7 @@ body.video-failed .card{max-width:100%}
       if(p < 1){
         requestAnimationFrame(frame);
       } else {
-        requestSeek(toT); // land exactly on the target frame once the glide is actually done
+        requestSeek(toT, true); // land exactly on the target frame once the glide is actually done
         animating = false;
         lastStepAt = performance.now();
         reveal(); // safety net - only fires here if revealAt somehow never fired above
@@ -1665,7 +1675,7 @@ body.video-failed .card{max-width:100%}
     window.scrollTo(0,0);
     idx = 0;
     lastStepAt = performance.now();
-    requestSeek(0);
+    requestSeek(0, true);
     showCard('start');
     updateChrome();
   }
@@ -1772,7 +1782,7 @@ body.video-failed .card{max-width:100%}
               // seek to the old waypoint: its own frame loop was already calling requestSeek every
               // tick, those just had nowhere to go until now, so let its very next tick catch up
               // on its own instead of jumping the video first and correcting a frame later.
-              if(!animating) requestSeek(WAYPOINTS[idx].t);
+              if(!animating) requestSeek(WAYPOINTS[idx].t, true);
               stageEl.classList.add('video-ready');
             }, {once:true});
             return;
@@ -1812,7 +1822,7 @@ body.video-failed .card{max-width:100%}
     // flip can bring this mode back mid-tour, not just from a fresh load); at idx 0 ('start')
     // that's simply the video's own opening frame, with nothing shown until a click or scroll
     // walks it forward to the threshold.
-    requestSeek(WAYPOINTS[idx].t);
+    requestSeek(WAYPOINTS[idx].t, true);
     showCard(WAYPOINTS[idx].id);
     updateChrome();
   }
@@ -1889,7 +1899,7 @@ body.video-failed .card{max-width:100%}
       lockScroll();
     }
     idx = target2;
-    requestSeek(WAYPOINTS[idx].t);
+    requestSeek(WAYPOINTS[idx].t, true);
     showCard(WAYPOINTS[idx].id);
     updateChrome();
     if(idx === LAST){ tourEl.classList.add('settled'); unlockScroll(); }
