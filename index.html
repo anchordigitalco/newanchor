@@ -1484,13 +1484,35 @@ body.video-failed .card{max-width:100%}
       showCard(WAYPOINTS[idx].id);
       updateChrome();
     }
+    var FINISH_MS = 350;
     function frame(now){
       if(myId !== transitionId) return; // superseded (a reset or a newer jump); stop cleanly, no more seeks
       var elapsed = now - start;
       var p = Math.min(1, elapsed / dur);
       var eased = ease(p);
-      requestSeek(fromT + (toT - fromT) * eased);
-      if(!revealed && elapsed >= revealAt) reveal();
+      var interp = fromT + (toT - fromT) * eased;
+      // once we're within one source frame of the true target, seek straight to it (forced)
+      // instead of continuing to request ever-smaller intermediate points on a decelerating
+      // curve - those all land within MIN_SEEK_DELTA of each other and the guard in requestSeek
+      // silently drops them, which without this left the video stuck on a stale, not-quite-final
+      // frame for the rest of the hop (sometimes seconds) instead of ever reaching the crisp
+      // final one. Harmless to force early: this is the same target the hop already ends on.
+      if(Math.abs(toT - interp) < MIN_SEEK_DELTA) requestSeek(toT, true);
+      else requestSeek(interp);
+      if(!revealed && elapsed >= revealAt){
+        reveal();
+        // on a long, flat-tailed curve (the intro especially) very little video-time is actually
+        // left at this point, but the ORIGINAL curve can still take seconds of real time to work
+        // through that last sliver - it reads as the video still visibly crawling well after the
+        // card/button are already up. Restart this same loop as a short, fixed-length fast finish
+        // to the true target instead of continuing on the original (dilated) tail, so it settles
+        // quickly right after reveal rather than dragging on.
+        fromT = interp;
+        start = now;
+        dur = FINISH_MS;
+        ease = easeOut;
+        p = 0;
+      }
       if(p < 1){
         requestAnimationFrame(frame);
       } else {
