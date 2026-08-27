@@ -511,14 +511,14 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
    same time, not after. */
 .threshold-word{
   display:flex;gap:.5em;margin-bottom:.9rem;
-  font-family:var(--font-word);font-size:clamp(1.5rem,3.6vw,2.3rem);color:#fff;
+  font-family:var(--font-word);font-size:clamp(2rem,5vw,3.2rem);color:#fff;
   filter:drop-shadow(0 3px 14px rgba(10,9,7,.6)) drop-shadow(0 14px 42px rgba(10,9,7,.5));
 }
 .word-half{display:inline-block;transition:transform .6s cubic-bezier(.65,0,.35,1),opacity .5s ease .1s}
 .threshold-word.split .word-left{transform:translateX(-120vw);opacity:0}
 .threshold-word.split .word-right{transform:translateX(120vw);opacity:0}
 .threshold-logo{
-  position:relative;width:min(28vw,200px);aspect-ratio:827/438;margin-bottom:1.6rem;
+  position:relative;width:min(20vw,140px);aspect-ratio:827/438;margin-bottom:1.6rem;
 }
 .logo-half{
   position:absolute;top:0;width:50%;height:100%;
@@ -1344,9 +1344,11 @@ body.video-failed .card{max-width:100%}
   // Repositioned for the new video's team shot: three framed photos in a single even row
   // (the old video's wall had two rows). First one nudged toward the photo's right edge rather
   // than dead-center, clear of the text card sitting at the left of this band.
+  // index 0 is score-signal, 1 is fairtest, 2 is a-better-chance (DATA.clips order) - score-signal
+  // moved to the middle photo's position, fairtest takes the left one it vacated.
   var ARTICLE_POSITIONS = [
-    {left:'40%', top:'41%'},
     {left:'56%', top:'41%'},
+    {left:'40%', top:'41%'},
     {left:'78%', top:'41%'}
   ];
   // only the wall's trigger buttons are built here now - their content lives in the ONE shared
