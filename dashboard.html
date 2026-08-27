@@ -181,6 +181,25 @@
   .drive-file-actions svg{width:15px;height:15px}
   .drive-status{font-size:.78rem;color:var(--ink-faint);margin-top:.7rem}
 
+  /* ---- account (change email) ---- */
+  .account-field{margin-bottom:1rem}
+  .account-field label{display:block;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.04em;text-transform:lowercase;color:var(--ink-faint);margin-bottom:.4rem}
+  .account-field input{
+    width:100%;max-width:340px;padding:.7rem .9rem;border-radius:10px;
+    background:rgba(var(--ink-rgb),.05);border:1px solid var(--hairline);
+    color:var(--dark-ink);font-family:var(--font-body);font-size:.88rem;
+    transition:border-color .2s var(--ease-soft);
+  }
+  .account-field input:focus{outline:none;border-color:rgba(var(--ink-rgb),.4)}
+  .account-submit{
+    padding:.75rem 1.3rem;border-radius:99px;border:0;cursor:pointer;
+    background:var(--accent);color:var(--ink);font-family:var(--font-mono);font-size:.78rem;
+    transition:background .2s var(--ease-soft),opacity .2s var(--ease-soft);
+  }
+  .account-submit:hover{background:var(--accent-hover)}
+  .account-submit:disabled{opacity:.55;cursor:default}
+  .account-status{font-size:.8rem;color:var(--ink-faint);margin:.8rem 0 0;line-height:1.5}
+
   .main-footer{margin:2rem 0 0;padding-top:1.2rem;border-top:1px solid var(--hairline);font-size:.72rem;color:var(--ink-faint);text-align:center}
 
   /* ---- studio assistant (chat widget) ---- */
@@ -272,6 +291,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
         <span>Activity</span>
       </a>
+      <a class="sidebar-link" href="#account">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg>
+        <span>Account</span>
+      </a>
       <a class="sidebar-link" href="mailto:adam@anchordigitalco.com">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
         <span>Contact Us</span>
@@ -343,6 +366,19 @@
       </div>
       <ul class="drive-file-list" id="drive-file-list"></ul>
       <p class="drive-status" id="drive-status"></p>
+    </div>
+
+    <div class="panel" id="account">
+      <h2>Account</h2>
+      <p class="panel-sub">Update the email address on your portal account.</p>
+      <form id="email-form">
+        <div class="account-field">
+          <label for="account-email">Email</label>
+          <input id="account-email" type="email" required>
+        </div>
+        <button class="account-submit" type="submit" id="email-submit">Update email</button>
+        <p class="account-status" id="email-status"></p>
+      </form>
     </div>
     <p class="main-footer">&copy; <span id="year"></span> Anchor Digital Studio LLC.</p>
   </main>
@@ -594,6 +630,44 @@
       }
     });
 
+    // ---- account: change email ----
+    var emailForm = document.getElementById('email-form');
+    var accountEmailInput = document.getElementById('account-email');
+    var emailSubmit = document.getElementById('email-submit');
+    var emailStatus = document.getElementById('email-status');
+    emailForm.addEventListener('submit', async function(e){
+      e.preventDefault();
+      if(!currentUser) return;
+      var newEmail = accountEmailInput.value.trim();
+      if(!newEmail) return;
+      if(newEmail === currentUser.email){
+        emailStatus.textContent = "That's already your email.";
+        return;
+      }
+      emailSubmit.disabled = true;
+      emailStatus.textContent = 'Sending confirmation...';
+      try {
+        // Supabase emails a confirmation link (to the new address, and to the old one too if
+        // "Secure email change" is on) before this actually takes effect - lands back on
+        // /portal, which confirms it and sends them back in.
+        var res = await supabase.auth.updateUser(
+          { email: newEmail },
+          { emailRedirectTo: window.location.origin + '/portal' }
+        );
+        if(res.error){
+          emailStatus.textContent = "That didn't go through (" + res.error.message + "). Try again, or email adam@anchordigitalco.com if it keeps happening.";
+          emailSubmit.disabled = false;
+          return;
+        }
+        emailStatus.textContent = 'Check your inbox for a confirmation link before this takes effect (and your old inbox too, if it asks).';
+        emailSubmit.disabled = false;
+      } catch (err) {
+        console.error('update email error', err);
+        emailStatus.textContent = 'Something went wrong, try again in a moment.';
+        emailSubmit.disabled = false;
+      }
+    });
+
     // ---- studio assistant (chat widget) ----
     var assistantLauncher = document.getElementById('assistant-launcher');
     var assistantPanel = document.getElementById('assistant-panel');
@@ -739,6 +813,7 @@
           return;
         }
         currentUser = res.data.user;
+        accountEmailInput.value = currentUser.email || '';
         await loadDashboardData(currentUser);
         await refreshDriveFiles();
       } catch (err) {

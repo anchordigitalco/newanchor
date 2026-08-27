@@ -155,6 +155,8 @@
     </form>
     <p class="portal-switch" id="portal-switch" hidden>
       <button type="button" id="portal-back">Use a different email</button>
+      <span aria-hidden="true"> &middot; </span>
+      <button type="button" id="portal-forgot">Forgot password?</button>
     </p>
     <p class="portal-note">
       Portal accounts can only be created for an email already on our client list. If yours
@@ -183,6 +185,35 @@
       <button class="portal-submit" type="submit" id="setpw-submit">Set password &amp; continue</button>
       <div class="portal-status" id="setpw-status" role="status" aria-live="polite"></div>
     </form>
+  </div>
+
+  <!-- "Forgot password?" from the login card. Sends Supabase's password-reset email, which lands
+       back here with type=recovery and is handled by the set-password card above, same as an
+       invite link. -->
+  <div class="portal-card" id="portal-card-forgot" hidden>
+    <p class="portal-kicker">client portal</p>
+    <h1>Reset your password</h1>
+    <p class="portal-lede">Enter your email and we'll send you a link to set a new password.</p>
+    <form id="forgot-form">
+      <div class="portal-field">
+        <label for="forgot-email">Email</label>
+        <input id="forgot-email" type="email" placeholder="you@company.com" autocomplete="email" required>
+      </div>
+      <button class="portal-submit" type="submit" id="forgot-submit">Send reset email</button>
+      <div class="portal-status" id="forgot-status" role="status" aria-live="polite"></div>
+    </form>
+    <p class="portal-switch">
+      <button type="button" id="forgot-back">Back to login</button>
+    </p>
+  </div>
+
+  <!-- Landing spot for the confirmation link Supabase sends when a client changes their email
+       from the dashboard (type=email_change). Nothing to fill in here, just confirm and move on. -->
+  <div class="portal-card" id="portal-card-emailchanged" hidden>
+    <p class="portal-kicker">client portal</p>
+    <h1>Email updated</h1>
+    <p class="portal-lede">Your account email has been confirmed. Taking you in...</p>
+    <button class="portal-submit" type="button" id="emailchanged-continue">Continue</button>
   </div>
 
   <script>
@@ -228,6 +259,7 @@
     // flow, ?code= query string for PKCE) - not pinned to a specific supabase-js version here,
     // so covering both is safer than assuming one.
     var cameFromInviteOrRecovery = /type=invite|type=recovery/.test(window.location.hash + window.location.search);
+    var cameFromEmailChange = /type=email_change/.test(window.location.hash + window.location.search);
 
     var SUPABASE_URL = 'https://sroncqqparjklohbyidt.supabase.co';
     var SUPABASE_ANON_KEY = 'sb_publishable_5buinIijAx9Y_3ZpJ3d_BA_Jd-5cpyw';
@@ -300,9 +332,13 @@
       window.location.href = '/dashboard';
     }
 
-    function showSetPasswordCard(){
-      document.getElementById('portal-card-login').hidden = true;
-      document.getElementById('portal-card-setpw').hidden = false;
+    // All the cards this page can show - kept in one place so switching between them (login,
+    // set-password, forgot-password, email-changed) can never leave two visible at once.
+    var ALL_PORTAL_CARDS = ['portal-card-login', 'portal-card-setpw', 'portal-card-forgot', 'portal-card-emailchanged'];
+    function showCard(id){
+      ALL_PORTAL_CARDS.forEach(function(cardId){
+        document.getElementById(cardId).hidden = (cardId !== id);
+      });
       document.body.classList.add('ready');
     }
 
@@ -311,7 +347,12 @@
         var res = await supabase.auth.getUser();
         if(res && res.data && res.data.user){
           if(cameFromInviteOrRecovery){
-            showSetPasswordCard();
+            showCard('portal-card-setpw');
+            return;
+          }
+          if(cameFromEmailChange){
+            showCard('portal-card-emailchanged');
+            setTimeout(redirectAfterLogin, 1600);
             return;
           }
           await redirectAfterLogin();
@@ -448,6 +489,52 @@
         setpwSubmit.disabled = false;
       }
     });
+
+    // ============ FORGOT PASSWORD ============
+    var forgotBtn = document.getElementById('portal-forgot');
+    var forgotBackBtn = document.getElementById('forgot-back');
+    var forgotForm = document.getElementById('forgot-form');
+    var forgotEmailInput = document.getElementById('forgot-email');
+    var forgotStatus = document.getElementById('forgot-status');
+    var forgotSubmit = document.getElementById('forgot-submit');
+
+    forgotBtn.addEventListener('click', function(){
+      forgotStatus.textContent = '';
+      forgotStatus.classList.remove('show');
+      forgotSubmit.disabled = false;
+      forgotEmailInput.value = emailInput.value.trim();
+      showCard('portal-card-forgot');
+      forgotEmailInput.focus();
+    });
+    forgotBackBtn.addEventListener('click', function(){
+      showCard('portal-card-login');
+    });
+    forgotForm.addEventListener('submit', async function(e){
+      e.preventDefault();
+      var email = forgotEmailInput.value.trim();
+      if(!email) return;
+      forgotSubmit.disabled = true;
+      forgotStatus.textContent = 'Sending...';
+      forgotStatus.classList.add('show');
+      try {
+        // Supabase doesn't reveal whether the address actually has an account here, so the
+        // message below stays deliberately non-committal either way.
+        var res = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/portal' });
+        if(res.error){
+          forgotStatus.textContent = "That didn't go through (" + res.error.message + "). Try again, or email adam@anchordigitalco.com if it keeps happening.";
+          forgotSubmit.disabled = false;
+          return;
+        }
+        forgotStatus.textContent = "If that email's on our client list, we've sent a link to reset your password. Check your inbox.";
+      } catch (err) {
+        console.error('reset password error', err);
+        forgotStatus.textContent = 'Something went wrong, try again in a moment.';
+        forgotSubmit.disabled = false;
+      }
+    });
+
+    // ============ EMAIL CHANGED (landing spot for the confirmation link) ============
+    document.getElementById('emailchanged-continue').addEventListener('click', redirectAfterLogin);
   </script>
 </body>
 </html>
