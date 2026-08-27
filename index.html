@@ -1596,16 +1596,16 @@ body.video-failed .card{max-width:100%}
     // harsh-jump bug; it's scoped to just this hop so the other, already-tuned hops don't change.
     var ease = isIntro ? function(p){ return easeOutPow(p, 5); } : easeOut;
     var start = performance.now();
-    // the card pops up the instant the motion is visually done, not when the raw timer hits dur:
-    // easeOut's tail is a long, barely-moving glide toward the exact final pixel, so waiting for
-    // elapsed===dur reads as lag even after the video looks stopped. reveal once the INTERPOLATED
-    // position is within a small fixed amount of real video-time of the target, rather than a fixed
-    // percentage of the ease curve - a percentage skips a bigger absolute chunk of footage (and
-    // reads as a jump) on a long hop than a short one, since dur scales with the hop's own length.
-    // capping the absolute remaining video-time instead keeps the final snap equally imperceptible
-    // regardless of hop length, while naturally revealing earlier (in wall-clock ms) on longer hops.
+    // the card/chrome reveals a fixed beat before the motion actually finishes, not once it's
+    // already stopped: waiting for the exact final frame made the reveal read as a separate
+    // step after the video, a stop-then-pop. revealing early means the last sliver of glide
+    // keeps playing underneath the card as it comes in, so the whole thing reads as one
+    // continuous motion instead of two. fixed wall-clock lead (not a fraction of dur) so it
+    // feels the same regardless of hop length; clamped so a hop shorter than the lead itself
+    // just reveals close to instantly rather than going negative.
+    var REVEAL_LEAD_MS = 333;
+    var revealAt = Math.max(0, dur - REVEAL_LEAD_MS);
     var revealed = false;
-    var SNAP_THRESHOLD_SEC = 0.15;
     function reveal(){
       if(revealed) return;
       revealed = true;
@@ -1621,28 +1621,15 @@ body.video-failed .card{max-width:100%}
       var elapsed = now - start;
       var p = Math.min(1, elapsed / dur);
       var eased = ease(p);
-      if(!revealed){
-        var interp = fromT + (toT - fromT) * eased;
-        requestSeek(interp);
-        // the moment we decide to reveal, snap straight to the exact target frame instead of
-        // continuing to ease through the last stretch - otherwise the card (and its hotspots)
-        // appear over a still-mid-seek, softer frame instead of the sharp one it lands on.
-        // gated on p>=0.3 too so a very short hop (small |toT-fromT|) can't satisfy the
-        // video-time threshold right out of the gate and skip the glide entirely. the p>=0.65
-        // fallback is a safety net for any hop whose curve stays flatter than expected near
-        // the end (the steeper intro curve above already clears the content-time threshold
-        // well before 0.65 in practice, so this mostly guards the other, cubic hops).
-        if(p >= 1 || (p >= 0.3 && (Math.abs(toT - interp) <= SNAP_THRESHOLD_SEC || p >= 0.65))){
-          requestSeek(toT);
-          reveal();
-        }
-      }
+      requestSeek(fromT + (toT - fromT) * eased);
+      if(!revealed && elapsed >= revealAt) reveal();
       if(p < 1){
         requestAnimationFrame(frame);
       } else {
+        requestSeek(toT); // land exactly on the target frame once the glide is actually done
         animating = false;
         lastStepAt = performance.now();
-        reveal();
+        reveal(); // safety net - only fires here if revealAt somehow never fired above
         if(idx === LAST){
           tourEl.classList.add('settled');
           unlockScroll();
