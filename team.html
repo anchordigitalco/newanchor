@@ -48,9 +48,6 @@
   h1{font-size:clamp(1.9rem,4.4vw,2.7rem);margin:0 0 .6rem;font-weight:600;line-height:1.15}
   .lede{font-size:.98rem;line-height:1.7;color:var(--ink-faint);max-width:42rem;margin:0 0 3rem}
 
-  section{margin-bottom:3.4rem}
-  section h2{font-size:1.4rem;margin:0 0 1.6rem;font-weight:600}
-
   /* ---- founders ---- */
   .founders{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem}
   @media (max-width:760px){ .founders{grid-template-columns:1fr} }
@@ -71,7 +68,7 @@
   .founder-links svg{width:13px;height:13px}
   .founder-more{display:inline-block;margin-top:.8rem;font-family:var(--font-mono);font-size:.68rem;color:var(--accent);letter-spacing:.02em}
 
-  /* ---- bio modal (same idea as the founder cards, just full detail) ---- */
+  /* ---- bio modal ---- */
   .bio-modal{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:2rem}
   .bio-modal[hidden]{display:none}
   .bio-modal-backdrop{position:absolute;inset:0;background:rgba(8,7,6,.7);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;transition:opacity .3s var(--ease-soft)}
@@ -95,72 +92,6 @@
   }
   @media (max-width:640px){ .bio-modal-card{flex-direction:column} .bio-modal-card img{width:100%;aspect-ratio:16/9} }
 
-  /* ---- press / nonprofit initiative tiles ---- */
-  .clips{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
-  @media (max-width:760px){ .clips{grid-template-columns:1fr} }
-  .clip-tile{
-    background:var(--panel);border:1px solid var(--hairline);border-radius:16px;overflow:hidden;
-    cursor:pointer;text-align:left;padding:0;font:inherit;color:inherit;
-    transition:border-color .25s var(--ease-soft);
-  }
-  .clip-tile:hover,.clip-tile:focus-visible{border-color:rgba(242,240,236,.4)}
-  .clip-tile.active{border-color:var(--accent)}
-  .clip-tile img{width:100%;aspect-ratio:16/10;object-fit:cover;display:block}
-  .clip-tile-body{padding:1rem 1.2rem 1.2rem}
-  .clip-cat{font-family:var(--font-mono);font-size:.62rem;color:var(--accent);letter-spacing:.06em;text-transform:lowercase}
-  .clip-title{font-size:.92rem;line-height:1.35;margin:.5rem 0 0}
-  .clip-status{font-family:var(--font-mono);font-size:.6rem;opacity:.6;margin-top:.7rem;display:block}
-
-  /* ---- expanded article panel: opens centered, full width, right under the tile row ---- */
-  .article-panel{
-    margin-top:1.4rem;background:var(--panel);border:1px solid var(--hairline);border-radius:20px;
-    padding:0;max-height:0;opacity:0;overflow:hidden;
-    transition:max-height .4s var(--ease-soft),opacity .3s var(--ease-soft),margin-top .4s var(--ease-soft);
-  }
-  .article-panel.open{max-height:1400px;opacity:1}
-  .article-panel-inner{padding:clamp(1.6rem,3vw,2.6rem);position:relative}
-  .article-photo{float:right;width:38%;max-width:340px;margin:0 0 1rem 1.6rem;border-radius:14px;overflow:hidden;border:1px solid var(--hairline)}
-  .article-photo img{width:100%;display:block}
-  @media (max-width:700px){ .article-photo{float:none;width:100%;max-width:none;margin:0 0 1rem} }
-  .article-panel-inner .clip-text{display:flow-root}
-  .article-panel-inner p{font-size:.92rem;line-height:1.7;margin:0 0 .9rem;opacity:.92}
-  .article-panel-inner .kicker{margin:.5rem 0 .8rem;color:var(--dark-ink);opacity:1;font-size:1.05rem;text-transform:none;letter-spacing:0}
-  .article-panel-inner .kicker::before{display:none}
-  .article-foot{
-    clear:both;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;
-    margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--hairline);
-  }
-  .btn-outline{
-    display:inline-block;padding:.6rem 1.2rem;border-radius:99px;border:1px solid rgba(242,240,236,.4);
-    text-decoration:none;font-size:.82rem;transition:background .2s var(--ease-soft),border-color .2s var(--ease-soft);
-  }
-  .btn-outline:hover{background:rgba(242,240,236,.1);border-color:var(--accent)}
-  .panel-close{
-    position:absolute;top:1.2rem;right:1.2rem;width:32px;height:32px;border-radius:50%;
-    background:rgba(0,0,0,.25);border:1px solid var(--hairline);color:var(--dark-ink);
-    font-size:1.2rem;line-height:1;cursor:pointer;
-  }
-  /* before/after slider, same technique as the services cards */
-  .ba-slider{position:relative;overflow:hidden;cursor:ew-resize;touch-action:pan-y}
-  .ba-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-  .ba-after{clip-path:inset(0 50% 0 0)}
-  .ba-line{position:absolute;top:0;bottom:0;left:50%;width:2px;background:#fff;transform:translateX(-1px)}
-  .ba-handle{position:absolute;top:50%;left:50%;width:30px;height:30px;border-radius:50%;background:#fff;color:#111;display:flex;align-items:center;justify-content:center;transform:translate(-50%,-50%)}
-  .ba-label{position:absolute;bottom:.6rem;font-family:var(--font-mono);font-size:.6rem;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:rgba(0,0,0,.55);padding:.3rem .6rem;border-radius:99px}
-  .ba-label-before{left:.6rem}
-  .ba-label-after{right:.6rem}
-
-  /* ---- the education initiative card ---- */
-  .initiative-card{
-    max-width:min(1100px,94vw);margin:0 auto;
-    background:var(--panel);border:1px solid var(--hairline);border-radius:22px;
-    padding:clamp(1.8rem,3.4vw,3rem);
-  }
-  .initiative-card .kicker{margin-bottom:.9rem}
-  .initiative-card h2{font-size:clamp(1.3rem,2.4vw,1.7rem);margin:0 0 1rem}
-  .initiative-card p{font-size:.95rem;line-height:1.75;max-width:52rem;margin:0 0 .9rem;opacity:.92}
-  .initiative-card p:last-child{margin-bottom:0}
-
   .page-footer{max-width:1100px;margin:4rem auto 0;padding:1.6rem clamp(1.2rem,4vw,3rem) 0;border-top:1px solid var(--hairline);font-size:.76rem;opacity:.55}
 </style>
 </head>
@@ -174,29 +105,9 @@
   <main>
     <p class="kicker">team</p>
     <h1>The people behind the work.</h1>
-    <p class="lede">Two co-founders, a handful of nonprofit partnerships we're proud of, and the reason we keep looking for more of them.</p>
+    <p class="lede">Two co-founders building Anchor Digital. Read more about the nonprofit work we're proud of on <a href="/#community" style="text-decoration:underline;text-underline-offset:2px">the studio tour</a>.</p>
 
-    <section>
-      <h2>Founders</h2>
-      <div class="founders" id="founders"></div>
-    </section>
-
-    <section>
-      <h2>Nonprofit initiative work</h2>
-      <div class="clips" id="clips"></div>
-      <div class="article-panel" id="article-panel">
-        <div class="article-panel-inner" id="article-panel-inner"></div>
-      </div>
-    </section>
-
-    <section style="margin-bottom:0">
-      <div class="initiative-card">
-        <p class="kicker">the anchor education initiative</p>
-        <h2>The Anchor Education Initiative</h2>
-        <p>We prioritize working with nonprofits that expand access to education, especially for underprivileged students navigating the college search with less information and fewer resources than their peers.</p>
-        <p>Adam and Jackson are both students of color who attended selective high schools and colleges, and know firsthand how much of getting there comes down to access: to information, to guidance, to knowing the right question to ask at the right time. That's not an abstract cause for us. It's why organizations like FairTest and A Better Chance are the kind of partners we go looking for, not just work we happen to take on.</p>
-      </div>
-    </section>
+    <div class="founders" id="founders"></div>
   </main>
 
   <p class="page-footer">&copy; <span id="year"></span> Anchor Digital Studio LLC.</p>
@@ -212,51 +123,18 @@
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
 
-  var DATA = {
-    founders: [
-      {name:"Adam Bello", role:"Co-Founder", img:"assets/team/adam-bello.jpg", linkedin:"https://www.linkedin.com/in/adam-bello-57067231a", email:"adam@anchordigitalco.com",
-       bio:"Adam Evans Bello is the Co-Founder of Anchor Digital. A native New Yorker, his diverse background across corporate, athletic, and international environments shapes his approach to brand differentiation and business growth. Adam is an undergraduate student-athlete at Bowdoin College, pursuing a B.A. in Government and Legal Studies with a minor in Economics while playing point guard on the Men's Basketball team. He and Jackson founded Anchor Digital to eliminate the gap between a business's actual value and its digital presence."},
-      {name:"Jackson Bleecker", role:"Co-Founder", img:"assets/team/jackson-bleecker.jpg", linkedin:"https://www.linkedin.com/in/jackson-bleecker/", email:"jackson@anchordigitalco.com",
-       bio:"Jackson Bleecker is the Co-Founder of Anchor Digital. A native of West Orange, New Jersey, his background spans startup strategy, global consulting, and competitive athletics. Jackson is an undergraduate student-athlete at Bowdoin College, pursuing a B.A. in Government and Legal Studies with a minor in Economics while competing as a shooting guard on the Men's Basketball team. He co-founded Anchor Digital on a simple conviction: small businesses deserve a digital presence that actually reflects their value."}
-    ],
-    clips: [
-      {id:"score-signal", cat:"AI-Powered Tool", date:"7/31/2026", title:"Score Signal, an AI-powered SAT and ACT tool, launches in partnership with Anchor Digital.", status:"Live now.", img:"assets/press/score-signal-launch.jpg", url:"https://getscoresignal.com",
-       body:[
-         "Score Signal was our most ambitious project to date. This was an idea-to-implementation build that took a conversation with a test prep company founder and turned it into a beautifully designed, scalable digital solution. Leveraging our frustrations with the college search process and knowledge of public databases, we conceived and created a unique data integration and recommendation engine.",
-         "Score Signal takes a user's SAT or ACT score and other relevant data, processes it against a sophisticated custom-designed algo to report the strength of the \"signal\" that the score provides about the user's admissibility, turning a confusing admissions question into a clear, specific answer in seconds.",
-         "We led the full front-end (design, layout, and nearly every interactive feature), scoped the backend specifications, and defined the reporting parameters, delivering to the client a refined product ready for final commercialization and integration.",
-         "The AI helper woven through the experience wasn't handed to us as a spec. We originated the idea ourselves, designed the concept, and built the interface, then implemented it end to end.",
-         "Score Signal is live now, and we're still involved as it grows."
-       ]},
-      {id:"fairtest", cat:"Non-Profit", date:"7/19/2026", title:"Anchor Digital partners with FairTest to redesign its test-optional research page.", status:"Currently in development.", imgBefore:"assets/press/fairtest-before.jpg", imgAfter:"assets/press/fairtest-after.jpg", url:null,
-       body:[
-         "FairTest, the National Center for Fair & Open Testing, has spent decades pushing back on the idea that a single test score should decide who gets in. Their test-optional college list, which tracks admissions policy at over 2,000 four-year schools, sees half a million visitors per year and is the go-to reference for students and counselors navigating test-optional admissions nationwide.",
-         "Our analysis of the previous page found that while it provided a searchable resource for students and their supporters, it missed the opportunity to drive its mission by providing insight into policies across colleges. We rebuilt the page to serve this dual policy and practical function by making more clear the trends and patterns across institutions.",
-         "The dynamic filterable database itself (state, region, school type, system) is still front and center, now paired with a chart that makes the overall split (test-optional, test-free, still requiring scores) legible at a glance instead of a wall of numbers.",
-         "This isn't a full site rebuild. It's a single page reimagined to more effectively use data to deliver its message. Done quickly and built to hold up as the underlying research keeps growing.",
-         "Currently in development. We'll share it here the day it ships."
-       ]},
-      {id:"a-better-chance", cat:"Non-Profit", date:"8/4/2026", title:"Anchor Digital partners with A Better Chance on a new site for its college-access mission.", status:"Currently in development.", img:"assets/press/a-better-chance.jpg", url:null,
-       body:[
-         "A Better Chance, a national non-profit organization, has spent more than sixty years placing talented young people of color at leading independent and boarding schools across the country.",
-         "ABC typically secures opportunities for their members and shares them via PDFs or spreadsheets of programs and partner opportunities.",
-         "Opportunity only counts if the right student can find it. So we are designing the experience around the people using it, not the org chart behind it. A student should be able to arrive, understand what is possible, and see their next step without having to hunt for it. Clear paths for students. Clear paths for families. Clear paths for the partner schools that make the network run.",
-         "We identified the inefficiency and proposed an advanced scalable digital solution that would not only serve their primary needs but would also expand their capabilities.",
-         "Help the organization stand apart and make it easier for students and families to find the programs and opportunities waiting for them.",
-         "We are building it to meet students where they are. Fast. Accessible. Designed for whatever device a student already has, not the one we wish they had. The kind of experience that feels effortless to use and hard to walk away from.",
-         "This is where strategy and build come together. We are not handing over a shell and calling it done. We shape the message, the structure, and the experience as one, so the presence feels as serious, and as warm, as the organization behind it, and so every page moves a student one step closer.",
-         "We took this on because it is work worth doing. A Better Chance is already changing lives. We are just making it easier for the next student to find their way in. That is the kind of project we want our name on.",
-         "It is currently in development. We will post the finished product here once it is live."
-       ]}
-    ]
-  };
+  var founders = [
+    {name:"Adam Bello", role:"Co-Founder", img:"assets/team/adam-bello.jpg", linkedin:"https://www.linkedin.com/in/adam-bello-57067231a", email:"adam@anchordigitalco.com",
+     bio:"Adam Evans Bello is the Co-Founder of Anchor Digital. A native New Yorker, his diverse background across corporate, athletic, and international environments shapes his approach to brand differentiation and business growth. Adam is an undergraduate student-athlete at Bowdoin College, pursuing a B.A. in Government and Legal Studies with a minor in Economics while playing point guard on the Men's Basketball team. He and Jackson founded Anchor Digital to eliminate the gap between a business's actual value and its digital presence."},
+    {name:"Jackson Bleecker", role:"Co-Founder", img:"assets/team/jackson-bleecker.jpg", linkedin:"https://www.linkedin.com/in/jackson-bleecker/", email:"jackson@anchordigitalco.com",
+     bio:"Jackson Bleecker is the Co-Founder of Anchor Digital. A native of West Orange, New Jersey, his background spans startup strategy, global consulting, and competitive athletics. Jackson is an undergraduate student-athlete at Bowdoin College, pursuing a B.A. in Government and Legal Studies with a minor in Economics while competing as a shooting guard on the Men's Basketball team. He co-founded Anchor Digital on a simple conviction: small businesses deserve a digital presence that actually reflects their value."}
+  ];
 
   var linkedinSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>';
   var mailSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>';
 
-  // ============ FOUNDERS ============
   var foundersEl = document.getElementById('founders');
-  DATA.founders.forEach(function(f, i){
+  founders.forEach(function(f, i){
     var card = document.createElement('div');
     card.className = 'founder';
     card.tabIndex = 0;
@@ -275,7 +153,7 @@
   var bioModal = document.getElementById('bio-modal');
   var bioModalBody = document.getElementById('bio-modal-body');
   function openBio(i){
-    var f = DATA.founders[i];
+    var f = founders[i];
     if(!f || !bioModal) return;
     bioModalBody.innerHTML =
       '<img src="' + f.img + '" alt="">' +
@@ -296,102 +174,6 @@
   document.addEventListener('keydown', function(e){
     if(e.key === 'Escape' && !bioModal.hidden) closeBio();
   });
-
-  // ============ NONPROFIT INITIATIVE ARTICLES ============
-  var clipsEl = document.getElementById('clips');
-  var panelEl = document.getElementById('article-panel');
-  var panelInner = document.getElementById('article-panel-inner');
-  var activeClip = null;
-
-  DATA.clips.forEach(function(c){
-    var btn = document.createElement('button');
-    btn.className = 'clip-tile';
-    btn.setAttribute('data-id', c.id);
-    var thumb = c.img || c.imgBefore;
-    btn.innerHTML =
-      '<img src="' + thumb + '" alt="">' +
-      '<div class="clip-tile-body">' +
-      '<span class="clip-cat">' + c.cat + ' &middot; ' + c.date + '</span>' +
-      '<p class="clip-title">' + c.title + '</p>' +
-      '<span class="clip-status">' + c.status + '</span>' +
-      '</div>';
-    btn.addEventListener('click', function(){ toggleClip(c.id); });
-    clipsEl.appendChild(btn);
-  });
-
-  function renderMedia(c){
-    if(c.imgBefore && c.imgAfter){
-      return '<div class="ba-slider" data-ba tabindex="0" role="slider" aria-label="Before and after redesign" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">' +
-        '<img class="ba-img ba-before" src="' + c.imgBefore + '" alt="Before">' +
-        '<img class="ba-img ba-after" src="' + c.imgAfter + '" alt="After">' +
-        '<div class="ba-line" aria-hidden="true"></div>' +
-        '<div class="ba-handle" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 7-5 5 5 5M15 7l5 5-5 5"/></svg></div>' +
-        '<span class="ba-label ba-label-before" aria-hidden="true">Before</span>' +
-        '<span class="ba-label ba-label-after" aria-hidden="true">After</span>' +
-        '</div>';
-    }
-    return c.img ? '<img src="' + c.img + '" alt="">' : '';
-  }
-  function initSlider(el){
-    var after = el.querySelector('.ba-after');
-    var line = el.querySelector('.ba-line');
-    var handle = el.querySelector('.ba-handle');
-    if(!after || !line || !handle) return;
-    function setPos(pct){
-      pct = Math.max(0, Math.min(100, pct));
-      after.style.clipPath = 'inset(0 ' + (100 - pct) + '% 0 0)';
-      line.style.left = pct + '%';
-      handle.style.left = pct + '%';
-      el.setAttribute('aria-valuenow', String(Math.round(pct)));
-    }
-    function pctFromEvent(e){
-      var rect = el.getBoundingClientRect();
-      var x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-      return (x / rect.width) * 100;
-    }
-    var dragging = false;
-    el.addEventListener('pointerdown', function(e){ dragging = true; if(el.setPointerCapture) el.setPointerCapture(e.pointerId); setPos(pctFromEvent(e)); });
-    el.addEventListener('pointermove', function(e){ if(dragging) setPos(pctFromEvent(e)); });
-    el.addEventListener('pointerup', function(){ dragging = false; });
-    el.addEventListener('pointercancel', function(){ dragging = false; });
-    el.addEventListener('keydown', function(e){
-      var cur = parseFloat(el.getAttribute('aria-valuenow')) || 50;
-      if(e.key === 'ArrowLeft'){ setPos(cur - 5); e.preventDefault(); }
-      else if(e.key === 'ArrowRight'){ setPos(cur + 5); e.preventDefault(); }
-    });
-    setPos(50);
-  }
-
-  function renderClip(c){
-    var media = '<div class="article-photo">' + renderMedia(c) + '</div>';
-    var link = c.url ? '<a class="btn-outline" href="' + c.url + '" target="_blank" rel="noopener">Visit site</a>' : '';
-    var paras = (c.body || []).map(function(p){ return '<p>' + p + '</p>'; }).join('');
-    return '<button class="panel-close" aria-label="Close">&times;</button>' +
-      '<div class="clip-text">' + media +
-      '<p class="kicker">' + c.title + '</p>' +
-      paras +
-      '<div class="article-foot"><span class="clip-status" style="margin:0">' + c.status + '</span>' + link + '</div>' +
-      '</div>';
-  }
-
-  function toggleClip(id){
-    document.querySelectorAll('.clip-tile').forEach(function(t){ t.classList.toggle('active', t.getAttribute('data-id') === id); });
-    if(activeClip === id){
-      activeClip = null;
-      panelEl.classList.remove('open');
-      document.querySelectorAll('.clip-tile').forEach(function(t){ t.classList.remove('active'); });
-      return;
-    }
-    var c = DATA.clips.filter(function(x){ return x.id === id; })[0];
-    if(!c) return;
-    activeClip = id;
-    panelInner.innerHTML = renderClip(c);
-    var slider = panelInner.querySelector('.ba-slider');
-    if(slider) initSlider(slider);
-    panelInner.querySelector('.panel-close').addEventListener('click', function(){ toggleClip(id); });
-    panelEl.classList.add('open');
-    requestAnimationFrame(function(){ panelEl.scrollIntoView({behavior:'smooth', block:'nearest'}); });
-  }
 </script>
 </body>
 </html>
