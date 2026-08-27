@@ -1605,7 +1605,12 @@ body.video-failed .card{max-width:100%}
     // continuous motion instead of two. fixed wall-clock lead (not a fraction of dur) so it
     // feels the same regardless of hop length; clamped so a hop shorter than the lead itself
     // just reveals close to instantly rather than going negative.
-    var REVEAL_LEAD_MS = 333;
+    // the intro is a much longer hop than any other (6.4s at its own slower pace), so the same
+    // 333ms lead still leaves the button waiting for the video to be almost entirely done - a
+    // bigger lead here brings that up front. safe to go this early specifically on the intro's
+    // steep exponent-5 curve: by dur-3000ms it's already ~98% of the way to the target, so what's
+    // left playing underneath the button is a small, fast-decaying tail, not a visible jump.
+    var REVEAL_LEAD_MS = isIntro ? 3000 : 333;
     var revealAt = Math.max(0, dur - REVEAL_LEAD_MS);
     var revealed = false;
     function reveal(){
