@@ -1421,6 +1421,13 @@ body.video-failed .card{max-width:100%}
   function requestSeek(t, force){
     if(!video.duration || isNaN(video.duration)) return;
     t = Math.min(video.duration - 0.02, Math.max(0, t));
+    // exact-equality check first, force or not: once frame()'s near-target branch forces a seek
+    // to toT, it keeps calling requestSeek(toT, true) every remaining frame of that hop (force
+    // exists to bypass the DELTA check below, not to repeat an already-reached target). Without
+    // this, we'd re-issue video.currentTime = <the value it's already at> dozens of times right
+    // at the point everyone's watching most closely (the settle) - some browsers don't reliably
+    // fire 'seeked' for a no-op time set, which can stall the single-seek queue exactly there.
+    if(lastRequestedTime !== null && t === lastRequestedTime) return;
     if(!force && lastRequestedTime !== null && Math.abs(t - lastRequestedTime) < MIN_SEEK_DELTA) return;
     lastRequestedTime = t;
     if(seekBusy){ pendingTime = t; return; }
@@ -1510,12 +1517,20 @@ body.video-failed .card{max-width:100%}
         // through that last sliver - it reads as the video still visibly crawling well after the
         // card/button are already up. Restart this same loop as a short, fixed-length fast finish
         // to the true target instead of continuing on the original (dilated) tail, so it settles
-        // quickly right after reveal rather than dragging on.
-        fromT = interp;
-        start = now;
-        dur = FINISH_MS;
-        ease = easeOut;
-        p = 0;
+        // quickly right after reveal rather than dragging on. Skipped entirely if we're already
+        // essentially there (true on most non-intro hops, where the content-time threshold above
+        // has usually already forced the exact target well before revealAt fires) - otherwise
+        // this was running a whole extra 350ms of pointless no-op rAF frames and seek calls right
+        // at the moment the card's own DOM updates are happening, competing for the same frames.
+        if(Math.abs(toT - interp) >= MIN_SEEK_DELTA){
+          fromT = interp;
+          start = now;
+          dur = FINISH_MS;
+          ease = easeOut;
+          p = 0;
+        } else {
+          p = 1;
+        }
       }
       if(p < 1){
         requestAnimationFrame(frame);
