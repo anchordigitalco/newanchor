@@ -1534,7 +1534,15 @@ body.video-failed .card{max-width:100%}
   function scrollNext(){ if(idx === FLOOR) return; next(); }
 
   function canStep(){
-    return scrubActive && !animating && (performance.now() - lastStepAt) > COOLDOWN_MS;
+    // stageEl only gets 'video-ready' once the full video blob has actually loaded (see
+    // loadHeroBlob's canplay handler below) - without this check, scrolling/clicking during that
+    // load window still advanced idx and revealed cards right on schedule, but requestSeek was a
+    // silent no-op the whole time (no video.duration yet), so the video itself just sat frozen on
+    // the poster frame. Whenever the blob DID finish loading, it would snap straight to wherever
+    // idx had already gotten to - reading as the site being unresponsive, then suddenly jumping,
+    // rather than a real load delay. Gating here means nothing advances until there's an actual
+    // video to show for it.
+    return scrubActive && !animating && stageEl.classList.contains('video-ready') && (performance.now() - lastStepAt) > COOLDOWN_MS;
   }
 
   function resetToLanding(){
@@ -1743,6 +1751,9 @@ body.video-failed .card{max-width:100%}
       if(target) target.scrollIntoView({behavior:'smooth'});
       return;
     }
+    // same reasoning as canStep() above: don't advance idx/reveal a card ahead of the video
+    // actually being able to show it.
+    if(!stageEl.classList.contains('video-ready')) return;
     if(animating) return;
     if(tourEl.classList.contains('settled')){
       tourEl.classList.remove('settled');
@@ -1761,6 +1772,9 @@ body.video-failed .card{max-width:100%}
       if(s) s.scrollIntoView({behavior:'smooth'});
       return;
     }
+    // same reasoning as canStep() above: don't advance idx/reveal a card ahead of the video
+    // actually being able to show it.
+    if(!stageEl.classList.contains('video-ready')) return;
     var target2 = idxOf[id];
     if(target2 === undefined) return;
     transitionId++; // cancel anything still mid-flight so it can't fight this cut
