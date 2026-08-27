@@ -216,6 +216,24 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
   transition:opacity .14s var(--ease-soft),transform .14s var(--ease-soft);
 }
 .band.active .card{opacity:1;transform:translateY(0)}
+/* scrollable card content stays scrollable, native scrollbar just hidden - a visible track/thumb
+   over the video reads as a stray sidebar rather than part of the card. */
+.card,
+#band-services .services-col .popup-card .clip-text,
+.testimonials-scroll,
+#article-panel-body,
+.contact-info-side,
+.contact-form-side{
+  scrollbar-width:none;-ms-overflow-style:none;
+}
+.card::-webkit-scrollbar,
+#band-services .services-col .popup-card .clip-text::-webkit-scrollbar,
+.testimonials-scroll::-webkit-scrollbar,
+#article-panel-body::-webkit-scrollbar,
+.contact-info-side::-webkit-scrollbar,
+.contact-form-side::-webkit-scrollbar{
+  display:none;
+}
 .card.card-wide{max-width:min(920px,90vw)}
 .kicker{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.12em;text-transform:lowercase;color:var(--accent);margin-bottom:.9rem;display:flex;align-items:center;gap:.6rem}
 .kicker::before{content:"";width:22px;height:1px;background:var(--accent)}
