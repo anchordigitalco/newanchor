@@ -542,8 +542,8 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
    this band is gone (it lives on its own /team page now). the shared article panel opens
    centered, full width, in the flex flow right under the banner, not off to a side column. ============ */
 .community-band{
-  justify-content:flex-start;align-items:center;flex-direction:column;
-  padding-top:7vh;gap:1.4rem;
+  justify-content:flex-end;align-items:center;flex-direction:column;
+  padding-bottom:6vh;gap:1.4rem;
 }
 .community-band::before{--scrim-x:50%}
 .community-band .card.community-banner{
@@ -856,16 +856,15 @@ body.video-failed .card{max-width:100%}
       <!-- COMMUNITY: the Anchor Education Initiative banner over the wall of framed nonprofit-work
            photos. The founders card that used to share this stop lives on its own /team page now. -->
       <div class="band community-band" id="band-community" data-stop="community">
-        <div class="card community-banner">
-          <p class="kicker">03 &middot; the anchor education initiative</p>
-          <h2>The Anchor Education Initiative</h2>
-          <p>We prioritize working with nonprofits that expand access to education, especially for underprivileged students navigating the college search with less information and fewer resources than their peers.</p>
-          <p>Adam and Jackson are both students of color who attended selective high schools and colleges, and know firsthand how much of getting there comes down to access: to information, to guidance, to knowing the right question to ask at the right time. That's not an abstract cause for us. It's why organizations like FairTest and A Better Chance are the kind of partners we go looking for, not just work we happen to take on.</p>
-          <p class="hotspot-hint">Click the frames on the wall for more on each partnership.</p>
-        </div>
         <div class="popup-card article-panel" id="article-panel" hidden>
           <button class="popup-close" data-close aria-label="Close">&times;</button>
           <div class="article-panel-body" id="article-panel-body"></div>
+        </div>
+        <div class="card community-banner">
+          <p class="kicker">03 &middot; the anchor education initiative</p>
+          <h2>The Anchor Education Initiative</h2>
+          <p>We prioritize nonprofits that expand access to education for underprivileged students. Adam and Jackson are both students of color who attended selective high schools and colleges, and know firsthand how much of getting there comes down to access. It's why organizations like FairTest and A Better Chance are partners we go looking for, not just work we happen to take on.</p>
+          <p class="hotspot-hint">Click the frames on the wall for more on each partnership.</p>
         </div>
         <div id="wall-hotspots"></div>
       </div>
@@ -1022,7 +1021,7 @@ body.video-failed .card{max-width:100%}
       <div class="card card-wide">
         <p class="kicker">03 &middot; the anchor education initiative</p>
         <h2 style="font-size:clamp(1.3rem,5vw,1.8rem)">The Anchor Education Initiative</h2>
-        <p class="lede">We prioritize working with nonprofits that expand access to education, especially for underprivileged students navigating the college search with less information and fewer resources than their peers. Adam and Jackson are both students of color who attended selective high schools and colleges, and know firsthand how much of getting there comes down to access. It's why organizations like FairTest and A Better Chance are the kind of partners we go looking for.</p>
+        <p class="lede">We prioritize nonprofits that expand access to education for underprivileged students. Adam and Jackson are both students of color who attended selective high schools and colleges, and know firsthand how much of getting there comes down to access. It's why organizations like FairTest and A Better Chance are partners we go looking for, not just work we happen to take on.</p>
       </div>
     </div>
     <div class="static-stop" id="s-testimonials" style="background-image:url('assets/frame-chairs.jpg')">
