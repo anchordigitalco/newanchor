@@ -151,6 +151,18 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
 .menu-dropdown a:hover{background:var(--canvas-alt);padding-left:1.1rem}
 .menu-dropdown .idx{font-family:var(--font-mono);font-size:.72rem;color:var(--ink-faint)}
 
+/* mobile-only nav panel (see the STATIC-HERO / mobile breakpoint below for when this swaps in) */
+.hamburger-btn{
+  display:none;align-items:center;justify-content:center;
+  width:44px;height:44px;flex-shrink:0;
+  border:1px solid rgba(242,240,236,.4);
+  border-radius:99px;background:transparent;color:var(--dark-ink);cursor:pointer;
+  transition:background .3s var(--ease-soft),border-color .3s var(--ease-soft);
+}
+.hamburger-btn:hover{background:rgba(242,240,236,.12);border-color:rgba(242,240,236,.7)}
+.hamburger-btn svg{width:18px;height:18px}
+.navlinks-dropdown{min-width:200px}
+
 /* ============ TOUR (fixed-viewport stepper) ============ */
 .tour{position:fixed;inset:0;z-index:1}
 .tour.settled{position:relative;inset:auto;height:100vh;height:100dvh}
@@ -425,6 +437,9 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
 @media (max-width:860px){
   .testimonial-grid{grid-template-columns:1fr}
   .testimonial-tile.tile-feature{grid-column:auto;grid-row:auto}
+  .testimonial-note{font-size:1rem}
+  .tile-feature .testimonial-note{font-size:1.15rem}
+  .testimonial-who{font-size:.74rem}
 }
 
 /* ---- threshold: the sign is already right there in the aerial shot - the logo and the wordmark
@@ -552,6 +567,13 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
 .thumb .t-name{font-size:.92rem}
 .thumb .t-visit{margin-left:auto;font-family:var(--font-mono);font-size:.66rem;color:var(--accent);white-space:nowrap}
 .work-note{font-size:.82rem;color:var(--dark-ink);opacity:.7;margin-top:.9rem;max-width:44ch}
+@media (max-width:860px){
+  .work-blurb .proj-name{font-size:1.5rem}
+  .thumb{padding:.85rem}
+  .thumb img,.thumb .ph{width:72px;height:50px}
+  .thumb .t-name{font-size:1rem}
+  .thumb .t-visit{font-size:.72rem}
+}
 
 /* ============ COMMUNITY band: the Education Initiative banner (same top-of-band pattern as
    services) sits over the wall of framed photos, whose three hotspot dots stay absolutely
@@ -595,6 +617,17 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
 #article-panel-body .clip-text{display:flow-root}
 @media (max-width:640px){
   .article-photo{float:none;width:100%;max-width:none;margin:0 0 1rem}
+}
+/* the left-pinned banner + beside-it article panel is a desktop-only row shape - its 32vw cap on
+   the banner card would be a sliver on a phone, so this stacks the two instead of shrinking them
+   further, each still scrolling internally the same way every other card on the site already does. */
+@media (max-width:860px){
+  .community-band{flex-direction:column;gap:1rem;padding-top:5vh;padding-bottom:2vh}
+  .community-band .card.community-banner{max-width:94vw !important;width:100%;max-height:38vh}
+  .community-band .article-panel{max-width:94vw;width:100%;height:min(48vh,520px)}
+  .community-banner h2{font-size:1.5rem}
+  .community-banner p{font-size:1rem}
+  #article-panel-body .kicker{font-size:1.5rem}
 }
 .article-foot{
   clear:both;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;
@@ -669,6 +702,10 @@ body.in-motion .dot-rail{opacity:0;pointer-events:none;transition:opacity .35s v
 @media (max-width:860px){
   .contact-card{grid-template-columns:1fr}
   .contact-form-side{border-left:none;border-top:1px solid rgba(242,240,236,.14)}
+  .contact-form label{font-size:.72rem}
+  .contact-form input,.contact-form textarea,.contact-form select{font-size:1rem;padding:.85rem 1rem}
+  .info-label{font-size:.92rem}
+  .info-value{font-size:.86rem}
 }
 
 /* ============ STATIC MOBILE / REDUCED-MOTION TOUR ============ */
@@ -736,7 +773,23 @@ body.video-failed .card{max-width:100%}
 
 @media (max-width:860px){
   .work-grid{grid-template-columns:1fr}
-  .card{max-width:92vw !important}
+  .chrome-right > a.btn-ghost{display:none}
+  .hamburger-btn{display:flex;width:48px;height:48px}
+
+  /* bigger cards, bigger type, bigger buttons on a phone-width screen - a card running a little
+     further before its own internal scroll kicks in beats everything packed in small. */
+  .card{max-width:94vw !important;max-height:92vh;max-height:92dvh}
+  .card h2{font-size:2rem}
+  .card p.lede{font-size:1.05rem}
+  .kicker{font-size:.8rem}
+  .popup-card .kicker{font-size:1.4rem}
+  .popup-card p{font-size:1rem}
+  .popup-close{width:40px;height:40px;font-size:1.35rem}
+  #band-services .services-col .popup-card:not([hidden]){height:min(520px,58vh)}
+  .services-banner-row h2{font-size:1.5rem}
+  .services-banner .lede{font-size:1rem}
+  .btn-solid,.btn-outline{font-size:.92rem;padding:1rem 1.8rem}
+  .menu-pill{font-size:.9rem;padding:.8rem 1.5rem}
 }
 </style>
 
@@ -752,6 +805,26 @@ body.video-failed .card{max-width:100%}
     <a class="btn-ghost" href="/team">Team</a>
     <a class="btn-ghost instant-jump" href="#contact" data-jump="contact">Start a project</a>
     <a class="btn-ghost" href="/portal" id="client-portal-link">Anchor Client Portal</a>
+
+    <!-- mobile-only: replaces the three links above (hidden below the breakpoint) with a single
+         icon that opens a panel holding the same links, so the header doesn't get cramped on a
+         narrow screen. Guide stays a separate, always-visible pill either way. -->
+    <div class="menu-wrap navlinks-wrap">
+      <button class="hamburger-btn" id="navlinks-btn" aria-haspopup="true" aria-expanded="false" aria-label="Open menu">
+        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <line x1="1" y1="1" x2="19" y2="1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="1" y1="7" x2="19" y2="7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="1" y1="13" x2="19" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="1" y1="19" x2="19" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <nav class="menu-dropdown navlinks-dropdown" id="navlinks-dropdown" aria-label="Site links">
+        <a href="/team">Team</a>
+        <a class="instant-jump" href="#contact" data-jump="contact">Start a project</a>
+        <a href="/portal" id="client-portal-link-mobile">Anchor Client Portal</a>
+      </nav>
+    </div>
+
     <div class="menu-wrap">
       <button class="menu-pill" id="menu-btn" aria-haspopup="true" aria-expanded="false">
         Guide
@@ -1353,17 +1426,29 @@ body.video-failed .card{max-width:100%}
   wireContactForm('contact-form', 'form-note', 'recaptcha-live');
   wireContactForm('contact-form-static', 'form-note-static', 'recaptcha-static');
 
-  // ============ MENU DROPDOWN ============
-  var menuBtn = document.getElementById('menu-btn');
-  var menuDropdown = document.getElementById('menu-dropdown');
-  function closeMenu(){ menuDropdown.classList.remove('open'); menuBtn.setAttribute('aria-expanded','false'); }
-  function toggleMenu(){
-    var open = menuDropdown.classList.toggle('open');
-    menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  // ============ MENU DROPDOWNS (Guide, and the mobile nav-links panel) ============
+  // same open/close/outside-click/Escape behavior for both, so the mobile panel added alongside
+  // Guide didn't need its own copy of this logic - closeMenu() below now closes whichever of the
+  // two is actually open, and every existing closeMenu() call site (jumpTo, instantJumpTo,
+  // logo-home) picks that up for free.
+  function makeMenu(btnId, dropdownId){
+    var btn = document.getElementById(btnId);
+    var dropdown = document.getElementById(dropdownId);
+    function close(){ dropdown.classList.remove('open'); btn.setAttribute('aria-expanded','false'); }
+    function toggle(){
+      var open = dropdown.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', toggle);
+    return { btn:btn, dropdown:dropdown, close:close };
   }
-  menuBtn.addEventListener('click', toggleMenu);
+  var guideMenu = makeMenu('menu-btn', 'menu-dropdown');
+  var navLinksMenu = makeMenu('navlinks-btn', 'navlinks-dropdown');
+  function closeMenu(){ guideMenu.close(); navLinksMenu.close(); }
   document.addEventListener('click', function(e){
-    if(!menuDropdown.contains(e.target) && e.target !== menuBtn && !menuBtn.contains(e.target)) closeMenu();
+    [guideMenu, navLinksMenu].forEach(function(m){
+      if(!m.dropdown.contains(e.target) && e.target !== m.btn && !m.btn.contains(e.target)) m.close();
+    });
   });
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeMenu(); });
 
