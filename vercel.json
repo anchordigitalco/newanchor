@@ -2,6 +2,15 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
   "trailingSlash": false,
+  "rewrites": [
+    { "source": "/portal", "destination": "/portal/portal.html" },
+    { "source": "/dashboard", "destination": "/portal/dashboard.html" },
+    { "source": "/admin", "destination": "/portal/admin.html" },
+    { "source": "/create-password", "destination": "/portal/create-password.html" },
+    { "source": "/reset-password", "destination": "/portal/reset-password.html" },
+    { "source": "/forgot-password", "destination": "/portal/forgot-password.html" },
+    { "source": "/email-changed", "destination": "/portal/email-changed.html" }
+  ],
   "headers": [
     {
       "source": "/",
